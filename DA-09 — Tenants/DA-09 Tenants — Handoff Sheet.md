@@ -253,7 +253,7 @@ Some cards carry a footer naming what needs attention, with one control that **o
 
 ### Loading, failure, sorting, entry
 
-Suite rules unchanged: every card loads, fails and retries alone; skeletons match their card; a failed card shows "Couldn't load this" and Retry, never a number; empty and failed look different. Every list sorts highest to lowest. Entry is the Tenants tab; screens drawn around it in the design file are context only.
+Suite rules unchanged: every card loads, fails and retries alone; skeletons match their card; a failed card shows "Couldn't load this" and Retry, never a number; empty and failed look different. Value breakdowns sort highest to lowest. Bars with a natural order (day buckets, tenure bands, expiry bands) keep that order. Entry is the Tenants tab; screens drawn around it in the design file are context only.
 
 ---
 
@@ -431,29 +431,96 @@ Hidden with one property in scope; returns automatically with more. Per property
 
 ## 19. What each number opens
 
-- A drill filters a list; it never re-scopes the screen.
-- A number opens the list of the kind of person it counts: living tenants → Tenants list, arrivals → Bookings, departures → Old Tenants.
-- The destination opens on the same window; the back control says "Tenants".
-- Records behind a number add back to the number tapped.
-- Rates and averages are not tappable. Every row that opens something looks like it does.
+### The rules
 
-| Number | Opens | Ready? |
-|---|---|---|
-| Active Tenants · Active Bookings | its list | ✅ |
-| Under Notice · Past their date | Tenants list | ✅ |
-| Move-ins | Tenants list, joined in window | ✅ |
-| Verification, agreement, profile, gender, food, stay type, renting type rows | Tenants list, that value | ✅ |
-| Property Wise row · Tenure bars | Tenants list | ✅ |
-| **Move-outs** | Old Tenants list, left in window | ❌ |
-| **Notices Raised · Eviction buckets** | Tenants list, that window / state | ❌ |
-| **Agreement expiry bands · Renewal figures** | Tenants list | ❌ |
-| **Approved / Cancelled / Converted bookings** | Bookings list, that state | ❌ |
-| E-KYC vs manual · agreement signed kinds | Tenants list | ⚠ partial, only done-or-not today |
-| Age band · City · Institute · Tenant type | Tenants list | ❌ |
+- **A drill filters a list. It never re-scopes the screen.** The one exception: a trend bar moves the screen's window.
+- **The destination follows the person's state.** Living here: the Tenants list. Arriving: the Bookings list. Left, or a cancelled booking: the Old Tenants list.
+- The destination opens on **the same window and the same properties** the screen was showing, and the back control reads "Tenants".
+- **Records add back to the number tapped.**
+- Rates, averages and percentages are not tappable. Everything tappable looks tappable.
+- The destination names the slice, shows the active filter on arrival, and names the filter in its empty state (the suite-wide requirement, still unowned).
 
-**Every ❌ is a filter to add, not history to start keeping.** All the dates and states exist in full; the lists just cannot be asked for a range or a state yet. Until they can, each affected number either ships without a tap or opens the unfiltered list and says so on arrival, never a silently wrong list.
+### The tap matrix
 
-The destination must also name the slice, show the active filter on arrival, and name the filter in its empty state. The suite-wide requirement, still unowned.
+Every tappable thing, what it opens, and what is already applied on arrival. ✅ works today · ⚠ partly · ❌ the filter has to be added first. **Every ❌ is a filter over data that already exists, never history to start keeping.**
+
+| You tap | What opens | Arriving filtered to | Ready? |
+|---|---|---|---|
+| **Overview Snapshot** | | | |
+| Active Tenants | Tenants list | Everyone living here | ✅ |
+| Active Bookings | Bookings list | All bookings, confirmed and awaiting together | ✅ |
+| Approved Bookings | Bookings list | Confirmed during the window shown | ❌ no confirmation-state or confirmation-date filter |
+| Eviction Pending | Tenants list | Notice raised, awaiting approval | ❌ no notice-state filter |
+| Eviction Approved | Tenants list | Departure scheduled | ❌ no notice-state filter |
+| Notices Raised | Tenants list | Notice raised during the window | ❌ no notice-date range |
+| Past their date | Tenants list | Confirmed leaving date already passed | ✅ |
+| Rent at risk line | Tenants list | Everyone under notice | ✅ |
+| Leaving with dues line | Tenants list | Under notice and still owing money | ⚠ confirm the list can combine the two |
+| View all | The View all sheet | — | — |
+| **View all sheet rows** | | | |
+| Under notice | Tenants list | Has a leaving date | ✅ |
+| Of which approved / awaiting | Tenants list | That notice state | ❌ no notice-state filter |
+| Past their date | Tenants list | Leaving date already passed | ✅ |
+| Short term / Long term | Tenants list | That stay type | ✅ |
+| Bookings, confirmed / awaiting | Bookings list | That state | ❌ no confirmation-state filter |
+| Arriving this month | Bookings list | Joining date inside this month | ✅ |
+| Move-ins | Tenants list | Joined during the window | ✅ |
+| Move-outs | Old Tenants list | Left during the window | ❌ no leaving-date range on that list |
+| Bookings cancelled | Old Tenants list | Cancelled bookings only | ❌ the list cannot single them out |
+| **Move-in & Move-out** | | | |
+| Move-ins | Tenants list | Joined during the window | ✅ |
+| Move-outs | Old Tenants list | Left during the window | ❌ as above |
+| The net | Nothing; two populations, no single list | — | — |
+| **Journey, Tenants tab** | | | |
+| Under Notice bar | Tenants list | Has a leaving date | ✅ |
+| Approved Eviction bar | Tenants list | Departure scheduled | ❌ no notice-state filter |
+| Renewals in 30 days bar | Tenants list | Agreement ends within 30 days | ❌ no agreement-end range |
+| Churn · Renewal · Net change | Nothing; rates and nets are not tappable | — | — |
+| Tenants who left early | Old Tenants list | Left before their lock-in ended | ❌ no such filter |
+| Eviction pending footer | Tenants list | Notice awaiting approval | ❌ no notice-state filter |
+| **Journey, Bookings tab** | | | |
+| Total | Bookings list | Booked during the window | ✅ |
+| Approved | Bookings list | Confirmed | ❌ no confirmation-state filter |
+| Cancelled | Old Tenants list | Cancelled bookings only | ❌ as above |
+| Converted | Tenants list | Joined during the window | ⚠ the list cannot tell converted bookings from direct joins |
+| **Tenant Verification** | | | |
+| E-KYC · Manually verified | Tenants list | That verification route | ⚠ only verified-or-not today |
+| Not verified | Tenants list | Identity not confirmed | ✅ |
+| Police verification: done | Tenants list | Check on file | ✅ |
+| Police: not done, still in time | Tenants list | No check, joined within 7 days | ✅ |
+| Police: overdue | Tenants list | No check, joined over 7 days ago | ✅ |
+| Action bar (overdue, recent) | Tenants list | No check, joined in the last 90 days | ✅ |
+| **Tenancy Details** | | | |
+| Stamp · Simple · Manually uploaded | Tenants list | That signing route | ⚠ only on-file-or-not today |
+| Not signed | Tenants list | No agreement on record | ✅ |
+| Profile completed / pending | Tenants list | The list's own completed-profile filter | ✅ |
+| **Upcoming Eviction** | | | |
+| Overdue bar | Tenants list | Leaving date already passed | ✅ |
+| 0–7 · 8–15 · 16–30 · 31+ bars | Tenants list | Leaving in that window, pending and approved together | ❌ no leaving-date range |
+| **Agreement Expiry Status** | | | |
+| Already expired · 30 · 60 · 90 · Valid | Tenants list | Agreement ending in that band | ❌ no agreement-end range |
+| Notify Tenant footer | Tenants list | The tapped band, ready to message | ❌ same |
+| **Tenant Profile** | | | |
+| Any gender row | Tenants list | That gender | ✅ |
+| Any age band | Tenants list | That age band | ❌ the list filters exact values, not ranges |
+| Any city row | Tenants list | That city | ❌ no city filter |
+| **Tenant Details** | | | |
+| Any food preference row | Tenants list | That preference | ✅ |
+| Any tenant type row | Tenants list | That type | ⚠ the list's filter reads a different place than this card today; counts will not match until both read one place |
+| Any institute row | Tenants list | That institute | ❌ no institute filter |
+| **Renewal & Retention** | | | |
+| Renewal Due · Renewal overdue | Tenants list | Agreement ending in 30 days · already ended | ❌ no agreement-end range |
+| Completed · Tenants who renewed | Tenants list | Renewed during the window | ❌ no renewal-date filter |
+| Stayed after notice | Nothing; a share, not tappable | — | — |
+| **Stay Type** | | | |
+| Short term / Long term | Tenants list | That stay type | ✅ |
+| B2B / Residential | Tenants list | That renting type | ✅ |
+| **How long tenants have been here** | | | |
+| Any tenure bar | Tenants list | Joined inside that band | ✅ |
+| **Property Wise** | | | |
+| Any property row | Tenants list | That property, everyone living there | ✅ |
+
+---
 
 ## 20. Who can see this
 
@@ -523,7 +590,7 @@ Every number in the file is placeholder; these are structural.
 
 **Remove:** 24. Hidden Collection leftovers in four cards (rupee rows, the "Received by" tab). 25. Hidden duplicate chips under five tiles. 26. The three-tab Lifecycle component with a Leads tab; archive it, the two-tab Journey placed on screen is the build target. 27. Parked cards outside the frame (Deposit Dues, the ratio-style Property Wise, loose copies).
 
-**Decide:** 28. Tile row overflow, scroll or wrap. 29. Info icon and chevron placement; currently inconsistent, and no card has both.
+**Decide:** 28. Tile row overflow, scroll or wrap. 29. Info icon and chevron placement; currently inconsistent, and no card has both. 30. Which cards carry their own date dropdown: the expanded Journey variant draws one, the placed card does not.
 
 ---
 

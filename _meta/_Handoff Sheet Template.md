@@ -55,7 +55,7 @@ One numbered section per card, in screen order. Each: what it shows (`| Row | Me
 
 ## N+1. What each number opens
 
-Fixed sub-heads: **The rules** (a drill filters a list, never re-scopes the screen; a number opens the list of the kind of record it counts; the destination opens on the same window and the back control names this screen; records add back to the number tapped; rates and averages are not tappable) · **The table** (`| Number | Opens | Ready? |`, verdicts ✅ ⚠ ❌, every ❌ named as filter-to-add or fact-not-recorded) · **What the destination says when you arrive** (name the slice, show the active filter, name the filter in the empty state).
+Fixed sub-heads: **The rules** (a drill filters a list, never re-scopes the screen, trend bars excepted; the destination follows the record's state, so different taps open different lists; the destination opens on the same window and the same properties, and the back control names this screen; records add back to the number tapped; rates and averages are not tappable) · **The tap matrix** (`| You tap | What opens | Arriving filtered to | Ready? |`, grouped by card with a bold divider row per card, one row per tappable element, arrival filters in plain words, verdicts ✅ ⚠ ❌, every ❌ named as filter-to-add or fact-not-recorded) · **What the destination says when you arrive** (name the slice, show the active filter, name the filter in the empty state).
 
 ## N+2. Who can see this
 
