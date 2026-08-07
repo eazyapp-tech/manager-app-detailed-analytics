@@ -40,7 +40,7 @@ One term per heading, one or two lines each, `| Row | Meaning |` tables for para
 
 Fixed sub-heads, in this order, dropping what does not apply:
 
-- **The time filter** — the options, the default, and the two kinds of number: `| Kind | Meaning |` for **Live** (always the current snapshot, says "as of today" on its face) and **Time-scoped** (counts inside the window the filter picks), then a worked example with real dates.
+- **The time filter** — the options, the default, where Custom stops, what the filter remembers across drills and launches, and the two kinds of number: `| Kind | Meaning |` for **Live** (always the current snapshot, says "as of today" on its face) and **Time-scoped** (counts inside the window the filter picks), then a worked example with real dates.
 - **What every number does on every filter setting** — the grid: every number down the side, the period settings and any forward setting across the top, every cell filled. Nothing on a forward setting ever invents an event.
 - **Periods that have not finished** — compare against the same elapsed days of the previous period, marked as unfinished.
 - **Periods that have not happened yet** — confirmed facts only; no chips, no action bars.
