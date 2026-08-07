@@ -1,188 +1,477 @@
 ---
+title: Dues — Handoff Sheet
 screen: DA-01 — Dues
-source: Figma "Home Screen — Manager App", frame "Dues insight - done" (node
-  10764:112750) + existing DA-01 Brief/Formula Map/Build Sheet + developer's own
-  rough sheet + owner review pass + grilling session on Restricted-state and
-  hidden-breakdown threads
-status: v8 — two cross-screen corrections, see top of doc
-date: 2026-08-06
+status: v11 · audits + sibling check complete · developer handoff
+owner: Sanchay
+date: 2026-08-08
+tags:
+  - rentok
+  - dues
+  - financial
+  - detailed-analytics
+  - handoff
 ---
+# Dues — Handoff Sheet
 
-# DA-01 — Dues: Handoff Sheet
+Everything on the Dues analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
 
-Plain-language definition of every number on the Dues widget and its detail screen. No code, no file names — this is what the number means and where it comes from, not how it's built.
+## What is in here
 
-> [!WARNING] Two corrections since v7, made 7 August 2026
-> Both came out of checking this sheet against the Collection and Expense sheets. Anyone who built from v7 should re-read these two points.
->
-> 1. **The change indicator colours were the wrong way round.** They now read red ▲ / green ▼. Dues going up is bad.
-> 2. **A card's own date dropdown no longer survives a change to the filter at the top.** It snaps back. This was decided after this sheet closed and now applies to every analytics screen.
+| | Section | For |
+|---|---|---|
+| **1** | Build status | everyone |
+| **2** | Where this lives | everyone |
+| **3** | What every number counts | everyone |
+| **4** | How the screen behaves | backend + design |
+| **5** | Overview Snapshot | backend |
+| **6** | View all sheet | backend + design |
+| **7** | Dues (Live) | backend |
+| **8** | Bills Summary | backend |
+| **9** | Dues Breakdown | backend |
+| **10** | Overdue Breakup | backend + design |
+| **11** | Upcoming Dues | backend |
+| **12** | Deposit Dues | backend |
+| **13** | Breakup by Stay Duration | backend |
+| **14** | Dues by Property | backend |
+| **15** | What each number opens | backend |
+| **16** | Who can see this | backend |
+| **17** | What each card shows when it is empty, healthy or broken | design + copy |
+| **18** | What this screen is not | everyone |
+| **19** | Build guidance | backend |
+| **20** | Open items | named owners |
+| **21** | Design file: what needs fixing | design |
+| | Where the measured figures came from | anyone re-checking a decision |
 
-## Empty-state copy fixes needed
+**Building the backend?** Read 1, 3 to 15, 19, 20. **Working on the design?** Read 3, 4, 6, 10, 17, 21. **Just need the decisions?** Read 3, 4 and the appendix.
 
-Nearly every empty state on this screen currently shows leftover copy from the Maintenance/Complaints module. Only Defaulter has correct, on-topic copy today — use its tone as the model for the rest.
+## 1. Build status
 
-| Widget | Current copy (wrong) | Recommended copy | CTA |
+The screen is designed and mostly signed off in the design file; the view-all sheet is the one exception (§6). The backend serves every card as a scaffold: each block is wired and reachable but answers with placeholder numbers while the real calculations wait to be written. Nothing in this sheet describes a live defect; it describes what each number must do once built. The dues list screen that every tap lands on already exists and works.
+
+If the build cycle runs short, cut in this order: Breakup by Stay Duration first, then Deposit Dues, then Upcoming Dues. The six core cards (Overview strip, Dues (Live), Bills Summary, Dues Breakdown, Overdue Breakup, Dues by Property) and their overflow sheets ship together.
+
+## 2. Where this lives
+
+Manager App → property → **Financial** tab → **Dues** sub-tab. The suite tab row:
+
+|---|---|
+| Financial | Dues · Collection · Expense |
+| People | Leads · Bookings · Tenants · Old Tenants |
+| Inventory | — |
+| Complaints | — |
+
+The entry point is the widget at the top of the Financial tab. Screens drawn around it in the design file are reference context only.
+
+## 3. What every number counts
+
+### Due
+
+One bill someone owes: a tenant, an amount still unpaid, a due date, a category. Where the screen's copy says "bill", it means a due.
+
+### The base rule
+
+A due counts if it is unpaid, at least ₹1, and belongs to a tenant who is living here, under notice, or a confirmed booking. **Old tenants are excluded from every number on this screen except one row**, the Old tenants row in Dues Breakdown (§9). That row is their only home; they are never blended into any total.
+
+### Overdue
+
+The due date has passed. A due dated today is not yet overdue.
+
+### Category
+
+The due's type as the property configured it: Rent, Electricity, Security Deposit, and so on. Types are free-named, so every category chart shows the top few by amount and folds the rest into **Others**, a bottomsheet listing every remaining category with its own total. Names that differ only by capitals group as one.
+
+### Added by
+
+Who raised the bill. Rent and late fines the system raises on schedule carry the manager's name.
+
+### Deposit
+
+Dues in the Security Deposit and Caution Money categories.
+
+### Short stay, long stay
+
+Every tenant is one or the other. There is no third state.
+
+### Upcoming and Projected
+
+Dues the property's recurring setup will raise but has not raised yet. A forecast, never blended with real dues, and nothing about it ever invents an event.
+
+### Under notice
+
+A leaving date on record, matching Tenants and Inventory. Uses the **confirmed** leaving date only, the same rule Tenants uses for real departures — a date that was raised but never approved does not count here. A withdrawn notice stops counting immediately, same as everywhere else.
+
+### Money on this screen
+
+Rupees, shown short: ₹23K, ₹2.45L.
+
+### Words to be careful with
+
+|---|---|
+| **Active, not under notice** | This screen's tenant-status bars partition money, so this bar excludes people under notice. On the Tenants screen, Active includes them. The label says so on its face. |
+| **Received** | Payments. Payment records live on the Collection screen; this screen only shows them paired beside what was billed. |
+| **Late Fine** | Auto-raised. Expect it near the top of every category chart: that is real money, not a bug. |
+| **Others** | Every overflow list on this screen — categories, added-by — opens the same way: a bottomsheet naming everyone or everything left out, each row drillable to its own filtered list. One pattern, used everywhere it applies. |
+
+## 4. How the screen behaves
+
+### The time filter
+
+Options: **All Time · This Month · Last Month · Current FY · Custom**. Default: **This Month**. Custom stops at today. The screen opens on This Month every launch, and the filter survives a drill and back.
+
+Changing the global filter updates every time-scoped card, and snaps any card-level override back to the global choice. A card with its own dropdown follows its own choice until the global filter next changes. A day runs midnight to midnight, India time.
+
+Two kinds of number, the suite's own two words:
+
+| Kind | Meaning |
+|---|---|
+| **Live** | Always the current snapshot. No filter setting changes it. Says "as of today" on its face |
+| **Time-scoped** | Counts dues whose due date falls inside the window the filter picks |
+
+Worked example, today being 8 August. A ₹6,300 rent due dated 28 July, still unpaid:
+
+| Number | Kind | Shows |
+|---|---|---|
+| All Time Dues | Live | counts it |
+| All Past Dues | pinned window | counts it, its due date sits before this month |
+| This Month's Due | pinned window | does not count it |
+| Dues (Live) gauge | Live | counts it under Overdue |
+| Overdue Breakup | Live | 11 days overdue, sits in the 8–14 bucket |
+| Dues Breakdown on This Month | Time-scoped | does not count it |
+| Dues Breakdown on Last Month | Time-scoped | counts it |
+
+### What every number does on every filter setting
+
+| Number | This Month | Last Month | Current FY | Custom | All Time |
+|---|---|---|---|---|---|
+| Overview strip, 6 tiles | pinned windows, ignore the filter | ″ | ″ | ″ | ″ |
+| Dues (Live) gauge | Live, ignores the filter | ″ | ″ | ″ | ″ |
+| Bills Summary | follows | follows | follows | follows | follows |
+| Dues Breakdown, all 3 views | follows, own dropdown may override | ″ | ″ | ″ | ″ |
+| Overdue Breakup | Live, ignores the filter | ″ | ″ | ″ | ″ |
+| Upcoming Dues | forward: tomorrow to month end, ignores the filter | ″ | ″ | ″ | ″ |
+| Deposit Dues | Live, ignores the filter | ″ | ″ | ″ | ″ |
+| Breakup by Stay Duration | follows | follows | follows | follows | follows |
+| Dues by Property | follows | follows | follows | follows | follows |
+
+### Periods that have not finished
+
+An unfinished period compares against the same elapsed days of the previous period, marked as unfinished on the chip: "▼12% vs same point last month." The note drops away once the period completes.
+
+### Change chips
+
+Exactly two numbers carry one: **This Month's Due** and **Current FY Dues**. Up is bad here: a rising chip shows red, a falling one green, an unchanged number shows a neutral chip. No other number on this screen carries a chip. The other four tiles have no previous period of the same shape, and a chip on a forecast would be a guess.
+
+### When a number is red
+
+Red only where somebody can be held to it. Overdue money is red. Money not yet due is plain. A property onboarded this morning must not open red.
+
+### Loading, failure, sorting, entry
+
+Each card loads with a skeleton and fails alone with "Couldn't load this" and Retry, never a healthy message, never a zero. Property-wise components sort highest to lowest. The entry point is the widget at the top of the Financial tab.
+
+## 5. Overview Snapshot
+
+Six tiles, always visible, none follow the filter.
+
+| Tile | Counts | Kind |
+|---|---|---|
+| All Time Dues | every unpaid due, any due date | Live |
+| All Past Dues | unpaid dues due before the 1st of this month | pinned window |
+| This Month's Due | unpaid dues due from the 1st through today | pinned window |
+| All Future Dues | unpaid dues due from tomorrow onwards | Live |
+| This Month's Projected Due | what the recurring setup will raise before month end, every configured type, not rent alone | forward |
+| Current FY Dues | unpaid dues due since 1 April | pinned window |
+
+All Time, All Past, This Month's Due and All Future partition cleanly: Past plus This Month plus Future adds to All Time. Chips per §4: This Month's Due and Current FY Dues only.
+
+## 6. View all sheet
+
+Opens from the strip header. **The design file's current frame for this sheet is an old draft, superseded and not the build target.** Ignore its specific rows; it belongs to an earlier version of the whole screen. What the sheet must do, following the same pattern as the rest of this screen: restate the six tiles, then this month's category rows with the actual month name on each ("May Rent Dues"), then the two stay-duration totals. Every row that can open a list does, arriving filtered to exactly that row's dues, the same as if tapped from its card. The Projected row opens the forecast explainer, not a list.
+
+Needs a fresh design pass building on the card definitions in this sheet, not the stale frame. See §21.
+
+## 7. Dues (Live)
+
+The gauge under the strip. Says "as of today" on its face.
+
+| Row | Meaning |
+|---|---|
+| Total Dues | the same figure as All Time Dues, one computation shown twice |
+| Overdue | the portion whose due date has passed, red |
+| Due Today | the portion due today |
+| Due This Week | the portion due inside the current 7-day window, the face shows the dates ("01 Aug–07 Aug") |
+| Due Later | the portion due after this week, the face shows the start ("After 08 Aug") |
+
+The four slices partition Total Dues exactly.
+
+## 8. Bills Summary
+
+Time-scoped pair: how billing went in the window.
+
+| Row | Meaning |
+|---|---|
+| Bill Due | every due that came due inside the window, whether since paid or still unpaid |
+| Received | money collected against those same dues, inside the window |
+
+Bill Due is not the same figure as This Month's Due on the default window: This Month's Due counts only what remains unpaid, Bill Due counts everything that came due including what has since been paid. That gap is the card's purpose, it shows how much of what came due has actually been collected.
+
+## 9. Dues Breakdown
+
+Time-scoped, own dropdown. Three views over the same dues, switched by a toggle.
+
+**Category.** Top categories in the window by unpaid amount, the rest in Others. Expect Rent and Late Fine to lead nearly everywhere. Top plus Others always sums to the window's total.
+
+**Tenant status.** Four bars that partition the window's money by where the payer stands today:
+
+| Row | Meaning |
+|---|---|
+| Active, not under notice | living here, no leaving date on record |
+| Under notice | living here, confirmed leaving date on record (§3) |
+| Bookings | confirmed bookings with dues |
+| Old tenants | moved out still owing. Their only home on this screen |
+
+**Added by.** The top four contributors by amount, the rest in an Others overflow sheet, listing each remaining person or RentOk with their total and bill count. RentOk's own row is shown only when it has an unpaid amount, never pinned in with nothing to show. Fewer than four real contributors: show only the real ones, no empty Others row.
+
+The categories that surface here can differ from the categories in Overdue Breakup (§10). That is expected: this view counts every unpaid due, that one counts only the overdue ones, two different pools that can each have their own top few.
+
+## 10. Overdue Breakup
+
+Live, says "as of today" on its face, no dropdown of its own. Two views over everything overdue right now.
+
+**By ageing.** Five buckets by days past the due date: **1–7 · 8–14 · 15–21 · 22–90 · 90+**. The first three are the chase cadence: remind, follow up, escalate. 22–90 is serious and still recoverable. 90+ is a review-for-write-off pile, and its bar being the biggest is the message, not a rendering fault.
+
+**By category.** Top categories of the overdue pool, the rest folded into Others, the same overflow bottomsheet pattern as §9, each remaining category drillable to its own filtered list. Top plus Others always sums to the overdue total.
+
+## 11. Upcoming Dues
+
+Forward, "from today onwards": what the recurring setup will raise from tomorrow through month end, grouped Rent · Food · Others, laid out by due date. Others is the fold of every further configured type, not a fixed third group. Only rent configured, only rent shows. If the recurring setup can't be read cleanly, the card shows zero rather than a guess, never an estimate.
+
+Not built yet; ships after the live cards. Its taps open an explainer, no real dues exist to list.
+
+## 12. Deposit Dues
+
+Live running balance, not a period.
+
+| Row | Meaning |
+|---|---|
+| Received | deposit collected and still held. Money returned or adjusted no longer counts |
+| Due | deposit still unpaid |
+
+Received opens the Collection screen's list filtered to deposit categories (§15).
+
+## 13. Breakup by Stay Duration
+
+Time-scoped. Short stay and long stay, two bars that always sum to the window's total. The card shows only when the property has at least one short-term tenant; on the rest of the platform it would only ever restate the total.
+
+## 14. Dues by Property
+
+Time-scoped. Renders only when the account has more than one property with data. Ranked highest to lowest, and **every row carries its share of the account total**: the share is what turns a ranking into a staffing decision.
+
+## 15. What each number opens
+
+### The rules
+
+A drill filters a list, it never re-scopes the screen. The destination follows the record's kind: **a tap lands on the list where its records live, even when that list sits on a sibling tab**, so the two Received figures open the Collection screen's list. The destination opens on the same window and the same properties, and the back control names this screen. Records add back to the number tapped. The forecast numbers open an explainer, nothing real exists to list.
+
+**Every overflow, one pattern.** Category Others and Added By Others both open a bottomsheet naming everyone or everything left out of the top few shown, each with its own total. Every row inside that bottomsheet is itself drillable, opening the dues list filtered to that one category or that one person.
+
+### When the window changes what a tap shows
+
+| The screen's window | What travels to the list |
+|---|---|
+| Live number | nothing, the list opens as of today |
+| Period window | the window travels as a due-date range, and the list shows tenants as they are today, naming any difference on arrival |
+| Forward number | no travel, the explainer opens instead |
+
+### The tap matrix
+
+| You tap | What opens | Arriving filtered to | Ready? |
 |---|---|---|---|
-| Dues (Live) | "You're all caught up! New maintenance requests and…" *(cut off, Maintenance-domain leftover)* | **Title:** No dues yet **Subtitle:** Add a tenant to start tracking dues for this property. | "Add first tenant" *(already in Figma — keep)* |
-| Bills Summary | Same leftover text | **Title:** No bills raised yet **Subtitle:** Bills you raise for this property will show up here. | — |
-| Dues Breakdown | Same leftover text | **Title:** Nothing to break down yet **Subtitle:** Once bills are raised, you'll see them by category, tenant status, and who added them. | — |
-| Overdue Breakup / Defaulter | ✅ Already correct: "No Defaulters this month" / "Every tenant has paid on time." | No change — this is the reference tone for every row above and below | — |
-| Upcoming Dues | Same leftover text | **Title:** No upcoming dues **Subtitle:** Recurring bills due to be raised will show up here. | — |
-| Deposit Dues | Same leftover text | **Title:** No deposit dues yet **Subtitle:** Deposits collected or pending will show up here. | — |
-| Dues by Property | Same leftover text | **Title:** No dues to rank yet **Subtitle:** Once properties have outstanding dues, they'll be ranked here. | — |
+| **Overview strip** | | | |
+| All Time Dues | dues list | all unpaid dues | ✅ |
+| All Past Dues | dues list | due before this month | ✅ |
+| This Month's Due | dues list | due 1st through today | ✅ |
+| All Future Dues | dues list | due after today | ⚠ list must accept a window ending in the future |
+| This Month's Projected Due | forecast explainer | — | ✅ |
+| Current FY Dues | dues list | due since 1 April | ✅ |
+| **View all sheet** | | | |
+| tile rows | as their tiles above | ″ | as above |
+| category rows | dues list | that category, this month | ✅ |
+| stay rows | dues list | that stay type | ❌ stay-type filter to add |
+| **Dues (Live)** | | | |
+| Overdue | dues list | due before today | ✅ |
+| Due Today | dues list | due today | ✅ |
+| Due This Week | dues list | due inside the shown dates | ⚠ future window, as above |
+| Due Later | dues list | due after the shown date | ⚠ future window, as above |
+| **Bills Summary** | | | |
+| Bill Due | dues list | came due in the window | ✅ |
+| Received | Collection list | payments in the window against those dues | ⚠ Collection list must accept the window |
+| **Dues Breakdown** | | | |
+| category bars | dues list | those categories in the window | ✅ |
+| category Others | overflow sheet, then dues list per row | remaining categories, then that one category | ✅ |
+| Active, not under notice | dues list | that tenant state | ❌ tenant-state filter to add |
+| Under notice | dues list | that tenant state | ❌ tenant-state filter to add |
+| Bookings | dues list | that tenant state | ✅ |
+| Old tenants | dues list | that tenant state | ❌ tenant-state filter to add |
+| added-by bars | dues list | that person's bills in the window | ✅ |
+| added-by Others | overflow sheet, then dues list per row | remaining people, then that one person's bills | ✅ |
+| **Overdue Breakup** | | | |
+| ageing buckets | dues list | the bucket's due-date range | ✅ |
+| category bars | dues list | those categories, due before today | ✅ |
+| category Others | overflow sheet, then dues list per row | remaining categories, then that one category, due before today | ✅ |
+| **Upcoming Dues** | forecast explainer | — | ✅ |
+| **Deposit Dues** | | | |
+| Due | dues list | deposit categories, unpaid | ✅ |
+| Received | Collection list | deposit payments still held | ⚠ Collection list must accept deposit categories |
+| **Breakup by Stay Duration** | | | |
+| either bar | dues list | that stay type in the window | ❌ stay-type filter to add |
+| **Dues by Property** | | | |
+| property row | dues list | that property, the window | ✅ |
 
-## Build status
+Every ❌ is a filter over data that already exists, never history to start keeping.
 
-The backend for this screen exists as a scaffold today — every block (Overview, Dues Live, Bills Summary, Dues Breakdown, Overdue Breakup, Upcoming Rent, Deposit Dues, Stay Duration, Property-wise) is wired up and reachable, but every one currently returns placeholder numbers, not real data. Nothing below describes a live bug — it describes what the real logic should do once it's written.
+### What the lists can already do, and what has to be added
 
-## Where this widget lives
+The dues list filters today by property, due-date window, who added the due, category, defaulter group, tenant type (active and booking only), and free search.
 
-Manager App → property → **Financials** tab → **Dues** sub-tab (siblings: Collection, Expense).
+| New filter to add | On which list | Which numbers wait on it |
+|---|---|---|
+| Tenant state, four values matching §9's bars | dues list | three of the four tenant-status bars |
+| Stay type | dues list | both stay bars, two view-all rows |
 
-## How the time filters work (applies the same way across every analytics section, not just Dues)
+### What the destination says when you arrive
 
-Two kinds of sections:
-- **Live** sections — always show the current, real-time snapshot. No filter, global or local, ever changes them.
-- **Duration-scoped** sections — show numbers for a time window, and follow the rules below.
+The list names the slice it arrived filtered to, shows the active filter, and names that filter in its empty state.
 
-One **global duration filter** sits at the top of the screen, with five options: **All Time, This Month, Last Month, Current FY, Custom**. ("All Time" is the same thing informal notes called "Today"/"Live" — it means no date limit, not literally today.)
+## 16. Who can see this
 
-- **Default: This Month.** Landing on "every due ever raised" (All Time) is a heavy, non-actionable first impression, especially for older properties — operators think in monthly cycles, so This Month is the useful landing state. (Recommendation, not yet user-tested — worth a quick sanity check once built.)
-- Changing the global filter updates **every duration-scoped section** to that window.
-- Some sections also have their **own local duration dropdown** (e.g. "This Month" shown on a section header), offering the same five options as the filter at the top. Changing a section's dropdown affects **only that section**.
-- **Changing the filter at the top pulls every section back into line.** Any section sitting on its own period snaps back to follow it. A manager can set one section aside to check something, but can never end up with a screen showing four different periods without meaning to.
+**Anyone who can view dues.** The suite rule: each analytics tab follows the permission of the records it describes. Dues and Collection open and lock together; Expense is separate. No partial state.
 
-## Drill-down rule (applies across every breakdown section below)
+Whoever lacks it sees the lock: *"Analytics Restricted, You don't have permission to view these analytics. Request access from your admin,"* with **Request Access**.
 
-Every duration-scoped breakdown widget — Dues Breakdown, Overdue Breakup, Dues by Property — opens the exact filtered bill list behind the number tapped (tap "Overdue" → see exactly those bills, tap a property → see exactly that property's dues, etc.). This was a hard rule in earlier hardening and carries forward here.
+Narrowed property access counts only those properties, and the drill matches.
 
-**Exception:** forecast-only numbers (This Month's Projected Due, Upcoming Dues) can't open a real bill list — the bills don't exist yet — so those open an explainer sheet instead, same as the existing "Dues Overview" sheet already does.
+## 17. What each card shows when it is empty, healthy or broken
 
-## Live sections (always real-time, ignore both filters)
+### The zeros, told apart
 
-### 1. Overview strip — 6 summary tiles
-
-| Tile | Meaning |
+| Situation | What shows |
 |---|---|
-| All Time Dues | Every unpaid bill right now, regardless of due date |
-| All Past Dues | Unpaid bills whose due date has already passed |
-| This Month's Due | Unpaid bills due between the 1st of this month and today |
-| All Future Dues | Unpaid bills due from tomorrow onward |
-| This Month's Projected Due | Forecast of recurring bills expected to be created before month-end, across every due type this tenant/property has set to auto-recur — not rent-only (see §7) |
-| Current FY Dues | Unpaid bills due within the current financial year (April–March) |
+| Never set up: no tenants | *"No dues yet. Add your first tenant and this page fills in."* with **Add tenant** |
+| Onboarding: tenants added, nothing billed yet | *"No bills raised yet. Bills you raise appear here."* |
+| In-window zero on a time-scoped card | the card draws zero, plain, no message |
+| Everything paid | good news, see Healthy below |
+| Upcoming with nothing configured | *"Nothing set to auto-raise."* |
+| Failed | "Couldn't load this" with Retry, never a healthy message, never a zero |
 
-Each tile shows a change indicator against the previous period. **Up is bad on this screen: an increase is red, a decrease is green.** Dues are money owed to you that has not arrived, so more of them is worse. This is the same polarity as Expense and the opposite of Collection, and it has to be set deliberately because the shared component defaults to the wrong way round.
+### Healthy: good news, no CTA
 
-**Where the selected period is still running, compare against the same point in the previous period**, not against the whole of it, and say so on the chip: *"▼ 12% vs same point last month."* On the 3rd of the month a whole-month comparison shows a collapse that is not real. The note drops away once the period completes.
-
-**Base rule (applies everywhere on this page unless a section says otherwise):** a bill counts if it's unpaid and for at least ₹1, and the tenant it belongs to is active, under notice, or a confirmed booking. **Moved-out (old) tenants are deliberately excluded from every number on this page except one** — the "Old Tenants" row inside Dues Breakdown → Tenant Status (§5). That row is the only place their unpaid balance should ever surface; it should not be blended into All Time Dues, the Live gauge, FY Dues, or any other total. Build note: an older, currently-live widget elsewhere in the app excludes old tenants everywhere with no per-row exception — don't copy that pattern here, since it has no way to include them in just the one row this design calls for.
-
-### 2. Dues (Live)
-
-The breakdown directly under the Overview strip — same "Total Dues" headline as "All Time Dues" above, split into 4 buckets:
-
-| Field | Meaning |
+| Card | Reads |
 |---|---|
-| Total Dues | Same figure as "All Time Dues" |
-| Overdue | Portion whose due date has already passed |
-| Due Today | Portion due today |
-| Due This Week | Portion due in the current 7-day window (widget shows the actual date range, e.g. "01 Aug – 07 Aug") |
-| Due Later | Portion due after this week (widget shows the actual start date, e.g. "After 08 Aug") |
+| Dues (Live) at zero with tenants present | *"Every bill is paid."* |
+| Overdue Breakup at zero | *"Nobody is overdue."* |
+| Dues Breakdown at zero | *"Nothing outstanding to break down."* |
+| Deposit Due at zero | *"No deposit pending."* |
+| Bills Summary, window with nothing billed | *"No bills came due in this window."* |
+| Dues by Property, no property carrying dues | *"No property has outstanding dues."* |
 
-The Figma file also has a tenant-status sub-breakdown (Active / Booking / Old Tenants, each with an amount) built into this same widget but switched off. **Dead, not deferred — do not build.** It duplicates the Tenant Status view already in §5; that's the one place this grouping should live.
+Zero unpaid dues is real but rare, about one live property in fourteen, so the healthy states must exist and must not be dressed as setup.
 
-### 3. Deposit Dues
+### Empty and hidden
 
-| Field | Meaning |
-|---|---|
-| Received | Security/caution deposit already collected and still held |
-| Due | Security/caution deposit still unpaid |
+Breakup by Stay Duration hides when the property has no short-term tenants. Dues by Property renders only for multi-property accounts. Hidden is hidden: no ghost card, no explainer.
 
-Live/running-balance by nature — deposits are evaluated as a running total, not a period.
+## 18. What this screen is not
 
-## Duration-scoped sections (follow the global filter, or their own local override — see above)
+- **Not a collections screen.** Payments live on Collection; this screen only pairs Received beside what was billed.
+- **Not a chase list.** Tenant-by-tenant follow-up happens on the dues list the numbers open.
+- **Not an income forecast.** Projected counts bills that will be raised, never money promised.
+- **Not a ledger of old tenants.** Their dues have one row (§9) and the rest of that story lives on Old Tenants.
 
-### 4. Bills Summary (default This Month)
+## 19. Build guidance
 
-Redefined as a period snapshot, not a repeat of the Overview strip:
+1. **Totals must survive junk amounts.** A bill of ₹1 crore or more is data entry gone wrong, not money. *Test:* a property holding one ₹500 crore bill reports totals matching its real bills.
+2. **A part-paid due counts its remaining amount.** *Test:* pay ₹4,000 of a ₹10,000 due; every total moves by exactly ₹4,000.
+3. **Old tenants appear in one row only.** *Test:* a moved-out tenant owing ₹5,000 raises the Old tenants bar by ₹5,000 and changes no tile, no gauge, no other bar.
+4. **The four tenant-status bars partition the window's total.** *Test:* the four bars sum to the window's total exactly, no due in two bars.
+5. **Category grouping normalises names.** *Test:* two types differing only by capitals chart as one bar.
+6. **Ageing runs from due date to today.** *Test:* a bill due the 1st sits in 1–7 on the 7th and in 8–14 on the 9th.
+7. **A due dated today is not overdue.** *Test:* it appears in Due Today and in no ageing bucket.
+8. **Deposit Received means still held.** *Test:* refund a ₹10,000 deposit; Received drops by ₹10,000 the same day.
+9. **Received counts only payments against the window's dues.** *Test:* a payment against last month's bill moves nothing in this month's Bills Summary.
+10. **Future windows must reach the list.** *Test:* tap Due Later; the list opens showing bills due after the shown date.
+11. **Chips compare unfinished periods fairly.** *Test:* on the 8th, the This Month's Due chip compares against the first 8 days of last month, marked as unfinished, and drops the mark once the month completes.
+12. **Chip direction is up-is-bad on this screen.** *Test:* a rising This Month's Due shows red; a falling one shows green.
+13. **The stay card hides rather than restating.** *Test:* a property with zero short-term tenants shows no stay card.
+14. **The property card needs two properties with data.** *Test:* a single-property account never sees it; a two-property account sees both rows with shares summing to 100%.
+15. **Cross-tab arrivals carry their slice.** *Test:* tap deposit Received; the Collection list opens on deposit payments, back control names this screen.
+16. **Every category and category chart normalises to top-plus-Others.** *Test:* a property with six categories shows the top four or five and one Others row, and the top rows plus Others sum to the card's total.
+17. **The tenant-status sub-breakdown that once sat inside the gauge is not built.** It duplicates §9's Tenant status view; that view is its only home.
+18. **No narrowed self-added-tenant view is built for this screen.** Product has confirmed nobody is granted that permission; if that changes, this screen needs the same scoping the dues list already has, see open item 1.
 
-| Field | Meaning |
-|---|---|
-| Bill Due | Bills that came due within the selected window |
-| Received | Money collected specifically against those same bills, within the same window |
+## 20. Open items
 
-Reads as a quick "how am I doing on collections this period" check — deliberately different from the Overview strip's all-time numbers.
+1. **Engineering.** A permission exists that narrows a member's view to only the tenants they added. Product says nobody is granted it. Confirm, because if anyone holds it, two people can see different totals on the same property with nothing on screen saying so.
+2. **Engineering.** Dues worth about ₹2.8 crore carry a creator category that has no display name. Added By needs a name for it before that view ships.
+3. **Engineering.** Some drill routes behind this screen's numbers have not been confirmed to carry the same permission check as the rest of the screen. Confirm before launch.
+4. **Engineering.** The dues list currently returns everything in one page with no real pagination. Decide whether that holds once this screen sends it real traffic.
+5. **Product.** The Added By overflow's row count is specified here as four, including RentOk's own row when it has an amount. Worth a final confirm before build, a different count was mentioned in passing this session.
 
-### 5. Dues Breakdown (has its own local dropdown, default This Month)
+## 21. Design file: what needs fixing
 
-Three views, switched by a toggle — same underlying bills, grouped differently:
+**Wrong**
 
-| View | Groups by |
-|---|---|
-| Category | Top categories present in this window (typically Rent / Electricity / Deposit / Mess), rest rolled into Others |
-| Tenant Status | Active / Under Notice / Bookings / **Old Tenants** — this is the one and only place moved-out tenants' dues appear anywhere on this screen (see Base Rule, §1) |
-| Added By | Whoever raised the bill — Owner / Rent Manager / RentOk (auto-generated) / Tenant / Partner, top few shown, rest folded into an overflow list |
+1. The tenant-status view labels a bar "Under Eviction". The suite word is **Under notice**, and the first bar must read **Active, not under notice**.
+2. Seven cards' empty states carry copy from the Complaints module ("You're all caught up! New maintenance requests…"): Dues (Live), Bills Summary, Dues Breakdown, Defaulter, Upcoming Dues, Deposit Dues, Dues by Property. §17 holds the replacement copy per card.
+3. The Defaulter card's healthy copy says "No Defaulters this month". The card is Live now: *"Nobody is overdue."*
+4. The forecast card is titled "Upcoming Rent (to be added)". It counts every configured type: **Upcoming Dues**. Its chart also carries the axis label "Overdue Timeline", left over from a copied chart; it is a forward-looking card and needs its own label.
+5. Change chips are drawn on four tiles (May's Due, May's Projected Due, All Past Dues, Current FY Dues). Only two carry a chip: This Month's Due and Current FY Dues.
+6. **Change chip colours are inverted.** A rising, worse number is drawn green; it must be red. Up is bad on this whole card.
+7. The gauge and Deposit Dues headlines show malformed amounts ("₹15,00,000 L", a full number plus a stray unit letter). Format as ₹15L.
+8. The global filter chip at the top of the screen reads "Today". It should show one of the five locked options, defaulting to This Month.
+9. The Overdue Breakup card's local dropdown, where one still exists in the file, reads "All Time" on the main screen and "This Month" on its empty-state copy, disagreeing with each other. Both are moot: the card takes no dropdown at all, see Remove below.
+10. The Restricted-state mockup's gauge shows a different Due Later window ("08 Aug–31 Aug") than the live card ("After 08 Aug"). Sync the two.
+11. Dev notes left on the canvas still name the tenant-status labels this sheet rules out ("Under Eviction" among them). Update or remove them so they stop reading as current guidance.
 
-Tapping "Added By → Others" opens a separate list of every other person who added bills, each with their total and bill count (see §10).
+**Missing**
 
-### 6. Overdue Breakup / Defaulter (has its own local dropdown, default This Month)
+12. The ageing view draws four buckets. The spec is five: 1–7 · 8–14 · 15–21 · 22–90 · 90+.
+13. Property rows need their share-of-total figure.
+14. Change chips need a neutral state for an unchanged number.
+15. Live cards need "as of today" on their face.
+16. Every card carries an info icon and no info copy is written anywhere. Either write the copy per card or drop the icons.
+17. The Category Others and Added By Others overflow sheets need their bottomsheet drawn wherever a category view exists, not only for Added By.
 
-Two views, same overdue bills grouped differently:
+**Remove**
 
-| View | Groups by |
-|---|---|
-| By Amount | How stale — 1–7 days / 8–14 days / 15–21 days / 22+ days overdue |
-| By Category | Top categories among specifically the overdue bills, rest rolled into Others |
+18. The Overdue Breakup card's own dropdown control, wherever it still appears in the file. The card is Live.
+19. The switched-off tenant-status block inside the gauge. Superseded by the Dues Breakdown view.
+20. Two loose cards parked outside the phone frames in the Dues section: a Deposit Dues card and a duplicate Dues Breakdown card. Housekeeping.
+21. Hidden leftover "Paid by / Paid to" labels sitting inside the Dues by Property card, left over from a different card.
 
-This is a **different slice** of bills than §5's Category view (all unpaid bills vs. only overdue ones) — so the top categories that surface can legitimately differ between the two (e.g. Joining Fee showing up here even though it isn't a top category overall). Not an inconsistency to fix — expected behavior of "top-of-this-slice."
+**Decide**
 
-A bill due today is not yet counted as overdue.
+22. The gauge when one slice is nearly everything: minimum sliver width or value-first treatment.
+23. The 90+ ageing bar will dominate on most properties: whether the bar scale needs a treatment or the labels carry it.
+24. The view all sheet (§6) needs a fresh design pass; its current frame is an old draft built on different vocabulary and should not be used as a reference for the new one.
 
-### 7. Upcoming Dues — recurring bills not yet raised (has its own local dropdown, default This Month)
+## Where the measured figures came from
 
-Forecast of bills expected to be auto-raised before the window ends, grouped by type (Rent / Food / Others) and shown by due-date range.
+Measured on production, 7 August 2026 evening, amounts in rupees. Totals exclude test properties and bills of ₹1 crore and above (22 such bills sum to an impossible figure and would poison every headline).
 
-**Logic:** driven by each tenant's recurring-dues-package setup — whatever due types that tenant has configured to auto-recur is what gets forecast, summed. Only rent configured → only rent shows. Rent + food configured → both show, cumulatively. "Others" is a catch-all for any further recurring type beyond Rent and Food, same top-categories-plus-rollup pattern used in §5/§6 — not a fixed third category.
-
-Naming: use "Upcoming Dues" consistently (the live widget currently also carries the label "Upcoming Rent (to be added)" — pick one, recommend "Upcoming Dues" since it doesn't imply rent-only).
-
-### 8. Breakup by Stay Duration
-
-Splits outstanding dues into **Short Stay** vs **Long Stay** tenants. Stay-type is a required field on every tenant record, so in practice every tenant lands in one of the two buckets — no "unbucketed" case expected.
-
-### 9. Dues by Property (has its own local dropdown, default This Month)
-
-Outstanding dues per property, ranked highest to lowest. A "% share of total" next to each property was in the earlier spec but isn't visible in the current Figma — up to the developers to add if time allows; design will accommodate it.
-
-## Detail sheets
-
-### 10. "Added By → Others" detail sheet
-
-Full list of everyone (besides the top few shown in §5) who added bills in the selected window, each with their total amount and bill count.
-
-### 11. "Dues Overview" detail sheet (view-all)
-
-Opens from the widget header. A read-only explainer, not a filtered bill list — restates every number from §1 (All Time / Past / This Month / Future / Projected / FY Dues) plus category and stay-duration breakdowns, all for the same fixed windows.
-
-## Restricted (no-permission) state
-
-Shows a locked overlay — "Analytics Restricted — You don't have permission to view these analytics. Request access from your admin." with a "Request Access" button. Clean copy, no issues.
-
-**Scope of the lock:** matches the existing app-wide permission grouping — **Dues and Collection are locked or unlocked together** (same underlying permission today), **Expense is gated independently**. A user without Dues access sees this same lock on Collection too; their Expense access is unaffected either way.
-
-**A note on narrowed views.** The system holds a permission that limits a team member to seeing only the tenants they added themselves. Product's position is that nobody is actually given it, so it isn't a state to design for. It is built and working in the code, though — see Open items.
-
-## Build guidance (read before implementing)
-
-1. **Old-tenant scope is a one-row exception, not a page-wide default.** Include moved-out tenants' dues only in Dues Breakdown → Tenant Status → Old Tenants (§5). Exclude them everywhere else. Don't reuse the older widget's shared query for this screen — that query has no way to make just one row an exception.
-2. **Restricted-state permission check should read the same permission Dues and Collection already share**, plus the separate one Expense already has — don't invent a third, and don't build it as an all-or-nothing "whole Financials tab" lock.
-3. **Don't build a narrowed self-added-tenant view.** Product says nobody is given that permission, so it isn't a state this screen needs to handle.
-4. **Empty-state copy needs fixing** — see table at the top of this doc.
-5. **Do not build the hidden tenant-status sub-breakdown inside Dues (Live)** — it's dead, superseded by §5.
-
-## Open items
-
-**One question for engineering.** The system has a permission that narrows a team member's view to only the tenants they added. It is built and working across both Dues and Collection. Product says nobody is actually given it. Confirm that — because if anyone does hold it, their numbers are being quietly narrowed today with nothing on screen saying so, and two people looking at the same property would see different totals with no way to explain the gap.
-
-Everything else from this round is closed.
+| Measured | Result | What it decided |
+|---|---|---|
+| Unpaid dues, live tenants and bookings | 3.56 million dues, ₹3,294 crore | the scale every total must survive |
+| Share already overdue | 99.5% of unpaid money | the gauge's dominant-slice treatment (§21.22) |
+| Ageing: 22+ days | 92% of overdue money | the fifth bucket: 22–90 split from 90+ |
+| Old tenants' unpaid dues | 0.23% of the total, median due ₹10 | one row is right-sized, never a card |
+| Category mix | Rent 67.5% + Late Fine 29.8% = 97.3%; Electricity 0.18%; Mess absent from the top 12 | dynamic top-N, Late Fine surfacing is real |
+| Distinct category names | 785, with case-variant duplicates | grouping must normalise names |
+| Added-by mix | one creator code holds 95.9% of dues | expect one dominant bar; the card serves the manual remainder |
+| Unnamed creator code | ₹2.8 crore of dues | open item 2 |
+| Stay type fill | zero unset across 1.08 million tenants; short-term 0.46% of active | no unbucketed case; the stay card hides at zero short-term |
+| Recurring setup beyond rent | 56% of active tenants have at least one non-rent configured type | the Upcoming card has real material |
+| Bills Summary pair, August | ₹330 crore billed, ₹128 crore received a week in | the card is viable and meaningful |
+| Properties with zero unpaid dues | 7.2% of live properties | healthy states are real but rare (§17) |
+| Accounts with dues on one property only | 94% | the property card renders multi-property only |
+| Top property's share, multi-property accounts | median 60.4% | share-of-total is a requirement, not a maybe |

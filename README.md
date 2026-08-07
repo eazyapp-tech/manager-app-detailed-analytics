@@ -23,7 +23,7 @@ Handoff documentation for the RentOk Manager App analytics suite: nine screens, 
 
 | # | Screen | Handoff sheet | Engineering map | Design map | Status |
 |---|---|---|---|---|---|
-| 1 | Dues | [DA-01 sheet](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md) | — | — | ✅ v8 · restructure queued |
+| 1 | Dues | [DA-01 sheet](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md) | [read me first](DA-01%20—%20Dues/DA-01%20Cover%20Note%20—%20Nimit.md) | [design map](DA-01%20—%20Dues/DA-01%20Cover%20Note%20—%20Design.md) | ✅ v11 |
 | 2 | Collection | [DA-02 sheet](DA-02%20—%20Collections/DA-02%20Collection%20—%20Handoff%20Sheet.md) | — | — | ✅ v12 · restructure queued |
 | 3 | Expense | [DA-04 sheet](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md) | [read me first](DA-04%20—%20Expenses/DA-04%20Cover%20Note%20—%20Nimit.md) | — | ✅ v2 |
 | 4 | Inventory | [DA-08 sheet](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md) | [read me first](DA-08%20—%20Occupancy/DA-08%20Cover%20Note%20—%20Nimit.md) | [design map](DA-08%20—%20Occupancy/DA-08%20Cover%20Note%20—%20Ishika.md) | ✅ v1 |
@@ -35,16 +35,16 @@ Handoff documentation for the RentOk Manager App analytics suite: nine screens, 
 
 ## Jump straight into a sheet
 
-Deep links into the sections readers ask for most. Dues and Collection predate the standard spine and join this table after their restructure.
+Deep links into the sections readers ask for most. Collection predates the standard spine and joins this table after its restructure.
 
-| Section | Tenants (DA-09) | Inventory (DA-08) | Expense (DA-04) |
-|---|---|---|---|
-| What every number counts | [§3](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#3-what-every-number-counts) | [§3](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#3-what-every-number-counts) | [§3](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#3-what-every-number-counts) |
-| How the screen behaves | [§4](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#4-how-the-screen-behaves) | [§4](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#4-how-the-screen-behaves) | [§4](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#4-how-the-screen-behaves) |
-| What each number opens | [§19](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#19-what-each-number-opens) | [§14](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#14-what-each-number-opens) | [§11](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#11-what-each-number-opens) |
-| Build guidance | [§23](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#23-build-guidance) | [§18](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#18-build-guidance) | [§15](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#15-build-guidance) |
-| Open items | [§24](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#24-open-items) | [§19](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#19-open-items) | [§16](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#16-open-items) |
-| Design file fixes | [§25](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#25-design-file-what-needs-fixing) | [§20](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#20-design-file-what-needs-fixing) | [§17](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#17-design-file-what-needs-fixing) |
+| Section | Tenants (DA-09) | Inventory (DA-08) | Expense (DA-04) | Dues (DA-01) |
+|---|---|---|---|---|
+| What every number counts | [§3](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#3-what-every-number-counts) | [§3](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#3-what-every-number-counts) | [§3](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#3-what-every-number-counts) | [§3](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md#3-what-every-number-counts) |
+| How the screen behaves | [§4](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#4-how-the-screen-behaves) | [§4](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#4-how-the-screen-behaves) | [§4](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#4-how-the-screen-behaves) | [§4](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md#4-how-the-screen-behaves) |
+| What each number opens | [§19](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#19-what-each-number-opens) | [§14](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#14-what-each-number-opens) | [§11](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#11-what-each-number-opens) | [§15](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md#15-what-each-number-opens) |
+| Build guidance | [§23](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#23-build-guidance) | [§18](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#18-build-guidance) | [§15](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#15-build-guidance) | [§19](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md#19-build-guidance) |
+| Open items | [§24](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#24-open-items) | [§19](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#19-open-items) | [§16](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#16-open-items) | [§20](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md#20-open-items) |
+| Design file fixes | [§25](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md#25-design-file-what-needs-fixing) | [§20](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md#20-design-file-what-needs-fixing) | [§17](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md#17-design-file-what-needs-fixing) | [§21](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md#21-design-file-what-needs-fixing) |
 
 Every sheet also opens with its own **What is in here** table: the full section list with a reading map per audience.
 
