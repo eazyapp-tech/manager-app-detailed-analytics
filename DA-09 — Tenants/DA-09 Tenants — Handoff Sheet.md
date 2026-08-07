@@ -554,7 +554,7 @@ The ❌ rows all wait on one of these, and nothing else:
 | Left before lock-in ended | Old Tenants | Tenants who left early |
 | Age band, city, institute | Tenants | Those Profile and Details rows |
 
-Two ⚠ rows need a check, not a build: whether under-notice combines with owing-money on one list, and the two verification-route splits, which need the route recorded going forward before any filter can exist.
+The ⚠ rows are checks or recordings, not filters to build: confirm under-notice combines with owing-money on one list; the verification routes and the signing kinds need the route recorded from now on; the tenant-type filter and its card must read one place; and telling a converted booking from a direct join needs the link kept when a booking converts.
 
 ---
 
@@ -590,7 +590,7 @@ No tenants, no bookings, no history: no cards render. One full-screen state: *"N
 | Agreement Expiry Status | "No agreements ending in the next 90 days." |
 | Renewal & Retention | "Nothing due for renewal." |
 | Past their date at zero | "Every move-out is closed off." |
-| Journey, all three bars at zero | "All quiet. Nobody is under notice and nothing is due." |
+| Journey, all three bars at zero | Headcount stays; the bars give way to "All quiet. Nobody is under notice and nothing is due." |
 
 ### Empty: nothing yet
 
