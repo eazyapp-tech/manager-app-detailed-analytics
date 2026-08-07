@@ -435,10 +435,20 @@ Hidden with one property in scope; returns automatically with more. Per property
 
 - **A drill filters a list. It never re-scopes the screen.** The one exception: a trend bar moves the screen's window.
 - **The destination follows the person's state.** Living here: the Tenants list. Arriving: the Bookings list. Left, or a cancelled booking: the Old Tenants list.
-- The destination opens on **the same window and the same properties** the screen was showing, and the back control reads "Tenants".
-- **Records add back to the number tapped.**
+- The destination opens on **the same properties** the screen was showing, and the back control reads "Tenants". Whether the window travels depends on the kind of number; the table below is the rule.
+- **Records add back to the number tapped** on any window that includes today. On a fully past window the list shows the people as they are now, and names the difference on arrival.
 - Rates, averages and percentages are not tappable. Everything tappable looks tappable.
 - The destination names the slice, shows the active filter on arrival, and names the filter in its empty state (the suite-wide requirement, still unowned).
+
+### When the window changes what a tap shows
+
+| The screen's window | What travels to the list |
+|---|---|
+| A Live number, on any window | Nothing. The number was as-of-today, so the list opens as-of-today |
+| A period, running or finished | The window travels, and the list shows those people **as they are today**. Where some have since moved on, the list says so on arrival: "showing 11 of the 14; the rest have since moved out" |
+| Coming up | The destination itself moves to where those people are **today**: scheduled arrivals open the **Bookings list**, scheduled departures open the **Tenants list**. Nothing on Coming up opens the Old Tenants list |
+
+*Test it:* filter Last Month, tap Move-ins showing 14. The list opens on last month's joiners as they stand today, and if only 11 remain it says so on arrival. Eleven silent rows under a tile saying 14 is a failed test.
 
 ### The tap matrix
 
