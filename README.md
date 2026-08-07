@@ -1,34 +1,34 @@
 # Manager App Detailed Analytics
 
-Product documentation for the RentOk Manager App analytics suite: nine screens, one handoff sheet per screen, written so a developer can build from them and a non-technical reader can follow them. Plain language, no code references, every number defined.
+Handoff documentation for the RentOk Manager App analytics suite: nine screens, one self-contained handoff sheet per screen. Each sheet defines every number, every window, every tap and every empty state in plain language, so a developer can build from it and a non-technical reader can follow it. No code references anywhere.
 
-## Where things are
+## The screens
 
-| Folder | Screen | Status |
-|---|---|---|
-| [docs/DA-01 — Dues](docs/DA-01%20—%20Dues) | Dues | Closed v8, restructure queued |
-| [docs/DA-02 — Collections](docs/DA-02%20—%20Collections) | Collection | Closed v12, restructure queued |
-| [docs/DA-03 — Refunds](docs/DA-03%20—%20Refunds) | Refunds | Deferred, no screen in current design |
-| [docs/DA-04 — Expenses](docs/DA-04%20—%20Expenses) | Expense | Closed v2 |
-| [docs/DA-05 — Discounts](docs/DA-05%20—%20Discounts) | Discounts | Earlier round, not in current eight |
-| [docs/DA-06 — Liabilities](docs/DA-06%20—%20Liabilities) | Liabilities | Earlier round, not in current eight |
-| [docs/DA-07 — Cash Flow](docs/DA-07%20—%20Cash%20Flow) | Cash Flow | Earlier round, not in current eight |
-| [docs/DA-08 — Occupancy](docs/DA-08%20—%20Occupancy) | Inventory | Closed v1 |
-| [docs/DA-09 — Tenants](docs/DA-09%20—%20Tenants) | Tenants | Closed v2, the current standard |
-| docs/Tenant Insights | Superseded PRD, kept with its banner | Superseded in part |
-| docs/_meta | Template, tooling notes, cross-screen specs | — |
+| Screen | Handoff sheet | Reading maps | Status |
+|---|---|---|---|
+| Dues | [DA-01](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md) | — | Closed v8, restructure queued |
+| Collection | [DA-02](DA-02%20—%20Collections/DA-02%20Collection%20—%20Handoff%20Sheet.md) | — | Closed v12, restructure queued |
+| Expense | [DA-04](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md) | [engineering](DA-04%20—%20Expenses/DA-04%20Cover%20Note%20—%20Nimit.md) | Closed v2 |
+| Inventory | [DA-08](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md) | [engineering](DA-08%20—%20Occupancy/DA-08%20Cover%20Note%20—%20Nimit.md) · [design](DA-08%20—%20Occupancy/DA-08%20Cover%20Note%20—%20Ishika.md) | Closed v1 |
+| Tenants | [DA-09](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md) | [engineering](DA-09%20—%20Tenants/DA-09%20Cover%20Note%20—%20Nimit.md) · [design](DA-09%20—%20Tenants/DA-09%20Cover%20Note%20—%20Design.md) | Closed v2, the current standard |
+| Old Tenants | — | — | Next up |
+| Bookings | — | — | Not started |
+| Complaints | — | — | Not started |
+| Leads | — | — | Not started, newest addition |
 
-**Start here:** [the tracker](docs/00%20—%20Manager%20App%20Analytics%20Tracker.md). It holds every locked cross-screen rule, the backfill queue, and the next action. Read it before touching anything.
+## How to read this repo
 
-**Writing a new sheet?** Copy [the template](docs/_meta/_Handoff%20Sheet%20Template.md). Never start from a blank page.
+**Building a screen?** Open its handoff sheet. It is the whole spec; you need nothing else. The engineering reading map tells you which sections are yours and what will bite.
 
-## How each screen's folder reads
+**Working on design?** The design reading map lists your sections and every fix, in one place.
 
-The current-standard sheets (Tenants, Inventory, Expense) each carry: the handoff sheet (the whole spec), cover notes for engineering and design (reading maps), and an `archive/` of superseded sources, each marked with what overrides it. Older folders still carry the earlier three-document structure (Brief, Ground-Truth Formula Map, Build Sheet) and get restructured to the template at their next touch.
+**Running the project?** [The tracker](00%20—%20Manager%20App%20Analytics%20Tracker.md) holds every locked cross-screen rule, the backfill queue, the session history and the next action. Read it first, every time.
 
-## Rules of this repo
+**Writing a new sheet?** Copy [the template](_meta/_Handoff%20Sheet%20Template.md). It is the canonical spine: section order, table shapes, fixed phrases. Never start from a blank page.
 
-- **The Obsidian vault is the source of truth** (`RentOk/PRDs/Homescreen Detailed Analytics/`). This repo is its shareable mirror; sync is a plain copy because filenames match exactly.
-- `[[Wikilinks]]` in the docs resolve inside Obsidian, not on GitHub. They are kept as-is.
-- Documents follow the suite grammar: one spine, fixed section names, fixed table schemas, plain punctuation, no code references. The grammar lives in the tracker and the template.
-- Superseded documents are never deleted; they carry a banner naming what overrides them.
+## Rules
+
+- The Obsidian vault is the source of truth; this repo carries the closed deliverables and the two working artifacts (tracker, template). Briefs, formula maps, archives and superseded sources stay in the vault.
+- Screens land here as they close, sheet plus reading maps, at close-out.
+- `[[Wikilinks]]` resolve inside Obsidian, not on GitHub, and are kept as written.
+- Dues and Collection predate the current standard; both are queued for restructure to the template and will be replaced here when that happens.
