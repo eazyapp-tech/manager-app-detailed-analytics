@@ -63,7 +63,7 @@ The permission rule: each analytics tab follows the permission of the records it
 
 ## N+3. What each card shows when it is empty, healthy or broken
 
-**Not set up** (whole screen, one state, one CTA) · **Healthy** (zero as good news, no CTA) · **Empty** (nothing yet) · **Not recorded** (draws what exists, states its coverage) · **Failed** ("Couldn't load this" plus Retry, never a healthy message, never a zero).
+Opens with **The zeros, told apart**: one router table covering every situation that produces an empty-looking card, told apart on sight — never-set-up, onboarding (something confirmed, nothing arrived yet), the emptied bad zero (never dressed as setup), the in-window zero, the good-news zero, the not-recorded gap, the failure. Then the sub-sections: **Not set up** (whole screen, one state, one CTA) · **Healthy** (zero as good news, no CTA) · **Empty** (nothing yet) · **Not recorded** (draws what exists, states its coverage) · **Failed** ("Couldn't load this" plus Retry, never a healthy message, never a zero).
 
 ## N+4. What this screen is not
 

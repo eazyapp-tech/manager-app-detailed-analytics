@@ -564,23 +564,51 @@ Two ⚠ rows need a check, not a build: whether under-notice combines with owing
 
 ## 21. What each card shows when it is empty, healthy or broken
 
-**Not set up:** no tenants, no bookings, no history → one full-screen state: *"No tenants yet. Add your first tenant and this page fills in."* with **Add tenant**. The most common state on the platform.
+### The zeros, told apart
 
-**Healthy, good news, no CTA:**
+Seven situations produce an empty-looking card, and they are never allowed to look alike:
+
+| Situation | What shows |
+|---|---|
+| Never had anyone: no tenants, no bookings, no history | The not-set-up screen below, and nothing else |
+| Bookings confirmed, nobody has moved in yet | The cards with real zeros, and one quiet line: "Tenants appear here from your first move-in." |
+| Had tenants; everyone has left | The cards with real zeros. A true and alarming number, never dressed up as setup |
+| Zero inside the window: no move-ins last month | The zero, with a neutral chip. Zero is real |
+| Zero that is good news | The healthy wording below, no CTA |
+| Nothing recorded for a breakdown | The not-recorded state: the card draws what exists and states its coverage |
+| The card failed | "Couldn't load this" and Retry. Never a zero, never a healthy message |
+
+### Not set up
+
+No tenants, no bookings, no history: no cards render. One full-screen state: *"No tenants yet. Add your first tenant and this page fills in."* with an **Add tenant** button. The most common state on the platform.
+
+### Healthy: good news, no CTA
 
 | Card | Reads |
 |---|---|
 | Upcoming Eviction | "Nobody is leaving soon. No tenants have given notice." |
-| Agreement Expiry | "No agreements ending in the next 90 days." |
+| Agreement Expiry Status | "No agreements ending in the next 90 days." |
 | Renewal & Retention | "Nothing due for renewal." |
 | Past their date at zero | "Every move-out is closed off." |
+| Journey, all three bars at zero | "All quiet. Nobody is under notice and nothing is due." |
 
-**Empty, nothing yet:** Profile/Details with nothing recorded: "No details recorded yet. These fill in as you add tenant details." Journey under a month old: "Not enough history yet."
+### Empty: nothing yet
 
-**Not recorded** is its own state, not empty: the card draws what exists and states its coverage.
+| Card | Reads |
+|---|---|
+| Tenant Profile or Tenant Details, nothing recorded | "No details recorded yet. These fill in as you add tenant details." |
+| Journey, under a month of history | "Not enough history yet." |
+| Property Wise, one property in scope | The card does not render at all |
 
-**Failed:** "Couldn't load this" + Retry. Never a healthy message, never a zero.
+### Not recorded
 
+Its own state, not empty, and the common case on this screen: the card draws its chart over whatever is recorded and states the coverage. Only where nothing at all is recorded does it fall back to the empty wording above.
+
+### Failed
+
+"Couldn't load this" plus Retry. Never a healthy message, never a zero.
+
+---
 ## 22. What this screen is not
 
 - **Not a management screen.** Nothing here edits, approves or sends. It diagnoses; every action lives on the lists it opens.
