@@ -211,6 +211,10 @@ Change the filter to This Month and only the time-scoped numbers change. That is
 
 **Coming up** is the forward setting, as on Inventory: pick a future date, see the property then: today's tenants, minus confirmed departures before that date, plus confirmed arrivals. Confirmed only, no guesses. Default 30 days. No change chips and no action bars; nothing can be done today about a state that hasn't arrived.
 
+**Custom stops at today.** The past and the present belong to Custom; the future belongs to Coming up. A future window is a projection, not a count, and one question must never have two answer models on one screen.
+
+**The filter stays where the manager put it while the app is open**, including drilling into a list and coming back. A fresh launch opens on This Month.
+
 ### What every number does on every filter setting
 
 | Number | This Month · Last Month · Current FY · Custom · All Time | Coming up |
@@ -234,7 +238,7 @@ Cards with their own date dropdown follow the three suite rules: same options as
 
 ### Change chips
 
-Only time-scoped numbers carry one; a Live number has no previous period. Nothing carries one on All Time or Coming up. Which direction counts as good is per number: **up is good** for Move-ins, Approved Bookings, Renewals; **up is bad** for Move-outs and Notices Raised. Unfinished periods compare against the same elapsed days of the previous period, marked as such.
+Only time-scoped numbers carry one; a Live number has no previous period. Nothing carries one on All Time or Coming up. Which direction counts as good is per number: **up is good** for Move-ins, Approved Bookings, Renewals; **up is bad** for Move-outs and Notices Raised. Unfinished periods compare against the same elapsed days of the previous period, marked as such. On Custom, the comparison is the same number of days immediately before the range.
 
 ### When a number is red
 
@@ -437,6 +441,7 @@ Hidden with one property in scope; returns automatically with more. Per property
 - **The destination follows the person's state.** Living here: the Tenants list. Arriving: the Bookings list. Left, or a cancelled booking: the Old Tenants list.
 - The destination opens on **the same properties** the screen was showing, and the back control reads "Tenants". Whether the window travels depends on the kind of number; the table below is the rule.
 - **Records add back to the number tapped** on any window that includes today. On a fully past window the list shows the people as they are now, and names the difference on arrival.
+- **Coming back from a list returns to the screen exactly as it was left, with fresh numbers.** *Test it:* close a stale record from Past their date, come back; the tile has moved.
 - Rates, averages and percentages are not tappable. Everything tappable looks tappable.
 - The destination names the slice, shows the active filter on arrival, and names the filter in its empty state (the suite-wide requirement, still unowned).
 
@@ -529,6 +534,27 @@ Every tappable thing, what it opens, and what is already applied on arrival. ✅
 | Any tenure bar | Tenants list | Joined inside that band | ✅ |
 | **Property Wise** | | | |
 | Any property row | Tenants list | That property, everyone living there | ✅ |
+
+
+### What the lists can already do, and what has to be added
+
+Today the three lists can filter by: who is living, booked or gone; joining date range; when the record was added; verification, agreement and profile states (done or not); stay type; food preference; gender and other exact profile values; room; and free search. That covers every ✅ above.
+
+The ❌ rows all wait on one of these, and nothing else:
+
+| New filter to add | On which list | Which numbers wait on it |
+|---|---|---|
+| Notice state (awaiting approval / approved) | Tenants | Eviction Pending, Eviction Approved, both Journey bars, the eviction-bar splits |
+| Notice date range | Tenants | Notices Raised |
+| Leaving date range | Tenants, Old Tenants | The four eviction buckets; Move-outs |
+| Agreement end range | Tenants | All five expiry bands, Renewal Due, Renewal overdue, Notify Tenant |
+| Renewal date range | Tenants | Completed, Tenants who renewed |
+| Confirmation state | Bookings | Approved Bookings, the confirmed and awaiting layers |
+| Cancelled bookings only | Old Tenants | Bookings cancelled |
+| Left before lock-in ended | Old Tenants | Tenants who left early |
+| Age band, city, institute | Tenants | Those Profile and Details rows |
+
+Two ⚠ rows need a check, not a build: whether under-notice combines with owing-money on one list, and the two verification-route splits, which need the route recorded going forward before any filter can exist.
 
 ---
 
