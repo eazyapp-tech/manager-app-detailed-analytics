@@ -465,41 +465,41 @@ Every tappable thing, what it opens, and what is already applied on arrival. ✅
 | Active Tenants | Tenants list | Everyone living here | ✅ |
 | Active Bookings | Bookings list | All bookings, confirmed and awaiting together | ✅ |
 | Approved Bookings | Bookings list | Confirmed during the window shown | ❌ no confirmation-state or confirmation-date filter |
-| Eviction Pending | Tenants list | Notice raised, awaiting approval | ❌ no notice-state filter |
-| Eviction Approved | Tenants list | Departure scheduled | ❌ no notice-state filter |
+| Eviction Pending | Tenants list | The "Pending Eviction" filter | ✅ |
+| Eviction Approved | Tenants list | The "Approved Eviction" filter | ✅ |
 | Notices Raised | Tenants list | Notice raised during the window | ❌ no notice-date range |
 | Past their date | Tenants list | Confirmed leaving date already passed | ✅ |
 | Rent at risk line | Tenants list | Everyone under notice | ✅ |
-| Leaving with dues line | Tenants list | Under notice and still owing money | ⚠ confirm the list can combine the two |
+| Leaving with dues line | Tenants list | "Under Notice" plus "Unpaid Dues", together | ✅ |
 | View all | The View all sheet | — | — |
 | **View all sheet rows** | | | |
 | Under notice | Tenants list | Has a leaving date | ✅ |
-| Of which approved / awaiting | Tenants list | That notice state | ❌ no notice-state filter |
+| Of which approved / awaiting | Tenants list | "Approved Eviction" / "Pending Eviction" | ✅ |
 | Past their date | Tenants list | Leaving date already passed | ✅ |
 | Short term / Long term | Tenants list | That stay type | ✅ |
 | Bookings, confirmed / awaiting | Bookings list | That state | ❌ no confirmation-state filter |
 | Arriving this month | Bookings list | Joining date inside this month | ✅ |
 | Move-ins | Tenants list | Joined during the window | ✅ |
-| Move-outs | Old Tenants list | Left during the window | ❌ no leaving-date range on that list |
+| Move-outs | Old Tenants list | Left during the window; the list offers past windows and a custom range | ✅ |
 | Bookings cancelled | Old Tenants list | Cancelled bookings only | ❌ the list cannot single them out |
 | **Move-in & Move-out** | | | |
 | Move-ins | Tenants list | Joined during the window | ✅ |
-| Move-outs | Old Tenants list | Left during the window | ❌ as above |
+| Move-outs | Old Tenants list | Left during the window, as above | ✅ |
 | The net | Nothing; two populations, no single list | — | — |
 | **Journey, Tenants tab** | | | |
 | Under Notice bar | Tenants list | Has a leaving date | ✅ |
-| Approved Eviction bar | Tenants list | Departure scheduled | ❌ no notice-state filter |
-| Renewals in 30 days bar | Tenants list | Agreement ends within 30 days | ❌ no agreement-end range |
+| Approved Eviction bar | Tenants list | The "Approved Eviction" filter | ✅ |
+| Renewals in 30 days bar | Tenants list | Agreement ending within 30 days | ✅ |
 | Churn · Renewal · Net change | Nothing; rates and nets are not tappable | — | — |
 | Tenants who left early | Old Tenants list | Left before their lock-in ended | ❌ no such filter |
-| Eviction pending footer | Tenants list | Notice awaiting approval | ❌ no notice-state filter |
+| Eviction pending footer | Tenants list | The "Pending Eviction" filter | ✅ |
 | **Journey, Bookings tab** | | | |
 | Total | Bookings list | Booked during the window | ✅ |
 | Approved | Bookings list | Confirmed | ❌ no confirmation-state filter |
 | Cancelled | Old Tenants list | Cancelled bookings only | ❌ as above |
 | Converted | Tenants list | Joined during the window | ⚠ the list cannot tell converted bookings from direct joins |
 | **Tenant Verification** | | | |
-| E-KYC · Manually verified | Tenants list | That verification route | ⚠ only verified-or-not today |
+| E-KYC · Manually verified | Tenants list | "Digitally Verified Profile" / "Documents Verified" | ✅ |
 | Not verified | Tenants list | Identity not confirmed | ✅ |
 | Police verification: done | Tenants list | Check on file | ✅ |
 | Police: not done, still in time | Tenants list | No check, joined within 7 days | ✅ |
@@ -511,10 +511,12 @@ Every tappable thing, what it opens, and what is already applied on arrival. ✅
 | Profile completed / pending | Tenants list | The list's own completed-profile filter | ✅ |
 | **Upcoming Eviction** | | | |
 | Overdue bar | Tenants list | Leaving date already passed | ✅ |
-| 0–7 · 8–15 · 16–30 · 31+ bars | Tenants list | Leaving in that window, pending and approved together | ❌ no leaving-date range |
+| 0–7 · 8–15 · 16–30 · 31+ bars | Tenants list | Leaving within that many days | ⚠ the list offers within-N windows (3, 7, 15, 30 days), not the card's bands. A band drill opens the nearest window and says so, until band filters exist |
 | **Agreement Expiry Status** | | | |
-| Already expired · 30 · 60 · 90 · Valid | Tenants list | Agreement ending in that band | ❌ no agreement-end range |
-| Notify Tenant footer | Tenants list | The tapped band, ready to message | ❌ same |
+| Already expired | Tenants list | The agreement-window "Past" filter | ✅ |
+| 30 days | Tenants list | Agreement ending within 30 days | ✅ |
+| 60 · 90 days · Valid | Tenants list | That band | ⚠ the list offers within-N windows, not bands, and nothing expresses "valid beyond 90" |
+| Notify Tenant footer | Tenants list | The tapped band, ready to message | Per the band above |
 | **Tenant Profile** | | | |
 | Any gender row | Tenants list | That gender | ✅ |
 | Any age band | Tenants list | That age band | ❌ the list filters exact values, not ranges |
@@ -524,7 +526,7 @@ Every tappable thing, what it opens, and what is already applied on arrival. ✅
 | Any tenant type row | Tenants list | That type | ⚠ the list's filter reads a different place than this card today; counts will not match until both read one place |
 | Any institute row | Tenants list | That institute | ❌ no institute filter |
 | **Renewal & Retention** | | | |
-| Renewal Due · Renewal overdue | Tenants list | Agreement ending in 30 days · already ended | ❌ no agreement-end range |
+| Renewal Due · Renewal overdue | Tenants list | Ending within 30 days · the "Past" agreement filter | ✅ |
 | Completed · Tenants who renewed | Tenants list | Renewed during the window | ❌ no renewal-date filter |
 | Stayed after notice | Nothing; a share, not tappable | — | — |
 | **Stay Type** | | | |
@@ -538,23 +540,22 @@ Every tappable thing, what it opens, and what is already applied on arrival. ✅
 
 ### What the lists can already do, and what has to be added
 
-Today the three lists can filter by: who is living, booked or gone; joining date range; when the record was added; verification, agreement and profile states (done or not); stay type; food preference; gender and other exact profile values; room; and free search. That covers every ✅ above.
+Checked against the filter drawer both apps share; the web list and the phone list use one filter set. The lists already filter by: who is living, booked or gone; joining, record-created and **leaving** dates in windows, including a custom range; eviction state (pending or approved) and leaving-date windows; agreement-end windows, including already ended; identity verification **and its route**; agreement signed or not; police check uploaded or not; profile completion; dues unpaid or cleared; stay type; food preference; gender; autopay; app downloaded. That covers every ✅ above.
 
-The ❌ rows all wait on one of these, and nothing else:
+What remains, and nothing else:
 
 | New filter to add | On which list | Which numbers wait on it |
 |---|---|---|
-| Notice state (awaiting approval / approved) | Tenants | Eviction Pending, Eviction Approved, both Journey bars, the eviction-bar splits |
-| Notice date range | Tenants | Notices Raised |
-| Leaving date range | Tenants, Old Tenants | The four eviction buckets; Move-outs |
-| Agreement end range | Tenants | All five expiry bands, Renewal Due, Renewal overdue, Notify Tenant |
+| Notice-raised date range | Tenants | Notices Raised |
+| Confirmation state and date | Bookings | Approved Bookings, the confirmed and awaiting layers |
+| Band filters for the day buckets | Tenants | The lists offer within-N windows; the eviction bars and the 60 and 90 expiry bands need true bands |
+| Valid beyond 90 days | Tenants | The Valid bar |
 | Renewal date range | Tenants | Completed, Tenants who renewed |
-| Confirmation state | Bookings | Approved Bookings, the confirmed and awaiting layers |
 | Cancelled bookings only | Old Tenants | Bookings cancelled |
 | Left before lock-in ended | Old Tenants | Tenants who left early |
 | Age band, city, institute | Tenants | Those Profile and Details rows |
 
-The ⚠ rows are checks or recordings, not filters to build: confirm under-notice combines with owing-money on one list; the verification routes and the signing kinds need the route recorded from now on; the tenant-type filter and its card must read one place; and telling a converted booking from a direct join needs the link kept when a booking converts.
+The remaining ⚠ checks: the three signing kinds still show only signed-or-not, and need the signing route kept from now on; the tenant-type filter and its card must read one place; and telling a converted booking from a direct join needs the link kept when a booking converts.
 
 ---
 
@@ -640,7 +641,7 @@ Its own state, not empty, and the common case on this screen: the card draws its
 ## 24. Open items
 
 1. **Info icon content**, every card carries one; no screen in the suite has written them. Section 3 is reusable as that content. Suite-wide.
-2. **The three signed-agreement kinds and the two verification routes** need the route to be kept from now on; until then those rows show done-or-not.
+2. **The three signed-agreement kinds** need the signing route kept from now on; until then those rows show signed-or-not. The identity-verification routes are already told apart.
 3. **Tile row overflow**, scroll or wrap. Design.
 4. **Trend chart**, specified, not committed: move-ins vs move-outs per month with net, own 6/12/24 range, exempt from the filter, matching the suite. Ships if design and engineering size it in.
 5. **Some departures do not appear on the Old Tenants list** even though the people have left. Move-outs counts them regardless; the list must catch up so the number and the list agree. Engineering.
