@@ -607,6 +607,7 @@ Two ⚠ rows need a check, not a build: whether under-notice combines with owing
 13. **Bands do not overlap and match Inventory's edges**, 0–7, 8–15, 16–30, 31+.
 14. **Layer rows hide at zero** (awaiting confirmation, past-their-date, the pending/approved split). Change chips do not; an unmoved number shows a neutral chip.
 15. **Zero is real.** A property with no notices this month shows zero with the healthy wording, never "no data".
+16. **A day runs midnight to midnight, India time**, on every card and every drill. *Test it:* a tenant joining at 11:55pm counts as that day's move-in, and their list row agrees.
 
 ## 24. Open items
 
