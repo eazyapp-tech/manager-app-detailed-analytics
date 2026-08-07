@@ -19,28 +19,28 @@ Everything on the Dues analytics screen: what each number means, what window it 
 
 | | Section | For |
 |---|---|---|
-| **1** | Build status | everyone |
-| **2** | Where this lives | everyone |
-| **3** | What every number counts | everyone |
-| **4** | How the screen behaves | backend + design |
-| **5** | Overview Snapshot | backend |
-| **6** | View all sheet | backend + design |
-| **7** | Dues (Live) | backend |
-| **8** | Bills Summary | backend |
-| **9** | Dues Breakdown | backend |
-| **10** | Overdue Breakup | backend + design |
-| **11** | Upcoming Dues | backend |
-| **12** | Deposit Dues | backend |
-| **13** | Breakup by Stay Duration | backend |
-| **14** | Dues by Property | backend |
-| **15** | What each number opens | backend |
-| **16** | Who can see this | backend |
-| **17** | What each card shows when it is empty, healthy or broken | design + copy |
-| **18** | What this screen is not | everyone |
-| **19** | Build guidance | backend |
-| **20** | Open items | named owners |
-| **21** | Design file: what needs fixing | design |
-| | Where the measured figures came from | anyone re-checking a decision |
+| **1** | [Build status](#1-build-status) | everyone |
+| **2** | [Where this lives](#2-where-this-lives) | everyone |
+| **3** | [What every number counts](#3-what-every-number-counts) | everyone |
+| **4** | [How the screen behaves](#4-how-the-screen-behaves) | backend + design |
+| **5** | [Overview Snapshot](#5-overview-snapshot) | backend |
+| **6** | [View all sheet](#6-view-all-sheet) | backend + design |
+| **7** | [Dues (Live)](#7-dues-live) | backend |
+| **8** | [Bills Summary](#8-bills-summary) | backend |
+| **9** | [Dues Breakdown](#9-dues-breakdown) | backend |
+| **10** | [Overdue Breakup](#10-overdue-breakup) | backend + design |
+| **11** | [Upcoming Dues](#11-upcoming-dues) | backend |
+| **12** | [Deposit Dues](#12-deposit-dues) | backend |
+| **13** | [Breakup by Stay Duration](#13-breakup-by-stay-duration) | backend |
+| **14** | [Dues by Property](#14-dues-by-property) | backend |
+| **15** | [What each number opens](#15-what-each-number-opens) | backend |
+| **16** | [Who can see this](#16-who-can-see-this) | backend |
+| **17** | [What each card shows when it is empty, healthy or broken](#17-what-each-card-shows-when-it-is-empty-healthy-or-broken) | design + copy |
+| **18** | [What this screen is not](#18-what-this-screen-is-not) | everyone |
+| **19** | [Build guidance](#19-build-guidance) | backend |
+| **20** | [Open items](#20-open-items) | named owners |
+| **21** | [Design file: what needs fixing](#21-design-file-what-needs-fixing) | design |
+| | [Where the measured figures came from](#where-the-measured-figures-came-from) | anyone re-checking a decision |
 
 **Building the backend?** Read 1, 3 to 15, 19, 20. **Working on the design?** Read 3, 4, 6, 10, 17, 21. **Just need the decisions?** Read 3, 4 and the appendix.
 
@@ -64,33 +64,23 @@ The entry point is the widget at the top of the Financial tab. Screens drawn aro
 
 ## 3. What every number counts
 
-### Due
+A **due** is one bill someone owes: a tenant, an amount still unpaid, a due date, a category. Where the screen's copy says "bill", it means a due.
 
-One bill someone owes: a tenant, an amount still unpaid, a due date, a category. Where the screen's copy says "bill", it means a due.
+| Term | Meaning |
+|---|---|
+| Overdue | The due date has passed. A due dated today is not yet overdue |
+| Added by | Who raised the bill. Rent and late fines the system raises on schedule carry the manager's name |
+| Deposit | Dues in the Security Deposit and Caution Money categories |
+| Short stay, long stay | Every tenant is one or the other. There is no third state |
+| Money on this screen | Rupees, shown short: ₹23K, ₹2.45L |
 
 ### The base rule
 
 A due counts if it is unpaid, at least ₹1, and belongs to a tenant who is living here, under notice, or a confirmed booking. **Old tenants are excluded from every number on this screen except one row**, the Old tenants row in Dues Breakdown (§9). That row is their only home; they are never blended into any total.
 
-### Overdue
-
-The due date has passed. A due dated today is not yet overdue.
-
 ### Category
 
 The due's type as the property configured it: Rent, Electricity, Security Deposit, and so on. Types are free-named, so every category chart shows the top few by amount and folds the rest into **Others**, a bottomsheet listing every remaining category with its own total. Names that differ only by capitals group as one.
-
-### Added by
-
-Who raised the bill. Rent and late fines the system raises on schedule carry the manager's name.
-
-### Deposit
-
-Dues in the Security Deposit and Caution Money categories.
-
-### Short stay, long stay
-
-Every tenant is one or the other. There is no third state.
 
 ### Upcoming and Projected
 
@@ -98,11 +88,7 @@ Dues the property's recurring setup will raise but has not raised yet. A forecas
 
 ### Under notice
 
-A leaving date on record, matching Tenants and Inventory. Uses the **confirmed** leaving date only, the same rule Tenants uses for real departures — a date that was raised but never approved does not count here. A withdrawn notice stops counting immediately, same as everywhere else.
-
-### Money on this screen
-
-Rupees, shown short: ₹23K, ₹2.45L.
+A leaving date on record, matching Tenants and Inventory. Uses the **confirmed** leaving date only, the same rule Tenants uses for real departures: a date that was raised but never approved does not count here. A withdrawn notice stops counting immediately, same as everywhere else.
 
 ### Words to be careful with
 
@@ -269,6 +255,10 @@ Time-scoped. Renders only when the account has more than one property with data.
 
 ## 15. What each number opens
 
+<details>
+<summary><strong>Expand:</strong> the drill rules and the full tap matrix (backend)</summary>
+
+
 ### The rules
 
 A drill filters a list, it never re-scopes the screen. The destination follows the record's kind: **a tap lands on the list where its records live, even when that list sits on a sibling tab**, so the two Received figures open the Collection screen's list. The destination opens on the same window and the same properties, and the back control names this screen. Records add back to the number tapped. The forecast numbers open an explainer, nothing real exists to list.
@@ -342,6 +332,7 @@ The dues list filters today by property, due-date window, who added the due, cat
 ### What the destination says when you arrive
 
 The list names the slice it arrived filtered to, shows the active filter, and names that filter in its empty state.
+</details>
 
 ## 16. Who can see this
 
@@ -419,6 +410,10 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 
 ## 21. Design file: what needs fixing
 
+<details>
+<summary><strong>Expand:</strong> the full Wrong / Missing / Remove / Decide list (design)</summary>
+
+
 **Wrong**
 
 1. The tenant-status view labels a bar "Under Eviction". The suite word is **Under notice**, and the first bar must read **Active, not under notice**.
@@ -454,8 +449,13 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 22. The gauge when one slice is nearly everything: minimum sliver width or value-first treatment.
 23. The 90+ ageing bar will dominate on most properties: whether the bar scale needs a treatment or the labels carry it.
 24. The view all sheet (§6) needs a fresh design pass; its current frame is an old draft built on different vocabulary and should not be used as a reference for the new one.
+</details>
 
 ## Where the measured figures came from
+
+<details>
+<summary><strong>Expand:</strong> every production figure behind a decision in this sheet</summary>
+
 
 Measured on production, 7 August 2026 evening, amounts in rupees. Totals exclude test properties and bills of ₹1 crore and above (22 such bills sum to an impossible figure and would poison every headline).
 
@@ -475,3 +475,4 @@ Measured on production, 7 August 2026 evening, amounts in rupees. Totals exclude
 | Properties with zero unpaid dues | 7.2% of live properties | healthy states are real but rare (§17) |
 | Accounts with dues on one property only | 94% | the property card renders multi-property only |
 | Top property's share, multi-property accounts | median 60.4% | share-of-total is a requirement, not a maybe |
+</details>
