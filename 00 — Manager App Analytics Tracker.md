@@ -408,7 +408,23 @@ Full stack, oldest first. Transcripts at `~/.claude/projects/-Users-eazypg-rento
 
 ## Next action
 
-Start **Old Tenants** (screen 6) — now the second sub-tab under People, after Leads.
+**Dues backfill (DA-01) — bring the first sheet up to the current standard.** Owner's call 2026-08-07, superseding Old Tenants as next; the order from here is Dues → Collection → Old Tenants → Expense+Inventory uplift.
+
+1. **Copy [[_Handoff Sheet Template]] and restructure Dues into it.** The content mostly exists; the spine, numbering and canonical section names do not. Read the Tenants sheet first as the standard exemplar.
+2. **Production sizing was never run on Dues.** Measure every specced number both directions, appendix the figures. This changed four decisions on Expense and killed three specced sections there.
+3. **Build the tap matrix from the apps' shared filter drawer**, not the backend. For Dues the drawer is the Money filter definitions in the web app (same place the tenant drawer sat: `utils/` and `redux/slices/Money/getDues`). Reachability verdicts per row.
+4. **Add today's layers:** the per-setting grid, window-travel, the five behaviour contracts, the zeros router (decide per number whether zero is good), the filters-to-add table.
+5. **Strip every code reference and critique** into outcome-plus-test. Dues has smaller ones than Collection's section.
+6. **Two owner decisions parked for this session:** the Live-tile change chips (backfill item 9), and share-of-total as a requirement (item 6).
+7. **Dash sweep, cover note, design-fix list, sibling check against Tenants** (watch the word "bill"), then replace DA-01 in the repo and add it to the README deep-link table.
+
+### After Dues
+
+**Collection backfill** (the code-critique section is its biggest item), then **Old Tenants** (screen 6; its pre-flight below still stands), then the **Expense + Inventory uplift** in one lighter session (arrival-filter column, window-travel, contracts, dash sweep).
+
+### Old Tenants pre-flight (when its turn comes)
+
+Old Tenants (screen 6) — the second sub-tab under People, after Leads.
 
 1. **Read the Tenants sheet first.** Old Tenants is the same record one state later, and it inherits the whole vocabulary — today numbers versus window numbers, under-notice-as-a-layer, the colour rule, the two leaving dates. Almost nothing needs redefining.
 2. **It has no developer-sheet tab.** The workbook holds only Issues, Tenants, Dues, Collection, Expense. First screen in the suite with no informal source at all — so production and the design file carry the whole grounding load.
