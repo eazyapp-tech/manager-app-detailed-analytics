@@ -16,6 +16,9 @@ owner: Sanchay
 > - The booked-layer sentence claimed equality with Inventory's booked count; the two totals differ by design and the sentence now says how.
 > - The chips rule and the two-kinds line were stated as suite laws; both are now scoped to this screen.
 
+> [!NOTE] Corrected 2026-08-09, sibling debts paid
+> - Section 4's filter-memory line was a paraphrase; replaced with Expense v3 §4's exact wording, and added the day-boundary sentence it was also missing. Converted all 7 test lines to the suite's "Test it:" phrasing.
+
 
 Everything on the Tenants analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
 
@@ -220,7 +223,7 @@ Change the filter to This Month and only the time-scoped numbers change. That is
 
 **Custom stops at today.** The past and the present belong to Custom; the future belongs to Coming up. A future window is a projection, not a count, and one question must never have two answer models on one screen.
 
-**The filter stays where the manager put it while the app is open**, including drilling into a list and coming back. A fresh launch opens on This Month.
+The filter stays where the manager put it while the app is open; a fresh launch opens on the default. Coming back from a drill returns to the screen as it was left, with fresh numbers. A day runs midnight to midnight, India time.
 
 ### What every number does on every filter setting
 
@@ -628,15 +631,15 @@ Its own state, not empty, and the common case on this screen: the card draws its
 
 ## 23. Build guidance
 
-1. **Live and time-scoped numbers must never blur.** *Test:* unchanged property, switch This Month → Last Month; every Live number identical, every other changes.
-2. **Under notice, approved eviction and past-their-date sit inside Active.** *Test:* 100 living, 12 under notice → Active shows 100.
-3. **A withdrawn notice stops counting everywhere at once.** *Test:* raise and withdraw same day → every number back where it started.
+1. **Live and time-scoped numbers must never blur.** *Test it:* unchanged property, switch This Month → Last Month; every Live number identical, every other changes.
+2. **Under notice, approved eviction and past-their-date sit inside Active.** *Test it:* 100 living, 12 under notice → Active shows 100.
+3. **A withdrawn notice stops counting everywhere at once.** *Test it:* raise and withdraw same day → every number back where it started.
 4. **A booking converting moves four numbers together**, Active Bookings −1, Active Tenants +1, Move-ins +1, Converted +1.
 5. **Compute each number once.** Past-their-date is a tile and the Overdue bar; Renewal Due is a figure and the 30-day band; Renewal overdue is a figure and the Already-expired bar. One computation, shown twice.
-6. **This screen agrees with the tenant list, the homescreen and Inventory** about the same people. *Test:* pick a property, compare Active here, the list's count, and Inventory's occupied beds.
-7. **Move-outs counts every departure however it was noted.** *Test:* a property with known departures never shows zero, and the tapped number equals the rows returned. The Old Tenants list must show the same people.
-8. **A room change is not a move-out.** *Test:* move a tenant between rooms → Move-ins and Move-outs unchanged.
-9. **Use the confirmed leaving date for departures, the requested date only inside Upcoming Eviction.** *Test:* a tenant whose requested date passed unapproved appears in Upcoming Eviction, not in Past their date.
+6. **This screen agrees with the tenant list, the homescreen and Inventory** about the same people. *Test it:* pick a property, compare Active here, the list's count, and Inventory's occupied beds.
+7. **Move-outs counts every departure however it was noted.** *Test it:* a property with known departures never shows zero, and the tapped number equals the rows returned. The Old Tenants list must show the same people.
+8. **A room change is not a move-out.** *Test it:* move a tenant between rooms → Move-ins and Move-outs unchanged.
+9. **Use the confirmed leaving date for departures, the requested date only inside Upcoming Eviction.** *Test it:* a tenant whose requested date passed unapproved appears in Upcoming Eviction, not in Past their date.
 10. **Coverage lines are part of the number** on every sparse breakdown. Unrecorded is excluded, never defaulted.
 11. **Coverage will grow.** These cards are near-empty by intent today; build them to improve on their own as details are backfilled and new properties collect from day one, not to need rewriting when the data arrives.
 12. **Overlapping bars are never stacked.** Journey's three rows overlap; parallel only.

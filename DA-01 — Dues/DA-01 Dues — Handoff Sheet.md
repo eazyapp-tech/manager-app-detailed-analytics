@@ -17,6 +17,9 @@ tags:
 > - The Active-not-under-notice bar now says "no confirmed leaving date", matching this sheet's own confirmed-only rule.
 > - One banned time word swept; the two-kinds line scoped to this screen.
 
+> [!NOTE] Corrected 2026-08-09, sibling debts paid
+> - Added the filter-memory contract to section 4, copied verbatim from Expense v3 §4. Converted all 19 test lines to the suite's "Test it:" phrasing.
+
 
 Everything on the Dues analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
 
@@ -113,7 +116,7 @@ Options: **This Month (default) · Last Month · Current FY · Custom · All Tim
 
 **Custom stops at today.** The past belongs to Custom, the future to Coming up. One question must never have two answer models on one screen.
 
-Cards with their own date dropdown follow three rules: same options as the top filter, the top filter pulls every card back in line, and one card can be deliberately set aside until the top filter next changes. A day runs midnight to midnight, India time.
+Cards with their own date dropdown follow three rules: same options as the top filter, the top filter pulls every card back in line, and one card can be deliberately set aside until the top filter next changes. The filter stays where the manager put it while the app is open; a fresh launch opens on the default. Coming back from a drill returns to the screen as it was left, with fresh numbers. A day runs midnight to midnight, India time.
 
 Two of the suite's three kinds of number on this screen:
 
@@ -398,25 +401,25 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 
 ## 19. Build guidance
 
-1. **Totals must survive junk amounts.** A bill of ₹1 crore or more is data entry gone wrong, not money. *Test:* a property holding one ₹500 crore bill reports totals matching its real bills.
-2. **A part-paid due counts its remaining amount.** *Test:* pay ₹4,000 of a ₹10,000 due; every total moves by exactly ₹4,000.
-3. **Old tenants appear in one row only.** *Test:* a moved-out tenant owing ₹5,000 raises the Old tenants bar by ₹5,000 and changes no tile, no gauge, no other bar.
-4. **Every due sits in exactly one tenant-status bar.** *Test:* the four bars add up to the window's total exactly, and no due appears in two bars.
-5. **Category names that differ only in capitals count as one.** *Test:* two types differing only by capitals chart as one bar.
-6. **Ageing runs from due date to today.** *Test:* a bill due the 1st sits in 1–7 on the 7th and in 8–14 on the 9th.
-7. **A due dated today is not overdue.** *Test:* it appears in Due Today and in no ageing bucket.
-8. **Deposit Received means still held.** *Test:* refund a ₹10,000 deposit; Received drops by ₹10,000 the same day.
-9. **Received counts only payments against the window's dues.** *Test:* a payment against last month's bill moves nothing in this month's Bills Summary.
-10. **Future windows must reach the list.** *Test:* tap Due Later; the list opens showing bills due after the shown date.
-11. **Chips compare unfinished periods fairly.** *Test:* on the 8th, the This Month's Due chip compares against the first 8 days of last month, marked as unfinished, and drops the mark once the month completes.
-12. **Chip direction is up-is-bad on this screen.** *Test:* a rising This Month's Due shows red; a falling one shows green.
-13. **The stay card hides rather than restating.** *Test:* a property with zero short-term tenants shows no stay card.
-14. **The property card needs two properties with data.** *Test:* a single-property account never sees it; a two-property account sees both rows with shares summing to 100%.
-15. **Cross-tab arrivals carry their slice.** *Test:* tap deposit Received; the Collection list opens on deposit payments, back control names this screen.
-16. **A window labelled forward must look forward.** *Test:* set the list to a "Next 30 days" option on a property with bills due next month; the list shows those bills. Seeing last month's bills instead is the failure this test exists to catch.
-17. **Coming up counts bills that exist, never bills that might.** *Test:* on Coming up set to 60 days, the breakdown cards count only bills already raised with due dates in that window; anything the recurring setup has yet to raise appears in Upcoming Dues and nowhere else.
-18. **Bills Summary sits out Coming up.** *Test:* switch to Coming up; the card shows its sitting-out state, not a Received figure near zero that reads as a collections failure.
-19. **Every category chart shows the top few plus one Others row.** *Test:* a property with six categories shows the top four or five and one Others row, and the top rows plus Others sum to the card's total.
+1. **Totals must survive junk amounts.** A bill of ₹1 crore or more is data entry gone wrong, not money. *Test it:* a property holding one ₹500 crore bill reports totals matching its real bills.
+2. **A part-paid due counts its remaining amount.** *Test it:* pay ₹4,000 of a ₹10,000 due; every total moves by exactly ₹4,000.
+3. **Old tenants appear in one row only.** *Test it:* a moved-out tenant owing ₹5,000 raises the Old tenants bar by ₹5,000 and changes no tile, no gauge, no other bar.
+4. **Every due sits in exactly one tenant-status bar.** *Test it:* the four bars add up to the window's total exactly, and no due appears in two bars.
+5. **Category names that differ only in capitals count as one.** *Test it:* two types differing only by capitals chart as one bar.
+6. **Ageing runs from due date to today.** *Test it:* a bill due the 1st sits in 1–7 on the 7th and in 8–14 on the 9th.
+7. **A due dated today is not overdue.** *Test it:* it appears in Due Today and in no ageing bucket.
+8. **Deposit Received means still held.** *Test it:* refund a ₹10,000 deposit; Received drops by ₹10,000 the same day.
+9. **Received counts only payments against the window's dues.** *Test it:* a payment against last month's bill moves nothing in this month's Bills Summary.
+10. **Future windows must reach the list.** *Test it:* tap Due Later; the list opens showing bills due after the shown date.
+11. **Chips compare unfinished periods fairly.** *Test it:* on the 8th, the This Month's Due chip compares against the first 8 days of last month, marked as unfinished, and drops the mark once the month completes.
+12. **Chip direction is up-is-bad on this screen.** *Test it:* a rising This Month's Due shows red; a falling one shows green.
+13. **The stay card hides rather than restating.** *Test it:* a property with zero short-term tenants shows no stay card.
+14. **The property card needs two properties with data.** *Test it:* a single-property account never sees it; a two-property account sees both rows with shares summing to 100%.
+15. **Cross-tab arrivals carry their slice.** *Test it:* tap deposit Received; the Collection list opens on deposit payments, back control names this screen.
+16. **A window labelled forward must look forward.** *Test it:* set the list to a "Next 30 days" option on a property with bills due next month; the list shows those bills. Seeing last month's bills instead is the failure this test exists to catch.
+17. **Coming up counts bills that exist, never bills that might.** *Test it:* on Coming up set to 60 days, the breakdown cards count only bills already raised with due dates in that window; anything the recurring setup has yet to raise appears in Upcoming Dues and nowhere else.
+18. **Bills Summary sits out Coming up.** *Test it:* switch to Coming up; the card shows its sitting-out state, not a Received figure near zero that reads as a collections failure.
+19. **Every category chart shows the top few plus one Others row.** *Test it:* a property with six categories shows the top four or five and one Others row, and the top rows plus Others sum to the card's total.
 20. **The tenant-status sub-breakdown that once sat inside the gauge is not built.** It duplicates §9's Tenant status view; that view is its only home.
 21. **No narrowed self-added-tenant view is built for this screen.** Product has confirmed nobody is granted that permission; if that changes, this screen needs the same scoping the dues list already has, see open item 1.
 
