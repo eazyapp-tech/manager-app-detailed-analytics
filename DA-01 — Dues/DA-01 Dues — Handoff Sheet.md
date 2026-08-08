@@ -20,6 +20,11 @@ tags:
 > [!NOTE] Corrected 2026-08-09, sibling debts paid
 > - Added the filter-memory contract to section 4, copied verbatim from Expense v3 §4. Converted all 19 test lines to the suite's "Test it:" phrasing.
 
+> [!NOTE] Corrected 2026-08-09, View all sheet re-audited against Figma
+> - Section 6 rewritten as a Row | Meaning table, built from the current "Dues Overview" frame. It is no longer treated as a stale draft.
+> - Design file fixes: items 2 and 3 renamed Defaulter to Overdue Breakup, item 7 notes its malformed amounts recur in the View all sheet, item 9 now covers a chip the View all sheet draws where §4 allows none, item 25 now covers the Duration segments hide-or-zero question. Items 26 to 28 added.
+> - Build status no longer lists the view-all sheet as an exception.
+
 
 Everything on the Dues analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
 
@@ -54,7 +59,7 @@ Everything on the Dues analytics screen: what each number means, what window it 
 
 ## 1. Build status
 
-The screen is designed and mostly signed off in the design file; the view-all sheet is the one exception (§6). The backend serves every card as a scaffold: each block is wired and reachable but answers with placeholder numbers while the real calculations wait to be written. Nothing in this sheet describes a live defect; it describes what each number must do once built. The dues list screen that every tap lands on already exists and works.
+The screen is designed and mostly signed off in the design file, including the view-all sheet. The backend serves every card as a scaffold: each block is wired and reachable but answers with placeholder numbers while the real calculations wait to be written. Nothing in this sheet describes a live defect; it describes what each number must do once built. The dues list screen that every tap lands on already exists and works.
 
 If the build cycle runs short, cut in this order: Breakup by Stay Duration first, then Deposit Dues, then Upcoming Dues. The six core cards (Overview strip, Dues (Live), Bills Summary, Dues Breakdown, Overdue Breakup, Dues by Property) and their overflow sheets ship together.
 
@@ -187,9 +192,33 @@ Every due sits in exactly one of All Past, This Month's Due and All Future, and 
 
 ## 6. View all sheet
 
-Opens from the strip header. **The design file's current frame for this sheet is an old draft, superseded and not the build target.** Ignore its specific rows; it belongs to an earlier version of the whole screen. What the sheet must do, following the same pattern as the rest of this screen: restate the six tiles, then this month's category rows with the actual month name on each ("May Rent Dues"), then the two stay-duration totals. Every row that can open a list does, arriving filtered to exactly that row's dues, the same as if tapped from its card. The Projected row opens the forecast explainer, not a list.
+Opens from the strip header. Restates the six Overview tiles, then breaks this month's dues down by category and by stay length. Chips per §4: This Month's Due and Current FY Dues only, same as the strip. Every row that can open a list does, arriving filtered to exactly that row's dues, the same as if tapped from its card. The Projected row opens the forecast explainer, not a list.
 
-Needs a fresh design pass building on the card definitions in this sheet, not the stale frame. See §21.
+**The six tiles, restated**
+
+| Row | Meaning |
+|---|---|
+| All Time Dues | Same as the tile (§5) |
+| Past Dues | Same as All Past Dues (§5) |
+| [Month] Dues | Same as This Month's Due (§5), the actual month name on its face |
+| Total Future Dues | Same as All Future Dues (§5) |
+| [Month]'s Projected Dues | Same as This Month's Projected Due (§5), the actual month name on its face. Counts every configured due type, never rent alone |
+| FY Dues | Same as Current FY Dues (§5), the actual financial year on its face |
+
+**This month, by category**
+
+| Row | Meaning |
+|---|---|
+| [Month] [Category] Dues | This month's top categories by unpaid amount, one row each, the real month and category name on every row ("May Rent Dues"). The rest fold into Others, same rule as Dues Breakdown (§9) |
+
+**By stay length**
+
+| Row | Meaning |
+|---|---|
+| Total Short Stay Dues | This month's unpaid dues from short-stay tenants |
+| Total Long Stay Dues | This month's unpaid dues from long-stay tenants |
+
+Hidden together when the property has no short-stay tenants, the same rule as the card these restate (§13).
 
 ## 7. Dues (Live)
 
@@ -434,20 +463,20 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 ## 21. Design file: what needs fixing
 
 <details>
-<summary><strong>Expand:</strong> 25 numbered design-file fixes, grouped Wrong / Missing / Remove / Decide</summary>
+<summary><strong>Expand:</strong> 28 numbered design-file fixes, grouped Wrong / Missing / Remove / Decide, plus Also found</summary>
 
 
 **Wrong**
 
 1. The tenant-status view labels a bar "Under Eviction". The suite word is **Under notice**, and the first bar must read **Active, not under notice**.
-2. Seven cards' empty states carry copy from the Complaints module ("You're all caught up! New maintenance requests…"): Dues (Live), Bills Summary, Dues Breakdown, Defaulter, Upcoming Dues, Deposit Dues, Dues by Property. §17 holds the replacement copy per card.
-3. The Defaulter card's healthy copy says "No Defaulters this month". The card is Live now: *"Nobody is overdue."*
+2. Seven cards' empty states carry copy from the Complaints module ("You're all caught up! New maintenance requests…"): Dues (Live), Bills Summary, Dues Breakdown, Overdue Breakup, Upcoming Dues, Deposit Dues, Dues by Property. §17 holds the replacement copy per card.
+3. The Overdue Breakup card's healthy copy says "No Defaulters this month". The card is Live now: *"Nobody is overdue."*
 4. The forecast card is titled "Upcoming Rent (to be added)". It counts every configured type: **Upcoming Dues**. Its chart also carries the axis label "Overdue Timeline", left over from a copied chart; it is a forward-looking card and needs its own label.
 5. Change chips are drawn on four tiles (May's Due, May's Projected Due, All Past Dues, Current FY Dues). Only two carry a chip: This Month's Due and Current FY Dues.
 6. **Change chip colours are inverted.** A rising, worse number is drawn green; it must be red. Up is bad on this whole card.
-7. The gauge and Deposit Dues headlines show wrongly written amounts ("₹15,00,000 L", a full number plus a stray unit letter). Format as ₹15L.
+7. The gauge and Deposit Dues headlines show wrongly written amounts ("₹15,00,000 L", a full number plus a stray unit letter). Format as ₹15L. The View all sheet repeats the same malformed pattern on nearly every one of its own amounts.
 8. The global filter chip at the top of the screen reads "Today". It should show one of the five locked options, defaulting to This Month.
-9. The Overdue Breakup card's local dropdown, where one still exists in the file, reads "All Time" on the main screen and "This Month" on its empty-state copy, disagreeing with each other. Both are moot: the card takes no dropdown at all, see Remove below.
+9. The View all sheet draws a change chip on Past Dues, a number §4 says should carry none. The arrow is also the wrong colour, red for a fall, the same inversion as item 6.
 10. The Restricted-state mockup's gauge shows a different Due Later window ("08 Aug–31 Aug") than the live card ("After 08 Aug"). Sync the two.
 11. Dev notes left on the canvas still name the tenant-status labels this sheet rules out ("Under Eviction" among them). Update or remove them so they stop reading as current guidance.
 
@@ -472,7 +501,13 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 
 23. The gauge when one slice is nearly everything: minimum sliver width or value-first treatment.
 24. The 90+ ageing bar will dominate on most properties: whether the bar scale needs a treatment or the labels carry it.
-25. The view all sheet (§6) needs a fresh design pass; its current frame is an old draft built on different vocabulary and should not be used as a reference for the new one.
+25. Whether the View all sheet's Duration segments hide entirely when the property has no short-stay tenants, matching the card they restate (§13), or show a zero row instead.
+
+**Also found**
+
+26. The View all sheet's Projected row is labelled "May's Projected Rent Dues". It counts every configured due type, never rent alone, the same naming slip already flagged on the Upcoming card (item 4).
+27. A bottomsheet sitting in the Dues section of the file holds an unrelated screen's content, a property's staff list. Misfiled, not part of this screen.
+28. Every Overview tile carries two stacked change-chip layers, one hidden, one shown. Never wrong on screen, but worth flattening to one before build so nobody wires both by mistake.
 </details>
 
 ## Where the measured figures came from
