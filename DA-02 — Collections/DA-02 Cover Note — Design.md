@@ -16,14 +16,14 @@ aliases:
 
 One doc, self-contained: [[DA-02 Collection — Handoff Sheet]] (this folder).
 
-Your sections: **3, 4, 10, 11, 12, 15, 19**. Section 19 is the work list: 24 numbered fixes grouped Wrong, Missing, Remove, Decide. Section 15 holds the replacement copy for the four wrong empty states word for word, plus the healthy states and the zeros router, so nothing needs writing from scratch.
+Your sections: **3, 4, 9, 11, 12, 15, 19**. Section 19 is the work list: 25 numbered fixes grouped Wrong, Missing, Remove, Decide. Section 15 holds the replacement copy for the four wrong empty states word for word, plus the healthy states and the zeros router, so nothing needs writing from scratch.
 
 The biggest pieces of new drawing, in rough size order:
 
 1. **The Due Date view of the whole screen.** Three replacement tiles (Billed, Collected & Adjusted, Still Unpaid), the billed-comparison rows on two Breakup tabs, and the Due Date trend where the yellow segment is the uncollected remainder. Nothing of this exists in the file.
 2. **The View all sheet.** The link exists in the header and opens nothing. Section 12 lists its rows.
 3. **The Coming up states.** The option on the filter, and the Paid Date sitting-out line with its tappable switch.
-4. **The trend chart reworked**: Collection takes the bottom segment, the weekly range joins the selector, the in-progress bar gets its unfinished treatment, and the card must decide horizontal scroll versus narrower bars (fix 23).
+4. **The trend chart reworked** (§9): Collection takes the bottom segment, the weekly range joins the selector, the in-progress bar gets its unfinished treatment, and the card must decide horizontal scroll versus narrower bars (fix 23).
 
 Three smaller things worth knowing before you open the file:
 

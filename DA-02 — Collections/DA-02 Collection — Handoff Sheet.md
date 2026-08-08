@@ -27,8 +27,8 @@ Everything on the Collection analytics screen: what each number means, what wind
 | **6** | [Collection Breakup](#6-collection-breakup) | backend |
 | **7** | [Collection Status](#7-collection-status) | backend |
 | **8** | [Adjusted Collection](#8-adjusted-collection) | backend |
-| **9** | [Collection by Property](#9-collection-by-property) | backend |
-| **10** | [Collection Trend](#10-collection-trend) | backend + design |
+| **9** | [Collection Trend](#9-collection-trend) | backend + design |
+| **10** | [Collection by Property](#10-collection-by-property) | backend |
 | **11** | [Payment Settlement](#11-payment-settlement) | backend + design |
 | **12** | [View all sheet](#12-view-all-sheet) | backend + design |
 | **13** | [What each number opens](#13-what-each-number-opens) | backend |
@@ -40,11 +40,11 @@ Everything on the Collection analytics screen: what each number means, what wind
 | **19** | [Design file: what needs fixing](#19-design-file-what-needs-fixing) | design |
 | | [Where the measured figures came from](#where-the-measured-figures-came-from) | anyone re-checking a decision |
 
-**Building the backend?** Read 1, 3 to 13, 17, 18. **Working on the design?** Read 3, 4, 10, 11, 12, 15, 19. **Just need the decisions?** Read 3, 4 and the appendix.
+**Building the backend?** Read 1, 3 to 13, 17, 18. **Working on the design?** Read 3, 4, 9, 11, 12, 15, 19. **Just need the decisions?** Read 3, 4 and the appendix.
 
 ## 1. Build status
 
-The screen is designed and signed off in the design file; the View all sheet is the one exception, it is not drawn at all (§12). The backend serves this screen as a scaffold: the block is wired and reachable but answers with nothing while the real calculations wait to be written. Nothing in this sheet describes a live defect; it describes what each number must do once built. The collections list that most taps land on already exists and works, and its filter drawer already reaches most of the slices this screen needs (§13).
+The Paid Date view of the screen is designed and signed off in the design file. The Due Date view, Coming up, the View all sheet and the special states are not drawn yet; §19 lists all of it, and the design file is being actively edited, so §19 should be re-checked at build kickoff. The backend serves this screen as a scaffold: the block is wired and reachable but answers with nothing while the real calculations wait to be written. Nothing in this sheet describes a live defect; it describes what each number must do once built. The three Due Date tiles and the Due Date trend need counting from bills; everything this screen counts today comes from payments, so that is new ground, not a variant. The collections list that most taps land on already exists and works, and its filter drawer already reaches most of the slices this screen needs (§13).
 
 Today the numbers a manager can see disagree with each other: the homescreen's collection figure, the collections list and the old collection widgets do not produce one answer. Making them one answer is part of this build, and the tests in §17 hold every card to it.
 
@@ -114,7 +114,7 @@ What changes when the toggle flips:
 | Collection Overview | Four tiles are replaced by three (§5) |
 | Collection Breakup | Category and Status gain a billed comparison; Mode and Received by show Collected & Adjusted only (§6) |
 | Collection Status | Hidden (§7) |
-| Collection Trend | The collection bar counts differently (§10) |
+| Collection Trend | The collection bar counts differently (§9) |
 | Adjusted Collection, Collection by Property, Payment Settlement | No change |
 
 **In Due Date view, adjustments count as dealt with.** A tenant moving out has their ₹10,000 May rent cleared from their deposit: the bill is done and nobody owes anything. If that ₹10,000 sat in Still Unpaid, a manager would chase a tenant who owes nothing. So money cleared from deposit, advance, caution money or a discount all count towards **Collected & Adjusted**, all four, and a discounted bill is just as dealt with as a deposit-adjusted one.
@@ -224,7 +224,7 @@ One card, four tabs, all splitting the same total for the window. The window's t
 | Category | bill type | top 3 by amount, rest in **Others** |
 | Status | tenant state | Active, not under notice · Under notice · Bookings · Old tenants. All four, always |
 | Mode | how it was paid | top 3 by amount, rest in **Others** |
-| Received by | who took the payment | top 3 by amount, rest in **Others** |
+| Received by | who took the payment: staff by name, plus RentOk itself for money tenants paid directly online | top 3 by amount, rest in **Others** |
 
 Top three means purely by amount: whatever is largest in the window shows by its real name, everything else rolls into Others, nothing is guaranteed a place and nothing is barred. Others opens the suite's overflow bottomsheet (§3), and on Received by it says how many people it holds: "Others (4 staff)".
 
@@ -263,6 +263,8 @@ These four are the same numbers as four Overview tiles. They appear twice on pur
 
 **Hidden in Due Date view** because the card's whole job is sorting money by when its bill was due, and in that view the filter has already decided it: the first row would show everything and the rest zero, every time.
 
+The design file carries a note headed "Collection Efficiency" describing a five-part stacked bar. Its parts line up with this card plus an unpaid segment, so it is treated as an earlier name for this same card. Recorded in case that assumption ever needs revisiting.
+
 ## 8. Adjusted Collection
 
 *The same in both views. Can be set to its own period.*
@@ -282,17 +284,7 @@ Each figure is the amount of bill that got cleared, not the size of any payment.
 
 Do not confuse the Advance row with the Advance tile (§3, Words to be careful with).
 
-## 9. Collection by Property
-
-*Multi-property accounts only. The same in both views. Can be set to its own period.*
-
-The window's total split by property, highest to lowest, and **every row carries its share of the account total**: one property carrying 70% is a different risk picture from four at 25%, and only share-of-total makes that readable at a glance.
-
-**Properties with zero collection stay in the list.** A property that collected nothing all window is the row most likely to need a phone call; sorting drops it to the bottom, so showing it costs nothing. Its drill opens an empty list whose empty state names the property and the window and offers the next question: *"See what was due there."*
-
-The rows add up to Total Collection when both are on the same window; when this card is set to its own period, its dropdown says so.
-
-## 10. Collection Trend
+## 9. Collection Trend
 
 One stacked bar per period. **Collection sits at the bottom, in green; what sits above it is yellow.** Collection takes the bottom because it is the number managers compare across bars, and only the bottom segment starts from the same line every time.
 
@@ -310,14 +302,24 @@ The axis says weeks or months, so the unit is never a guess. The weekly range sh
 
 **What the two parts mean.** The yellow part always counts bills by when they were due. The green part changes with the toggle:
 
-- **Paid Date view:** green is money that arrived in that period, yellow is what was billed in it, two independent numbers. Green can run past yellow: a month collecting heavy arrears shows more collected than billed, and that is the true story.
+- **Paid Date view:** green is money that arrived in that period, yellow is what was billed in it, two independent numbers. Green can run past yellow: a month collecting heavy arrears shows more collected than billed, and that is the true story. Whole-bar heights are not comparable between periods in this view, since the stack's total is two independent numbers added; the green segments compare, sharing the baseline, and the printed values carry the rest.
 - **Due Date view:** green is money collected against that period's bills whenever it arrived, and **yellow is what is still uncollected of them**, so the whole bar is exactly what was billed. Green can never pass the top. The more yellow you see, the more is outstanding. The current period always shows heavy yellow because its bills are not due-and-paid yet; the in-progress bar is marked as unfinished, the same rule as the chips.
 
-Yellow drawn as the full billed amount in Due Date view would double-count every collected rupee and draw a fully collected month as half done; the remainder is the only honest top segment.
+Yellow drawn as the full billed amount in Due Date view would double-count every collected rupee and draw a fully collected month as half done; the remainder is the only honest top segment. Design has not drawn this view yet, so the remainder reading is the recommended one, not a reviewed one; flag at design review if it should read differently.
 
 **Tapping.** Each segment drills directly: green opens the collections list, yellow opens the Dues screen, both arriving on **the period of the bar tapped**, not the screen's. This chart is the one place on the screen where a drill changes the window rather than narrowing it. With the weekly range, tapping a week's bar carries that week.
 
 If managers ever ask to pick their own range here: the chart should choose its own bar size to fit, days for a short stretch, weeks for a few months, months for a year or more, always landing between four and twelve bars, and always saying which unit it picked. Not for this build; the three ranges cover what managers ask a trend.
+
+## 10. Collection by Property
+
+*Multi-property accounts only. The same in both views. Can be set to its own period.*
+
+The window's total split by property, highest to lowest, and **every row carries its share of the account total**: one property carrying 70% is a different risk picture from four at 25%, and only share-of-total makes that readable at a glance.
+
+**Properties with zero collection stay in the list.** A property that collected nothing all window is the row most likely to need a phone call; sorting drops it to the bottom, so showing it costs nothing. Its drill opens an empty list whose empty state names the property and the window and offers the next question: *"See what was due there."*
+
+The rows add up to Total Collection when both are on the same window; when this card is set to its own period, its dropdown says so.
 
 ## 11. Payment Settlement
 
@@ -331,7 +333,7 @@ Where online money is on its way to the owner's bank.
 | Total Settled | how much of it has reached the owner's bank |
 | Unsettled | how much has not |
 
-Collected via RentOk is the total; Settled and Unsettled are its two parts and add back to it. The bar below shows **two segments**, Settled and Unsettled; the total is not a segment of itself. Money that has started moving but not landed counts as Unsettled: a manager needs "in my bank or not", and the in-between states live one tap away. **Money whose transfer was reversed or failed is marked within Unsettled**: it is stuck, not on its way, and the manager waiting for it needs to see the difference.
+Collected via RentOk is the total; Settled and Unsettled are its two parts and add back to it. The bar below shows **two segments**, Settled and Unsettled; the total is not a segment of itself. Money that has started moving but not landed counts as Unsettled: a manager needs "in my bank or not", and the in-between states live one tap away. Started moving means either a payout has begun or a wallet entry exists; money with neither has not started at all. **Money whose transfer was reversed or failed is marked within Unsettled**: it is stuck, not on its way, and the manager waiting for it needs to see the difference.
 
 **Below the bar, one row per destination shows where settled money went**, under a heading that says exactly that: *"Where settled money went."* A destination is usually a bank account but can be a UPI address. The rows break down Total Settled only and add up to it; the Unsettled tile accounts for the rest.
 
@@ -362,7 +364,7 @@ Every row that can open a list does, arriving filtered to exactly that row's sli
 
 ### The rules
 
-A drill filters a list, it never re-scopes the screen. The destination follows the record's kind: payments open the collections list, bills open the Dues screen even from this screen, settled money's journey lives on the FlexiPe screen. The destination opens on the same window and the same properties, and the back control names this screen. Records add back to the number tapped. Every overflow is the one Others pattern (§3).
+A drill filters a list, it never re-scopes the screen, and the list arrives sorted newest first. Actions on the arriving rows, view receipt, view tenant, WhatsApp, call, show or hide by what the viewer is allowed to do. The destination follows the record's kind: payments open the collections list, bills open the Dues screen even from this screen, settled money's journey lives on the FlexiPe screen. The destination opens on the same window and the same properties, and the back control names this screen. Records add back to the number tapped. Every overflow is the one Others pattern (§3), with one distinct control beside it: **View more** on Collection by Property and Payment Settlement expands the card in place to show the remaining rows. It is not a drill and opens nothing.
 
 **Deeper pages are not part of this build's drills.** Some pages reachable below the first list do not check the viewer's permission the way the list does; drilling stops at the list until that is resolved (§18).
 
@@ -545,7 +547,7 @@ The Overview tile row has no empty state drawn at all and needs one; a window wi
 ## 19. Design file: what needs fixing
 
 <details>
-<summary><strong>Expand:</strong> 24 numbered design-file fixes, grouped Wrong / Missing / Remove / Decide</summary>
+<summary><strong>Expand:</strong> 25 numbered design-file fixes, grouped Wrong / Missing / Remove / Decide</summary>
 
 
 **Wrong**
@@ -559,30 +561,31 @@ The Overview tile row has no empty state drawn at all and needs one; a window wi
 7. The trend chart draws Due as the bottom segment; Collection takes the bottom.
 8. The Payment Settlement bar has three segments; it takes two, and its tile and row numbers do not add up (sample data).
 9. Settlement rows are labelled bank rows though one is a UPI address; the heading "Where settled money went" covers both.
-10. Collection by Property bars do not track their amounts and the rows are unsorted (sample data), and Breakup and Status bars have the same fault.
+10. Bar lengths do not track their values on Collection by Property, the Breakup tabs and Collection Status (a ₹2.8L bar draws longer than a ₹5.2L one). The property rows themselves are now in the right descending order; only the bars are wrong.
 11. The Breakup tabs' period total does not match the rows beneath it (sample data), and the Category tab misspells Electricity.
-12. Tiles hard-code "May's"; the label reads as the selected window's own month.
+12. Tiles hard-code "May's", and Collection Status' first row does the same; both labels read as the selected window's own month.
 13. The trend's empty state shows a month dropdown instead of the range control.
 
 **Missing**
 
-14. The Advance tile, the three Due Date tiles, and the negative-total, adjustments-only and unfinished-window treatments.
+14. The Advance tile, the three Due Date tiles, the billed-comparison Due Date versions of the Category and Status tabs, and the negative-total, adjustments-only and unfinished-window treatments.
 15. The Coming up option, its date picker, and the Paid Date sitting-out state with the tappable switch.
 16. The View all sheet: the link exists and opens nothing.
 17. The weekly trend range, the Due Date trend, and the marked in-progress bar.
 18. The neutral change chip, and "Not recorded" on Received by.
-19. The Others bottomsheet for every overflow, with the staff count on Received by's.
+19. The Others bottomsheet for every overflow. The Received by tab currently draws four named receivers and no Others row at all; it needs the row, carrying its staff count.
 20. An empty state for the Overview tile row, and the healthy states in §15.
-21. Every card carries an info icon and no info copy is written anywhere; write it per card or drop the icons.
+21. The share-of-total figure on every Collection by Property row; the drawn rows carry amounts only.
+22. Every card carries an info icon and no info copy is written anywhere; write it per card or drop the icons.
 
 **Remove**
 
-22. The trend legend's two pill chips look tappable; if they do not toggle the series, they should not look like buttons.
+23. The trend legend's two pill chips look tappable; if they do not toggle the series, they should not look like buttons.
 
 **Decide**
 
-23. The trend card fits about four and a half bars at the six-month range: horizontal scroll or narrower bars.
-24. Received by has no written spec in the design's own notes; this sheet is its first. Design should confirm the tab as specced here.
+24. The trend card fits about four and a half bars at the six-month range: horizontal scroll or narrower bars.
+25. Received by has no written spec in the design's own notes; this sheet is its first. Design should confirm the tab as specced here.
 </details>
 
 ## Where the measured figures came from
