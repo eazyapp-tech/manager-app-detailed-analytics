@@ -8,6 +8,10 @@ owner: Sanchay
 
 # Expense — Handoff Sheet
 
+> [!NOTE] Corrected 2026-08-08, from the Inventory uplift's sibling check
+> - The no-forward-setting rationale now names all four siblings that carry Coming up, not two.
+
+
 Everything on the Expense analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
 
 ---
@@ -92,7 +96,7 @@ Total Expense sits on the Overview, above the Expense Breakdown bars, and above 
 
 Options: **This Month (default) · Last Month · Current FY · Custom · All Time.**
 
-**There is no forward setting here, and Custom stops at today.** Dues and Collection carry Coming up because a bill exists before its date arrives. Spending does not: an expense is recorded after money has already left, so a forward window would have nothing to count.
+**There is no forward setting here, and Custom stops at today.** Dues and Collection carry Coming up because a bill exists before its date arrives, and Tenants and Inventory carry it as projections. Spending does not: an expense is recorded after money has already left, so a forward window would have nothing to count.
 
 Cards with their own date dropdown follow three rules: same options as the top filter, the top filter pulls every card back into line, and one card can be deliberately set aside until the top filter next changes. The filter stays where the manager put it while the app is open; a fresh launch opens on the default. Coming back from a drill returns to the screen as it was left, with fresh numbers. A day runs midnight to midnight, India time.
 

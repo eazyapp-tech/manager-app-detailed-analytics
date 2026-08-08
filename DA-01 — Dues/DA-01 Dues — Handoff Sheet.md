@@ -13,6 +13,11 @@ tags:
 ---
 # Dues — Handoff Sheet
 
+> [!NOTE] Corrected 2026-08-08, from the Inventory uplift's sibling check
+> - The Active-not-under-notice bar now says "no confirmed leaving date", matching this sheet's own confirmed-only rule.
+> - One banned time word swept; the two-kinds line scoped to this screen.
+
+
 Everything on the Dues analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
 
 ## What is in here
@@ -110,7 +115,7 @@ Options: **This Month (default) · Last Month · Current FY · Custom · All Tim
 
 Cards with their own date dropdown follow three rules: same options as the top filter, the top filter pulls every card back in line, and one card can be deliberately set aside until the top filter next changes. A day runs midnight to midnight, India time.
 
-Two kinds of number, the suite's own two words:
+Two of the suite's three kinds of number on this screen:
 
 | Kind | Meaning |
 |---|---|
@@ -164,7 +169,7 @@ Each card loads with a skeleton and fails alone with "Couldn't load this" and Re
 
 ## 5. Overview Snapshot
 
-Six tiles, always visible, none follow the filter.
+Six tiles, always visible, none moves with the filter.
 
 | Tile | Counts | Kind |
 |---|---|---|
@@ -218,7 +223,7 @@ Time-scoped, own dropdown. Three views over the same dues, switched by a toggle.
 
 | Row | Meaning |
 |---|---|
-| Active, not under notice | living here, no leaving date on record |
+| Active, not under notice | living here, no confirmed leaving date on record |
 | Under notice | living here, confirmed leaving date on record (§3) |
 | Bookings | confirmed bookings with dues |
 | Old tenants | moved out still owing. Their only home on this screen |

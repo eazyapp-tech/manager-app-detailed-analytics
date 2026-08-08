@@ -13,6 +13,11 @@ tags:
 ---
 # Collection — Handoff Sheet
 
+> [!NOTE] Corrected 2026-08-08, from the Inventory uplift's sibling check
+> - Two banned time words swept.
+> - The trend-bar drill now names that it deliberately differs from the suite's re-window rule, and why.
+
+
 Everything on the Collection analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
 
 ## What is in here
@@ -288,7 +293,7 @@ Do not confuse the Advance row with the Advance tile (§3, Words to be careful w
 
 One stacked bar per period. **Collection sits at the bottom, in green; what sits above it is yellow.** Collection takes the bottom because it is the number managers compare across bars, and only the bottom segment starts from the same line every time.
 
-**This chart does not follow the filter at the top.** Every other card answers "which window?"; a trend answers "how far back?" and needs several periods to say anything. It has its own range control, and the toggle still applies to it even though the filter does not.
+**The filter at the top does not move this chart.** Every other card answers "which window?"; a trend answers "how far back?" and needs several periods to say anything. It has its own range control, and the toggle still applies to it even where the filter has no hold.
 
 | Range | Bars |
 |---|---|
@@ -307,7 +312,7 @@ The axis says weeks or months, so the unit is never a guess. The weekly range sh
 
 Yellow drawn as the full billed amount in Due Date view would double-count every collected rupee and draw a fully collected month as half done; the remainder is the only honest top segment. Design has not drawn this view yet, so the remainder reading is the recommended one, not a reviewed one; flag at design review if it should read differently.
 
-**Tapping.** Each segment drills directly: green opens the collections list, yellow opens the Dues screen, both arriving on **the period of the bar tapped**, not the screen's. This chart is the one place on the screen where a drill changes the window rather than narrowing it. With the weekly range, tapping a week's bar carries that week.
+**Tapping.** Each segment drills directly: green opens the collections list, yellow opens the Dues screen, both arriving on **the period of the bar tapped**, not the screen's. This chart is the one place on the screen where a drill changes the window rather than narrowing it. It also deliberately differs from the other screens, where a trend bar moves the whole screen's window and opens nothing: this chart's two colours answer on two different screens, so each opens its own list instead. With the weekly range, tapping a week's bar carries that week.
 
 If managers ever ask to pick their own range here: the chart should choose its own bar size to fit, days for a short stretch, weeks for a few months, months for a year or more, always landing between four and twelve bars, and always saying which unit it picked. Not for this build; the three ranges cover what managers ask a trend.
 

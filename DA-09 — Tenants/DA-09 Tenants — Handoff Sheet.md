@@ -7,12 +7,19 @@ tags:
   - people
   - detailed-analytics
   - handoff
-status: v2 · rewritten lean in suite voice · developer handoff
+status: v2.1 · share-of-total retrofit from the Dues sibling check · developer handoff
 owner: Sanchay
 ---
 # Tenants — Handoff Sheet
 
+> [!NOTE] Corrected 2026-08-08, from the Inventory uplift's sibling check
+> - The booked-layer sentence claimed equality with Inventory's booked count; the two totals differ by design and the sentence now says how.
+> - The chips rule and the two-kinds line were stated as suite laws; both are now scoped to this screen.
+
+
 Everything on the Tenants analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
+
+**Changed 8 August 2026:** share-of-total added as a requirement on Property Wise Active Tenants (section 18), matching a rule locked while building the Dues sheet. Anyone who already built section 18 without it needs this one addition.
 
 ---
 
@@ -115,7 +122,7 @@ A person who has booked and not moved in yet. A booking has two states, and both
 
 **Cancelled is not a booking any more.** It is excluded everywhere except the cancellation count, and the person lands on the Old Tenants list even though they never lived here.
 
-A booking occupies no bed and earns nothing until the person arrives; the bed they will fill is still vacant, here and on Inventory. Inventory counts the confirmed ones as its booked layer, so the two screens meet through the confirmed count.
+A booking occupies no bed and earns nothing until the person arrives; the bed they will fill is still vacant, here and on Inventory. Inventory counts the confirmed ones as its booked layer, so the two screens meet through confirmed bookings.
 
 ### Notice
 
@@ -179,7 +186,7 @@ Anyone owing anything counts. Collections, settlements and refunds stay on the F
 
 ### Words to be careful with
 
-**"Under notice"** is the phrase, matching Dues and Inventory. **"Booking"** here is the person; on Inventory it is the layer inside a vacant bed. Inventory counts confirmed bookings only, so its booked layer equals this screen's confirmed bookings, never the awaiting ones. **"Active"** describes both a tenant (living here) and a booking (waiting to arrive), never sum them.
+**"Under notice"** is the phrase, matching Dues and Inventory. **"Booking"** here is the person; on Inventory it is the layer inside a vacant bed. Inventory counts confirmed bookings only, so its booked layer draws only from this screen's confirmed bookings, never the awaiting ones. The two totals do not match: a confirmed booking behind a tenant under notice sits inside Inventory's Occupied as "already replaced", and a confirmed booking with no bed assigned sits outside every layer, so Inventory's booked layer is always the smaller number. **"Active"** describes both a tenant (living here) and a booking (waiting to arrive), never sum them.
 
 ---
 
@@ -189,7 +196,7 @@ Anyone owing anything counts. Collections, settlements and refunds stay on the F
 
 **This Month (default) · Last Month · Current FY · Custom · All Time · Coming up.**
 
-Two kinds of number share this screen, the same two kinds every screen in this suite has:
+Two kinds of number share this screen, two of the suite's three kinds; screens with projections add Forecast:
 
 | Kind | Meaning |
 |---|---|
@@ -238,7 +245,7 @@ Cards with their own date dropdown follow the three suite rules: same options as
 
 ### Change chips
 
-Only time-scoped numbers carry one; a Live number has no previous period. Nothing carries one on All Time or Coming up. Which direction counts as good is per number: **up is good** for Move-ins, Approved Bookings, Renewals; **up is bad** for Move-outs and Notices Raised. Unfinished periods compare against the same elapsed days of the previous period, marked as such. On Custom, the comparison is the same number of days immediately before the range.
+Only time-scoped numbers carry one on this screen; an event count has nothing to compare on a live view. Inventory rules the other way for its state numbers, which do have a predecessor, and says so. Nothing carries one on All Time or Coming up. Which direction counts as good is per number: **up is good** for Move-ins, Approved Bookings, Renewals; **up is bad** for Move-outs and Notices Raised. Unfinished periods compare against the same elapsed days of the previous period, marked as such. On Custom, the comparison is the same number of days immediately before the range.
 
 ### When a number is red
 
@@ -429,7 +436,7 @@ The only card describing people who have not decided anything yet. Every other d
 
 ## 18. Property Wise Active Tenants
 
-Hidden with one property in scope; returns automatically with more. Per property: name, active count, bar, sorted highest to lowest. Properties with zero still appear: a missing property reads as an error, a zero reads as a fact. Tapping a row opens that property's tenant list; it never re-scopes the screen.
+Hidden with one property in scope; returns automatically with more. Per property: name, active count, bar, and **its share of the account's total active tenants**, sorted highest to lowest. Properties with zero still appear: a missing property reads as an error, a zero reads as a fact. Tapping a row opens that property's tenant list; it never re-scopes the screen.
 
 ---
 
@@ -652,9 +659,9 @@ Every number in the file is placeholder; these are structural.
 
 **Wrong:** 1. Chips are visible on exactly the two tiles that should never have one (Active Tenants, Active Bookings) and switched off on the two that should (Approved Bookings, Notices Raised). Swap them, and delete the other five. 2. The Move-outs tile is replaced by **Past their date**. 3. Notices Raised chip red when rising. 4. The card internally named "Property Expense" is Property Wise Active Tenants; rename it and remove the hidden Paid by / Paid to. 5. All fourteen empty states carry truncated Complaints copy; rewrite per section 21. 6. Tenant Details third tab: "Office" on two variants, "Institute" on one. It is Institute. 7. Two Tenancy Details variants both named "Default"; name them for their tabs. 8. Journey foot labels: keep the on-screen wording ("Tenants who left early", "Avg. days to raise notice"); fix the component. 9. Upcoming Eviction: the 31+ bar sits outside the card edge with one value instead of two. Bring it in. A stray "Move-out" column sits further out; remove it (the same leftover as Inventory's trend chart). 10. The Renewal & Retention card draws **"Renewal rate after notice"**; the figure is renamed **Stayed after notice**.
 
-**Missing:** 11. Coming up chip, its date picker, and the screen's chipless state. 12. "As of today" on the five Live tiles. 13. The View all sheet. 14. Coverage lines on five cards. 15. The net on Move-in & Move-out. 16. The pending and approved split inside each eviction bar. 17. The Already-expired bar. 18. The **Renewal overdue** figure on Renewal & Retention. 19. The tenure card (section 17), which is new. 20. **The two money lines under the Overview tiles**: rent at risk, and leaving with dues. 21. Healthy, not-set-up, not-recorded, loading, failed and Restricted states. 22. The unfinished-period marker. 23. Counts beside Journey's rates.
+**Missing:** 11. Coming up chip, its date picker, and the screen's chipless state. 12. "As of today" on the five Live tiles. 13. The View all sheet. 14. Coverage lines on five cards. 15. The net on Move-in & Move-out. 16. The pending and approved split inside each eviction bar. 17. The Already-expired bar. 18. The **Renewal overdue** figure on Renewal & Retention. 19. The tenure card (section 17), which is new. 20. **The two money lines under the Overview tiles**: rent at risk, and leaving with dues. 21. Healthy, not-set-up, not-recorded, loading, failed and Restricted states. 22. The unfinished-period marker. 23. Counts beside Journey's rates. 31. Section 18's share-of-total figure, drawn on the parked ratio-style Property Wise card; wire it into the shipped card rather than building it fresh.
 
-**Remove:** 24. Hidden Collection leftovers in four cards (rupee rows, the "Received by" tab). 25. Hidden duplicate chips under five tiles. 26. The three-tab Lifecycle component with a Leads tab; archive it, the two-tab Journey placed on screen is the build target. 27. Parked cards outside the frame (Deposit Dues, the ratio-style Property Wise, loose copies).
+**Remove:** 24. Hidden Collection leftovers in four cards (rupee rows, the "Received by" tab). 25. Hidden duplicate chips under five tiles. 26. The three-tab Lifecycle component with a Leads tab; archive it, the two-tab Journey placed on screen is the build target. 27. Parked cards outside the frame not needed here: Deposit Dues, loose copies. **The parked ratio-style Property Wise card is no longer on this list** — section 18 now requires a share-of-total figure, and that card already draws one; use it as the reference for section 18's rebuild instead of removing it (see Missing, 31).
 
 **Decide:** 28. Tile row overflow, scroll or wrap. 29. Info icon and chevron placement; currently inconsistent, and no card has both. 30. Which cards carry their own date dropdown: the expanded Journey variant draws one, the placed card does not.
 
