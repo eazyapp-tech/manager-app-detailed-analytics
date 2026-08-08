@@ -625,7 +625,7 @@ Four items from v1 are closed and recorded in the tracker, not here: the tab row
 6. Toggle labels: both toggles read **Bed View / Unit View** (in-card: Beds / Units). The file draws them in opposite states; draw them matching, and the set-aside state separately.
 7. Occupancy Trend x-axis: the fifth column, "Move-out", is a leftover clipped bar where a month belongs. Remove it; a six-month default then needs two more columns.
 8. Bucket labels: "30 Days +" against "31 Days +" on the two bar charts; both become **31+ days**.
-9. The two bar charts need subtitles carrying their direction: "how long empty rooms have been waiting" against "when notice-given tenants leave".
+9. The two bar charts need subtitles carrying their direction: "how long empty rooms have been waiting" against "when confirmed move-outs happen".
 10. "No. of lease" becomes **"No. of agreements"**.
 11. Property Wise sorted arbitrarily; sort highest to lowest by vacant space (section 13).
 12. Empty-state copy is stale on every card: previous-draft titles ("Occupancy (Live)", "How long are my rooms vacant", "Rooms to be vacated soon", one for a card only this sheet restored) and a truncated Complaints-module body line. Rewrite per section 16.
