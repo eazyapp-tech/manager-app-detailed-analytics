@@ -32,7 +32,7 @@ The **Coming up** filter option and its date picker, plus the screen's state on 
 
 ## Smaller fixes, still real
 
-Malformed money strings ("₹15,00,000 L") on the gauge and Deposit headlines, format as ₹15L. The forecast card's chart still carries the axis label "Overdue Timeline," left over from a copied chart, it's forward-looking and needs its own label. The global filter chip reads "Today," it should show one of the five locked options. Two loose cards (a second Deposit Dues, a duplicate Dues Breakdown) sit parked outside the phone frames, housekeeping. Hidden "Paid by / Paid to" labels sit inside Dues by Property, leftover from a different card. Dev notes on the canvas still name the tenant-status labels this sheet rules out ("Under Eviction" among them); update or remove them.
+Wrongly written money on the gauge and Deposit headlines ("₹15,00,000 L", a full number with a stray unit letter), format as ₹15L. The forecast card's chart still carries the axis label "Overdue Timeline," left over from a copied chart, it's forward-looking and needs its own label. The global filter chip reads "Today," it should show one of the five locked options. Two loose cards (a second Deposit Dues, a duplicate Dues Breakdown) sit parked outside the phone frames, housekeeping. Hidden "Paid by / Paid to" labels sit inside Dues by Property, leftover from a different card. Dev notes on the canvas still name the tenant-status labels this sheet rules out ("Under Eviction" among them); update or remove them.
 
 ## The colour rule
 

@@ -12,7 +12,7 @@ aliases:
 > [!INFO] What this is
 > The message that accompanies [[DA-01 Dues — Handoff Sheet]] when it goes to Nimit for the backend build. Kept here so the reading map and the two pre-answered decisions survive outside chat.
 
-# Dues analytics — backend handoff
+# Dues analytics: backend handoff
 
 One doc, self-contained: [[DA-01 Dues — Handoff Sheet]] (this folder).
 

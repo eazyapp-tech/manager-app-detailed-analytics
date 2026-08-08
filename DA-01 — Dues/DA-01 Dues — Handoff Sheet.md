@@ -93,7 +93,7 @@ A leaving date on record, matching Tenants and Inventory. Uses the **confirmed**
 ### Words to be careful with
 
 |---|---|
-| **Active, not under notice** | This screen's tenant-status bars each hold different money, no due sits in two bars, so this bar excludes people under notice. On the Tenants screen, Active includes them. The label says so on its face. |
+| **Active, not under notice** | On this screen every due sits in exactly one tenant-status bar, so this bar excludes people under notice. On the Tenants screen, Active includes them. The label says so on its face. |
 | **Received** | Payments. Payment records live on the Collection screen; this screen only shows them paired beside what was billed. |
 | **Late Fine** | Auto-raised. Expect it near the top of every category chart: that is real money, not a bug. |
 | **Others** | Every overflow list on this screen — categories, added-by — opens the same way: a bottomsheet naming everyone or everything left out, each row drillable to its own filtered list. One pattern, used everywhere it applies. |
@@ -175,7 +175,7 @@ Six tiles, always visible, none follow the filter.
 | This Month's Projected Due | what the recurring setup will raise before month end, every configured type, not rent alone | Forecast |
 | Current FY Dues | unpaid dues due since 1 April | Time-scoped, window fixed |
 
-All Time, All Past, This Month's Due and All Future add up cleanly: Past plus This Month plus Future equals All Time. Chips per §4: This Month's Due and Current FY Dues only.
+Every due sits in exactly one of All Past, This Month's Due and All Future, and the three add up to All Time. Chips per §4: This Month's Due and Current FY Dues only.
 
 ## 6. View all sheet
 
@@ -195,7 +195,7 @@ The gauge under the strip. Says "as of today" on its face.
 | Due This Week | the portion due inside the current 7-day window, the face shows the dates ("01 Aug–07 Aug") |
 | Due Later | the portion due after this week, the face shows the start ("After 08 Aug") |
 
-The four slices add up to Total Dues exactly; every due sits in exactly one slice.
+Every due sits in exactly one slice, and the four add up to Total Dues.
 
 ## 8. Bills Summary
 
@@ -214,7 +214,7 @@ Time-scoped, own dropdown. Three views over the same dues, switched by a toggle.
 
 **Category.** Top categories in the window by unpaid amount, the rest in Others. Expect Rent and Late Fine to lead nearly everywhere. Top plus Others always sums to the window's total.
 
-**Tenant status.** Four bars splitting the window's money by where the payer stands today; every due sits in exactly one bar:
+**Tenant status.** Four bars splitting the window's money by where the payer stands today. Every due sits in exactly one bar:
 
 | Row | Meaning |
 |---|---|
@@ -396,7 +396,7 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 1. **Totals must survive junk amounts.** A bill of ₹1 crore or more is data entry gone wrong, not money. *Test:* a property holding one ₹500 crore bill reports totals matching its real bills.
 2. **A part-paid due counts its remaining amount.** *Test:* pay ₹4,000 of a ₹10,000 due; every total moves by exactly ₹4,000.
 3. **Old tenants appear in one row only.** *Test:* a moved-out tenant owing ₹5,000 raises the Old tenants bar by ₹5,000 and changes no tile, no gauge, no other bar.
-4. **The four tenant-status bars split the total with nothing counted twice.** *Test:* the four bars sum to the window's total exactly, no due in two bars.
+4. **Every due sits in exactly one tenant-status bar.** *Test:* the four bars add up to the window's total exactly, and no due appears in two bars.
 5. **Category names that differ only in capitals count as one.** *Test:* two types differing only by capitals chart as one bar.
 6. **Ageing runs from due date to today.** *Test:* a bill due the 1st sits in 1–7 on the 7th and in 8–14 on the 9th.
 7. **A due dated today is not overdue.** *Test:* it appears in Due Today and in no ageing bucket.
