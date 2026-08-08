@@ -12,6 +12,8 @@ owner: Sanchay
 
 **Every new sheet starts as a copy of this file.** Never from a blank page, never from memory of the format. Fill the placeholders, delete what the screen does not have, and never rename or reorder what you keep. The rules live in the tracker and the pipeline skill; this file is the shape.
 
+**The test every sentence must pass, owner-stated:** a developer or designer new to the project reads it once and knows what to build, no PM beside them, no dictionary. A sentence that needs the author standing next to it is wrong, however accurate.
+
 Writing rules that bind every section: plain words, no code references, no naming what is broken in code (outcome plus test instead), no em dashes in prose (watch spaced en dashes too, same tell, different character), no jargon from the banned list, tables wherever content is parallel, platform statistics only in the appendix, warnings for things that bite a builder only.
 
 **GitHub readability (added after Dues v11):** every section in the TOC links to its own heading anchor. The tap matrix (N+1), the design-fix list (N+7), and the measured-figures appendix each collapse behind a GitHub `<details><summary>` block, since each is read start-to-end by exactly one audience and none needs to be visible by default for someone scanning the sheet. Leave a blank line right after `</summary>` or the markdown inside renders as raw text.
