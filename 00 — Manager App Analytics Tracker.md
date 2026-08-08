@@ -118,6 +118,14 @@ Run four independent checks once the doc is "done". On Collection this pass foun
 
 Two cautions from running it: **audit agents are also wrong sometimes** — one confidently reported the property card sorted when it isn't; re-check any agent finding that contradicts your own records before accepting it. And **full rewrites silently drop sections** — Collection's Copy Fixes section vanished in a v9 rewrite and nobody noticed for three versions; diff the section list against the previous version after any full rewrite.
 
+### A frame called stale, superseded or not drawn needs a live re-check, not a recall (locked 2026-08-09, from Dues' View all sheet)
+
+Dues' View all sheet cited its own design frame as "an old draft, superseded, ignore it" and wrote the section from scratch instead of from it. The frame was actually current and complete, close enough to the doc's own vocabulary that it could have been documented almost as-is, and the dismissal let one real bug through unaudited: a change chip on a row (Past Dues) that the screen's own rule says should carry none.
+
+Swept the other four closed sheets for the same shape 2026-08-09 and found nothing: Collection's "the View all sheet is not drawn yet" is an honest absence, not a dismissal of something that exists, and every other stale/old hit on Expense, Inventory and Tenants is the doc correctly flagging old copy inside a current frame, already logged as its own design-fix item.
+
+The rule: **any sentence in any sheet that says a design frame is old, stale, superseded, or not yet drawn gets a live Figma check before that sheet is next touched, never a recall of when the claim was first made.** Cheap to run, and the one time it wasn't run is the one time it mattered. Still to sweep on Old Tenants, Bookings, Complaints and Leads once each has a design file worth checking.
+
 ### When the handoff supersedes its sources, say so in the sources
 
 Collection's handoff now overrides its Formula Map and Build Sheet on at least six points (the credit-payment maths, settlement states, the unpaid row, date assignments, category rows, a fourth adjustment type). Those docs still call themselves "source of truth". **Whoever reads them next builds the wrong thing.** When a handoff wins an argument with its sources, mark the losing sections as superseded, or log it as explicit debt. Both DA-02's and DA-04's sources now carry the marker.
