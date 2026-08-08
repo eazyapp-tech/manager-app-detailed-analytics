@@ -22,10 +22,12 @@ Read §19 (Build guidance) before writing anything, it carries the traps as outc
 
 The three older DA-01 docs (Brief, Ground-Truth Formula Map, Build Sheet) are marked superseded at the top; where they disagree with this sheet, the sheet wins. Their schema notes are still fine for finding where things live.
 
-Two decisions pre-answered so you're not blocked, flag if you disagree:
+Three decisions pre-answered so you're not blocked, flag if you disagree:
 
 1. **Overdue Breakup (§10) is Live**, not scoped to a time filter. An earlier design had it following "This Month"; production data showed that leaves the ageing buckets structurally empty for most of every month, since a bill due the 1st can't be more than a week overdue by the 7th. Ageing answers "how stale, as of today," which is a Live question.
 2. **Old tenants' dues appear in exactly one place**, the Old tenants row inside Dues Breakdown → Tenant status (§9). Every other number on the screen, including the six Overview tiles, excludes them entirely. This isn't a gap to fix by including them elsewhere.
+
+3. **The screen carries a forward setting, Coming up** (§4). Dues was the only screen in the suite without one, while the suite rule already said Custom stops at today and hands the future to a forward setting. About ₹28.5 crore of bills are already raised with due dates more than a week out, and no period setting reached them. Note that on this screen the forward numbers are plain records, bills that exist with a future due date, not projections, which is why they open real lists. Guidance 16 to 18 covers what follows the setting and what sits it out.
 
 One more worth flagging directly: the two **Received** figures (§8, §12) open the **Collection screen's** list, not this screen's. First cross-tab drill in the suite, tap lands where the records live even off-tab. Confirm the Collection list can accept a due-date window and, for §12, a deposit-category filter, before wiring the tap.
 

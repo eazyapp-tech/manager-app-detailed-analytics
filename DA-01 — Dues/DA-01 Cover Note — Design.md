@@ -26,6 +26,10 @@ The current frame for this sheet (§6) is an old draft built on different vocabu
 5. **Two overflow bottomsheets need drawing wherever a category view exists**, not only for Added By: tapping "Others" on any category chart should open the same pattern, list of what's left out, each row opens its own filtered list.
 6. **The Overdue Breakup card loses its dropdown entirely.** It's Live now, no time filter. Wherever the file still shows "This Month" or "All Time" on that card's header, remove it.
 
+## New to draw
+
+The **Coming up** filter option and its date picker, plus the screen's state on it: the billed-versus-collected card sitting out, the Live cards still saying "as of today", no change chips anywhere, and an empty state naming the window the manager picked rather than a generic one. This is a new setting for this screen, the other analytics screens already carry it.
+
 ## Smaller fixes, still real
 
 Malformed money strings ("₹15,00,000 L") on the gauge and Deposit headlines, format as ₹15L. The forecast card's chart still carries the axis label "Overdue Timeline," left over from a copied chart, it's forward-looking and needs its own label. The global filter chip reads "Today," it should show one of the five locked options. Two loose cards (a second Deposit Dues, a duplicate Dues Breakdown) sit parked outside the phone frames, housekeeping. Hidden "Paid by / Paid to" labels sit inside Dues by Property, leftover from a different card. Dev notes on the canvas still name the tenant-status labels this sheet rules out ("Under Eviction" among them); update or remove them.
