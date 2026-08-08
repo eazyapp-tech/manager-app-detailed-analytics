@@ -410,6 +410,8 @@ Full stack, oldest first. Transcripts at `~/.claude/projects/-Users-eazypg-rento
 
 The three one-sentence sibling debts spawned as a background task 2026-08-08 are **paid** (2026-08-09): the filter-memory contract on Dues and Tenants, the day-boundary line on Tenants, and the Test-convention sweep unifying Dues' and Tenants' forms to "Test it:". Repo synced at `765b98f`.
 
+**Dues' View all sheet, re-audited 2026-08-09** after an owner report that it looked thinner than the rest of the sheet. It was: §6 was written from a design frame the doc had dismissed as an old draft, and the frame turned out to be current and complete. Rewritten as a Row | Meaning table from that frame, matching the suite's own grammar; picked up one live bug the dismissal had let past (a change chip on Past Dues, a number the screen's own rule says should carry none) and three smaller ones (a rent-only mislabel on the Projected row, a misfiled bottomsheet from an unrelated screen, a duplicate hidden chip layer per tile). One design-fix item (the Overdue Breakup dropdown's self-contradiction) turned out to already be fixed in Figma and was corrected in place. Repo synced at `4a1293e`.
+
 ## Superseded — previous next action (Tenants, now closed)
 
 Start **Tenants** (screen 5). It is the first of the three People screens and the first greenfield one — Dues, Collection, Expense and Inventory all had hardened prior art; Tenants has a developer-sheet tab and nothing else.
