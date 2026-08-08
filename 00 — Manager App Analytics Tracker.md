@@ -375,8 +375,6 @@ All layers applied at v2 in one session: template spine kept (v1's numbering alr
 
 ## Open questions across screens
 
-- **The Test convention is three-way split.** Collection and Expense write "Test it:" (the template's form), Dues writes "*Test:*" 19 times, and Tenants uses both, seven of each. One mechanical sweep unifies Dues and Tenants; until then the suite's own fixed phrase is not fixed.
-- **Dues and Tenants lack the filter-memory contract** (stays while the app is open, fresh launch opens on the default, return-from-drill keeps state with fresh numbers), and **Tenants lacks the day-boundary line**. Both are one-sentence backfills logged for each sheet's next real touch.
 - **Nobody has written the contextual help.** Every card on every screen carries an info icon. No screen has content for any of them. Surfaced on Expense 2026-08-07; applies to all eight.
 - **Row tap affordances are missing across the suite.** On Expense only the "Others" rows carry a chevron, though every row on every card opens something. Likely a shared component, so likely wrong on the other screens too.
 - **Refunds** has hardened documentation in this folder from an earlier round, but no visible Refunds tab in the current design file. Fold into Collection, its own screen later, or dropped? Asked 2026-08-06: scope stayed **Collection only** — deferred, still no Figma frame to anchor it to. Still open.
@@ -410,7 +408,7 @@ Full stack, oldest first. Transcripts at `~/.claude/projects/-Users-eazypg-rento
 
 **Old Tenants (screen 6)**, second sub-tab under People; its pre-flight above stands. The Inventory uplift is **paid** (2026-08-08, same day). After Old Tenants: **Bookings** (inherits the booking definitions, including booked-is-a-layer and the no-space row reserved on Inventory's View all sheet), then **Complaints** (will need the "Averaged across the days of the window" phrase and the healthy-state distinction), then **Leads**.
 
-Three one-sentence sibling debts remain queued for their sheets' next touch, spawned as a background task 2026-08-08: the filter-memory contract on Dues and Tenants, the day-boundary line on Tenants, and the Test-convention sweep unifying Dues' *Test:* and Tenants' mixed forms.
+The three one-sentence sibling debts spawned as a background task 2026-08-08 are **paid** (2026-08-09): the filter-memory contract on Dues and Tenants, the day-boundary line on Tenants, and the Test-convention sweep unifying Dues' and Tenants' forms to "Test it:". Repo synced at `765b98f`.
 
 ## Superseded — previous next action (Tenants, now closed)
 
