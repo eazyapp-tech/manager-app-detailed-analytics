@@ -1,7 +1,7 @@
 ---
 title: Dues — Handoff Sheet
 screen: DA-01 — Dues
-status: v11 · audits + sibling check complete · developer handoff
+status: v12 · closed · the suite's current reference sheet
 owner: Sanchay
 date: 2026-08-08
 tags:

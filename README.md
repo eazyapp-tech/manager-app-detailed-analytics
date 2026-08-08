@@ -23,11 +23,11 @@ Handoff documentation for the RentOk Manager App analytics suite: nine screens, 
 
 | # | Screen | Handoff sheet | Engineering map | Design map | Status |
 |---|---|---|---|---|---|
-| 1 | Dues | [DA-01 sheet](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md) | [read me first](DA-01%20—%20Dues/DA-01%20Cover%20Note%20—%20Nimit.md) | [design map](DA-01%20—%20Dues/DA-01%20Cover%20Note%20—%20Design.md) | ✅ v11 |
-| 2 | Collection | [DA-02 sheet](DA-02%20—%20Collections/DA-02%20Collection%20—%20Handoff%20Sheet.md) | — | — | ✅ v12 · restructure queued |
+| 1 | Dues | [DA-01 sheet](DA-01%20—%20Dues/DA-01%20Dues%20—%20Handoff%20Sheet.md) | [read me first](DA-01%20—%20Dues/DA-01%20Cover%20Note%20—%20Nimit.md) | [design map](DA-01%20—%20Dues/DA-01%20Cover%20Note%20—%20Design.md) | ✅ v12 · **the current reference** |
+| 2 | Collection | [DA-02 sheet](DA-02%20—%20Collections/DA-02%20Collection%20—%20Handoff%20Sheet.md) | — | — | 🟡 v12 · **backfill in progress** |
 | 3 | Expense | [DA-04 sheet](DA-04%20—%20Expenses/DA-04%20Expense%20—%20Handoff%20Sheet.md) | [read me first](DA-04%20—%20Expenses/DA-04%20Cover%20Note%20—%20Nimit.md) | — | ✅ v2 |
 | 4 | Inventory | [DA-08 sheet](DA-08%20—%20Occupancy/DA-08%20Inventory%20—%20Handoff%20Sheet.md) | [read me first](DA-08%20—%20Occupancy/DA-08%20Cover%20Note%20—%20Nimit.md) | [design map](DA-08%20—%20Occupancy/DA-08%20Cover%20Note%20—%20Ishika.md) | ✅ v1 |
-| 5 | Tenants | [DA-09 sheet](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md) | [read me first](DA-09%20—%20Tenants/DA-09%20Cover%20Note%20—%20Nimit.md) | [design map](DA-09%20—%20Tenants/DA-09%20Cover%20Note%20—%20Design.md) | ✅ v2 · **the current standard** |
+| 5 | Tenants | [DA-09 sheet](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md) | [read me first](DA-09%20—%20Tenants/DA-09%20Cover%20Note%20—%20Nimit.md) | [design map](DA-09%20—%20Tenants/DA-09%20Cover%20Note%20—%20Design.md) | ✅ v2.1 · voice exemplar |
 | 6 | Old Tenants | — | — | — | 🟡 next up |
 | 7 | Bookings | — | — | — | ⬜ |
 | 8 | Complaints | — | — | — | ⬜ |
