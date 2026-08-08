@@ -122,27 +122,27 @@ Worked example, today being 8 August. A ₹6,300 rent due dated 28 July, still u
 | Number | Kind | Shows |
 |---|---|---|
 | All Time Dues | Live | counts it |
-| All Past Dues | pinned window | counts it, its due date sits before this month |
-| This Month's Due | pinned window | does not count it |
+| All Past Dues | Time-scoped, window fixed | counts it, its due date sits before this month |
+| This Month's Due | Time-scoped, window fixed | does not count it |
 | Dues (Live) gauge | Live | counts it under Overdue |
 | Overdue Breakup | Live | 11 days overdue, sits in the 8–14 bucket |
 | Dues Breakdown on This Month | Time-scoped | does not count it |
 | Dues Breakdown on Last Month | Time-scoped | counts it |
-| Dues Breakdown on Coming up | Time-scoped, forward | does not count it. That window starts tomorrow |
+| Dues Breakdown on Coming up | Time-scoped | does not count it. That window starts tomorrow |
 
 ### What every number does on every filter setting
 
 | Number | This Month · Last Month · Current FY · Custom · All Time | Coming up |
 |---|---|---|
-| Overview strip, 6 tiles | Pinned windows, ignore the filter | Unchanged. Each tile carries its own window, and All Future Dues is already the unbounded version of this setting |
-| Dues (Live) gauge | Live, ignores the filter | As of today. What is outstanding right now cannot be projected forward without guessing what gets paid |
-| Bills Summary | Follows | The card sits out. "How much of what came due has been collected" is a question about the past; nothing is yet due to collect against |
-| Dues Breakdown, all 3 views | Follows, own dropdown may override | Bills due between tomorrow and the chosen date, split the same three ways |
-| Overdue Breakup | Live, ignores the filter | As of today. Nothing is overdue in the future |
-| Upcoming Dues | Forward: tomorrow to month end | Forward: tomorrow to the chosen date |
-| Deposit Dues | Live, ignores the filter | As of today |
-| Breakup by Stay Duration | Follows | Bills due between tomorrow and the chosen date |
-| Dues by Property | Follows | Bills due between tomorrow and the chosen date. The planning view: which property has most landing, and when |
+| Overview strip, 6 tiles | Each tile keeps its own fixed window; the filter does not change it | Unchanged. Each tile carries its own window, and All Future Dues is already the unbounded version of this setting |
+| Dues (Live) gauge | As of today | As of today. What is outstanding right now cannot be projected forward without guessing what gets paid |
+| Bills Summary | Counted inside the window | The card sits out. "How much of what came due has been collected" is a question about the past; nothing is yet due to collect against |
+| Dues Breakdown, all 3 views | Counted inside the window; its own dropdown can pick a different one | Bills due between tomorrow and the chosen date, split the same three ways |
+| Overdue Breakup | As of today | As of today. Nothing is overdue in the future |
+| Upcoming Dues | From today onwards: tomorrow to month end | From today onwards: tomorrow to the chosen date |
+| Deposit Dues | As of today | As of today |
+| Breakup by Stay Duration | Counted inside the window | Bills due between tomorrow and the chosen date |
+| Dues by Property | Counted inside the window | Bills due between tomorrow and the chosen date. The planning view: which property has most landing, and when |
 
 Nothing on Coming up ever invents an event. Every number there counts bills that already exist with a future due date, except Upcoming Dues, which is labelled a forecast on its face.
 
@@ -169,11 +169,11 @@ Six tiles, always visible, none follow the filter.
 | Tile | Counts | Kind |
 |---|---|---|
 | All Time Dues | every unpaid due, any due date | Live |
-| All Past Dues | unpaid dues due before the 1st of this month | pinned window |
-| This Month's Due | unpaid dues due from the 1st through today | pinned window |
+| All Past Dues | unpaid dues due before the 1st of this month | Time-scoped, window fixed |
+| This Month's Due | unpaid dues due from the 1st through today | Time-scoped, window fixed |
 | All Future Dues | unpaid dues due from tomorrow onwards | Live |
-| This Month's Projected Due | what the recurring setup will raise before month end, every configured type, not rent alone | forward |
-| Current FY Dues | unpaid dues due since 1 April | pinned window |
+| This Month's Projected Due | what the recurring setup will raise before month end, every configured type, not rent alone | Forecast |
+| Current FY Dues | unpaid dues due since 1 April | Time-scoped, window fixed |
 
 All Time, All Past, This Month's Due and All Future partition cleanly: Past plus This Month plus Future adds to All Time. Chips per §4: This Month's Due and Current FY Dues only.
 
@@ -223,7 +223,7 @@ Time-scoped, own dropdown. Three views over the same dues, switched by a toggle.
 | Bookings | confirmed bookings with dues |
 | Old tenants | moved out still owing. Their only home on this screen |
 
-**Added by.** The top four contributors by amount, the rest in an Others overflow sheet, listing each remaining person or RentOk with their total and bill count. RentOk's own row is shown only when it has an unpaid amount, never pinned in with nothing to show. Fewer than four real contributors: show only the real ones, no empty Others row.
+**Added by.** The top four contributors by amount, the rest in an Others overflow sheet, listing each remaining person or RentOk with their total and bill count. RentOk's own row is shown only when it has an unpaid amount, never given a row with nothing to count. Fewer than four real contributors: show only the real ones, no empty Others row.
 
 The categories that surface here can differ from the categories in Overdue Breakup (§10). That is expected: this view counts every unpaid due, that one counts only the overdue ones, two different pools that can each have their own top few.
 
@@ -237,7 +237,7 @@ Live, says "as of today" on its face, no dropdown of its own. Two views over eve
 
 ## 11. Upcoming Dues
 
-Forward, "from today onwards": what the recurring setup will raise from tomorrow through month end, or through the chosen date when the filter is on Coming up, grouped Rent · Food · Others, laid out by due date. This is the one number on the screen that is a forecast rather than a record, and it says so on its face. Others is the fold of every further configured type, not a fixed third group. Only rent configured, only rent shows. If the recurring setup can't be read cleanly, the card shows zero rather than a guess, never an estimate.
+"From today onwards": what the recurring setup will raise from tomorrow through month end, or through the chosen date when the filter is on Coming up, grouped Rent · Food · Others, laid out by due date. This is the one number on the screen that is a forecast rather than a record, and it says so on its face. Others is the fold of every further configured type, not a fixed third group. Only rent configured, only rent shows. If the recurring setup can't be read cleanly, the card shows zero rather than a guess, never an estimate.
 
 Not built yet; ships after the live cards. Its taps open an explainer, no real dues exist to list.
 
@@ -276,10 +276,10 @@ A drill filters a list, it never re-scopes the screen. The destination follows t
 
 | The screen's window | What travels to the list |
 |---|---|
-| Live number | Nothing, the list opens as of today |
-| Period window | The window travels as a due-date range, and the list shows tenants as they are today, naming any difference on arrival |
+| A Live number, on any window | Nothing, the list opens as of today |
+| A period, running or finished | The window travels as a due-date range, and the list shows tenants as they are today, naming any difference on arrival |
 | Coming up | The forward window travels as a due-date range, tomorrow through the chosen date. These are real bills, so they open a real list |
-| Forecast number | No travel, the explainer opens instead. Nothing has been raised yet to list |
+| A forecast number | No travel, the explainer opens instead. Nothing has been raised yet to list |
 
 ### The tap matrix
 
