@@ -102,9 +102,13 @@ A leaving date on record, matching Tenants and Inventory. Uses the **confirmed**
 
 ### The time filter
 
-Options: **All Time · This Month · Last Month · Current FY · Custom**. Default: **This Month**. Custom stops at today. The screen opens on This Month every launch, and the filter survives a drill and back.
+Options: **This Month (default) · Last Month · Current FY · Custom · All Time · Coming up.**
 
-Changing the global filter updates every time-scoped card, and snaps any card-level override back to the global choice. A card with its own dropdown follows its own choice until the global filter next changes. A day runs midnight to midnight, India time.
+**Coming up** is the forward setting, the same control Tenants and Inventory carry: pick a future date, see what is due between tomorrow and that date. Default 30 days. Unlike the other screens, nothing here is projected: a bill raised today with a due date next month is a fact with a date on it, so a forward window counts real records, not estimates. Bills that have not been raised yet stay where they belong, in Upcoming Dues (§11), never mixed in.
+
+**Custom stops at today.** The past belongs to Custom, the future to Coming up. One question must never have two answer models on one screen.
+
+Cards with their own date dropdown follow three rules: same options as the top filter, the top filter pulls every card back in line, and one card can be deliberately set aside until the top filter next changes. A day runs midnight to midnight, India time.
 
 Two kinds of number, the suite's own two words:
 
@@ -124,20 +128,23 @@ Worked example, today being 8 August. A ₹6,300 rent due dated 28 July, still u
 | Overdue Breakup | Live | 11 days overdue, sits in the 8–14 bucket |
 | Dues Breakdown on This Month | Time-scoped | does not count it |
 | Dues Breakdown on Last Month | Time-scoped | counts it |
+| Dues Breakdown on Coming up | Time-scoped, forward | does not count it. That window starts tomorrow |
 
 ### What every number does on every filter setting
 
-| Number | This Month | Last Month | Current FY | Custom | All Time |
-|---|---|---|---|---|---|
-| Overview strip, 6 tiles | pinned windows, ignore the filter | ″ | ″ | ″ | ″ |
-| Dues (Live) gauge | Live, ignores the filter | ″ | ″ | ″ | ″ |
-| Bills Summary | follows | follows | follows | follows | follows |
-| Dues Breakdown, all 3 views | follows, own dropdown may override | ″ | ″ | ″ | ″ |
-| Overdue Breakup | Live, ignores the filter | ″ | ″ | ″ | ″ |
-| Upcoming Dues | forward: tomorrow to month end, ignores the filter | ″ | ″ | ″ | ″ |
-| Deposit Dues | Live, ignores the filter | ″ | ″ | ″ | ″ |
-| Breakup by Stay Duration | follows | follows | follows | follows | follows |
-| Dues by Property | follows | follows | follows | follows | follows |
+| Number | This Month · Last Month · Current FY · Custom · All Time | Coming up |
+|---|---|---|
+| Overview strip, 6 tiles | Pinned windows, ignore the filter | Unchanged. Each tile carries its own window, and All Future Dues is already the unbounded version of this setting |
+| Dues (Live) gauge | Live, ignores the filter | As of today. What is outstanding right now cannot be projected forward without guessing what gets paid |
+| Bills Summary | Follows | The card sits out. "How much of what came due has been collected" is a question about the past; nothing is yet due to collect against |
+| Dues Breakdown, all 3 views | Follows, own dropdown may override | Bills due between tomorrow and the chosen date, split the same three ways |
+| Overdue Breakup | Live, ignores the filter | As of today. Nothing is overdue in the future |
+| Upcoming Dues | Forward: tomorrow to month end | Forward: tomorrow to the chosen date |
+| Deposit Dues | Live, ignores the filter | As of today |
+| Breakup by Stay Duration | Follows | Bills due between tomorrow and the chosen date |
+| Dues by Property | Follows | Bills due between tomorrow and the chosen date. The planning view: which property has most landing, and when |
+
+Nothing on Coming up ever invents an event. Every number there counts bills that already exist with a future due date, except Upcoming Dues, which is labelled a forecast on its face.
 
 ### Periods that have not finished
 
@@ -145,7 +152,7 @@ An unfinished period compares against the same elapsed days of the previous peri
 
 ### Change chips
 
-Exactly two numbers carry one: **This Month's Due** and **Current FY Dues**. Up is bad here: a rising chip shows red, a falling one green, an unchanged number shows a neutral chip. No other number on this screen carries a chip. The other four tiles have no previous period of the same shape, and a chip on a forecast would be a guess.
+Exactly two numbers carry one: **This Month's Due** and **Current FY Dues**. Up is bad here: a rising chip shows red, a falling one green, an unchanged number shows a neutral chip. No other number on this screen carries a chip, and nothing carries one on Coming up. The other four tiles have no previous period of the same shape, and a chip on a forecast would be a guess.
 
 ### When a number is red
 
@@ -230,7 +237,7 @@ Live, says "as of today" on its face, no dropdown of its own. Two views over eve
 
 ## 11. Upcoming Dues
 
-Forward, "from today onwards": what the recurring setup will raise from tomorrow through month end, grouped Rent · Food · Others, laid out by due date. Others is the fold of every further configured type, not a fixed third group. Only rent configured, only rent shows. If the recurring setup can't be read cleanly, the card shows zero rather than a guess, never an estimate.
+Forward, "from today onwards": what the recurring setup will raise from tomorrow through month end, or through the chosen date when the filter is on Coming up, grouped Rent · Food · Others, laid out by due date. This is the one number on the screen that is a forecast rather than a record, and it says so on its face. Others is the fold of every further configured type, not a fixed third group. Only rent configured, only rent shows. If the recurring setup can't be read cleanly, the card shows zero rather than a guess, never an estimate.
 
 Not built yet; ships after the live cards. Its taps open an explainer, no real dues exist to list.
 
@@ -256,7 +263,7 @@ Time-scoped. Renders only when the account has more than one property with data.
 ## 15. What each number opens
 
 <details>
-<summary><strong>Expand:</strong> the drill rules and the full tap matrix (backend)</summary>
+<summary><strong>Expand:</strong> the drill rules, what travels with a tap, the full tap matrix with arrival filters, and the list filters that still have to be added</summary>
 
 
 ### The rules
@@ -269,9 +276,10 @@ A drill filters a list, it never re-scopes the screen. The destination follows t
 
 | The screen's window | What travels to the list |
 |---|---|
-| Live number | nothing, the list opens as of today |
-| Period window | the window travels as a due-date range, and the list shows tenants as they are today, naming any difference on arrival |
-| Forward number | no travel, the explainer opens instead |
+| Live number | Nothing, the list opens as of today |
+| Period window | The window travels as a due-date range, and the list shows tenants as they are today, naming any difference on arrival |
+| Coming up | The forward window travels as a due-date range, tomorrow through the chosen date. These are real bills, so they open a real list |
+| Forecast number | No travel, the explainer opens instead. Nothing has been raised yet to list |
 
 ### The tap matrix
 
@@ -281,7 +289,7 @@ A drill filters a list, it never re-scopes the screen. The destination follows t
 | All Time Dues | dues list | all unpaid dues | ✅ |
 | All Past Dues | dues list | due before this month | ✅ |
 | This Month's Due | dues list | due 1st through today | ✅ |
-| All Future Dues | dues list | due after today | ⚠ list must accept a window ending in the future |
+| All Future Dues | dues list | due after today | ✅ |
 | This Month's Projected Due | forecast explainer | — | ✅ |
 | Current FY Dues | dues list | due since 1 April | ✅ |
 | **View all sheet** | | | |
@@ -291,8 +299,8 @@ A drill filters a list, it never re-scopes the screen. The destination follows t
 | **Dues (Live)** | | | |
 | Overdue | dues list | due before today | ✅ |
 | Due Today | dues list | due today | ✅ |
-| Due This Week | dues list | due inside the shown dates | ⚠ future window, as above |
-| Due Later | dues list | due after the shown date | ⚠ future window, as above |
+| Due This Week | dues list | due inside the shown dates | ✅ |
+| Due Later | dues list | due after the shown date | ✅ |
 | **Bills Summary** | | | |
 | Bill Due | dues list | came due in the window | ✅ |
 | Received | Collection list | payments in the window against those dues | ⚠ Collection list must accept the window |
@@ -326,8 +334,11 @@ The dues list filters today by property, due-date window, who added the due, cat
 
 | New filter to add | On which list | Which numbers wait on it |
 |---|---|---|
-| Tenant state, four values matching §9's bars | dues list | three of the four tenant-status bars |
-| Stay type | dues list | both stay bars, two view-all rows |
+| Tenant state, four values matching §9's bars | dues list | Three of the four tenant-status bars |
+| Stay type | dues list | Both stay bars, two view-all rows |
+| A forward window option, "Next 30 days" or similar | dues list | Every drill taken while the screen is on Coming up |
+
+The forward window is the cheapest of the three. The date control both apps share already resolves forward ranges, and its custom two-date picker already accepts future dates, so the dues list can land on a future window today. What it does not do is offer one as a named option, which is what a manager reaching for it would expect. See build guidance for the trap waiting there.
 
 ### What the destination says when you arrive
 
@@ -353,6 +364,7 @@ Narrowed property access counts only those properties, and the drill matches.
 | In-window zero on a time-scoped card | the card draws zero, plain, no message |
 | Everything paid | good news, see Healthy below |
 | Upcoming with nothing configured | *"Nothing set to auto-raise."* |
+| Coming up, nothing due in the window | *"Nothing due in the next 30 days."* Named with the window the manager actually picked, and good news, not a gap |
 | Failed | "Couldn't load this" with Retry, never a healthy message, never a zero |
 
 ### Healthy: good news, no CTA
@@ -396,9 +408,12 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 13. **The stay card hides rather than restating.** *Test:* a property with zero short-term tenants shows no stay card.
 14. **The property card needs two properties with data.** *Test:* a single-property account never sees it; a two-property account sees both rows with shares summing to 100%.
 15. **Cross-tab arrivals carry their slice.** *Test:* tap deposit Received; the Collection list opens on deposit payments, back control names this screen.
-16. **Every category and category chart normalises to top-plus-Others.** *Test:* a property with six categories shows the top four or five and one Others row, and the top rows plus Others sum to the card's total.
-17. **The tenant-status sub-breakdown that once sat inside the gauge is not built.** It duplicates §9's Tenant status view; that view is its only home.
-18. **No narrowed self-added-tenant view is built for this screen.** Product has confirmed nobody is granted that permission; if that changes, this screen needs the same scoping the dues list already has, see open item 1.
+16. **A window labelled forward must look forward.** *Test:* set the list to a "Next 30 days" option on a property with bills due next month; the list shows those bills. Seeing last month's bills instead is the failure this test exists to catch.
+17. **Coming up counts bills that exist, never bills that might.** *Test:* on Coming up set to 60 days, the breakdown cards count only bills already raised with due dates in that window; anything the recurring setup has yet to raise appears in Upcoming Dues and nowhere else.
+18. **Bills Summary sits out Coming up.** *Test:* switch to Coming up; the card shows its sitting-out state, not a Received figure near zero that reads as a collections failure.
+19. **Every category and category chart normalises to top-plus-Others.** *Test:* a property with six categories shows the top four or five and one Others row, and the top rows plus Others sum to the card's total.
+20. **The tenant-status sub-breakdown that once sat inside the gauge is not built.** It duplicates §9's Tenant status view; that view is its only home.
+21. **No narrowed self-added-tenant view is built for this screen.** Product has confirmed nobody is granted that permission; if that changes, this screen needs the same scoping the dues list already has, see open item 1.
 
 ## 20. Open items
 
@@ -411,7 +426,7 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 ## 21. Design file: what needs fixing
 
 <details>
-<summary><strong>Expand:</strong> the full Wrong / Missing / Remove / Decide list (design)</summary>
+<summary><strong>Expand:</strong> 25 numbered design-file fixes, grouped Wrong / Missing / Remove / Decide</summary>
 
 
 **Wrong**
@@ -436,25 +451,26 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 15. Live cards need "as of today" on their face.
 16. Every card carries an info icon and no info copy is written anywhere. Either write the copy per card or drop the icons.
 17. The Category Others and Added By Others overflow sheets need their bottomsheet drawn wherever a category view exists, not only for Added By.
+18. The **Coming up** filter option, its date picker, and the screen's state on it: Bills Summary sitting out, the Live cards still saying "as of today", no chips anywhere.
 
 **Remove**
 
-18. The Overdue Breakup card's own dropdown control, wherever it still appears in the file. The card is Live.
-19. The switched-off tenant-status block inside the gauge. Superseded by the Dues Breakdown view.
-20. Two loose cards parked outside the phone frames in the Dues section: a Deposit Dues card and a duplicate Dues Breakdown card. Housekeeping.
-21. Hidden leftover "Paid by / Paid to" labels sitting inside the Dues by Property card, left over from a different card.
+19. The Overdue Breakup card's own dropdown control, wherever it still appears in the file. The card is Live.
+20. The switched-off tenant-status block inside the gauge. Superseded by the Dues Breakdown view.
+21. Two loose cards parked outside the phone frames in the Dues section: a Deposit Dues card and a duplicate Dues Breakdown card. Housekeeping.
+22. Hidden leftover "Paid by / Paid to" labels sitting inside the Dues by Property card, left over from a different card.
 
 **Decide**
 
-22. The gauge when one slice is nearly everything: minimum sliver width or value-first treatment.
-23. The 90+ ageing bar will dominate on most properties: whether the bar scale needs a treatment or the labels carry it.
-24. The view all sheet (§6) needs a fresh design pass; its current frame is an old draft built on different vocabulary and should not be used as a reference for the new one.
+23. The gauge when one slice is nearly everything: minimum sliver width or value-first treatment.
+24. The 90+ ageing bar will dominate on most properties: whether the bar scale needs a treatment or the labels carry it.
+25. The view all sheet (§6) needs a fresh design pass; its current frame is an old draft built on different vocabulary and should not be used as a reference for the new one.
 </details>
 
 ## Where the measured figures came from
 
 <details>
-<summary><strong>Expand:</strong> every production figure behind a decision in this sheet</summary>
+<summary><strong>Expand:</strong> 15 production figures and the decision each one settled</summary>
 
 
 Measured on production, 7 August 2026 evening, amounts in rupees. Totals exclude test properties and bills of ₹1 crore and above (22 such bills sum to an impossible figure and would poison every headline).
@@ -462,7 +478,8 @@ Measured on production, 7 August 2026 evening, amounts in rupees. Totals exclude
 | Measured | Result | What it decided |
 |---|---|---|
 | Unpaid dues, live tenants and bookings | 3.56 million dues, ₹3,294 crore | the scale every total must survive |
-| Share already overdue | 99.5% of unpaid money | the gauge's dominant-slice treatment (§21.22) |
+| Bills already raised with a due date more than a week out | 8,703 dues, ₹28.5 crore | Coming up: real money with future dates that no period setting could reach |
+| Share already overdue | 99.5% of unpaid money | the gauge's dominant-slice treatment (§21.23) |
 | Ageing: 22+ days | 92% of overdue money | the fifth bucket: 22–90 split from 90+ |
 | Old tenants' unpaid dues | 0.23% of the total, median due ₹10 | one row is right-sized, never a card |
 | Category mix | Rent 67.5% + Late Fine 29.8% = 97.3%; Electricity 0.18%; Mess absent from the top 12 | dynamic top-N, Late Fine surfacing is real |
