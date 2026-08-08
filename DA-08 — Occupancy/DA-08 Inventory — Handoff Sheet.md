@@ -356,11 +356,11 @@ Red marks the largest of the **four aging bars only**, the design's rule kept as
 
 ## 9. Upcoming Vacancy
 
-Who is confirmed to be leaving, how soon. Built only from tenants who have given notice, no predictions. Counted per room; ignores the view toggle; "From today onwards" on its face.
+Who is confirmed to be leaving, how soon. Built only from tenants with a confirmed move-out date, no predictions. Counted per room; ignores the view toggle; "From today onwards" on its face.
 
 Four bars: leaving within 0–7 · 8–15 · 16–30 · 31+ days.
 
-This card and Vacant Room Status are adjacent bar charts over day-buckets, one looking back at empty rooms, one forward at occupied ones. The subtitles carry the direction: "how long empty rooms have been waiting" against "when notice-given tenants leave". Bucket labels agree: **31+ days** on both, so day 30 falls in one bucket.
+This card and Vacant Room Status are adjacent bar charts over day-buckets, one looking back at empty rooms, one forward at occupied ones. The subtitles carry the direction: "how long empty rooms have been waiting" against "when confirmed move-outs happen". Bucket labels agree: **31+ days** on both, so day 30 falls in one bucket.
 
 ---
 
@@ -462,8 +462,8 @@ Checked one by one against the filters the rooms, tenants and bookings lists act
 | Bookings with no space allocated | Bookings list | confirmed, no room assigned | ⚠ the filter reads the older room link and can misread on migrated properties |
 | **Occupancy Status** | | | |
 | Under Notice chip | Rooms list | under notice | ✅ |
-| — already replaced | Bookings list | confirmed, against beds under notice | ⚠ reachable only where the booking is linked to the specific bed |
 | — past their date | Tenants list | move-out date already passed | ✅ |
+| — already replaced | Bookings list | confirmed, against beds under notice | ⚠ reachable only where the booking is linked to the specific bed |
 | Occupancy Rate | nothing: a percentage has no records | | — |
 | **Vacant Room Status** | | | |
 | Any aging bar (0–7 · 8–15 · 16–30 · 31+) | Rooms list | vacant that long | ❌ fact-not-recorded |
@@ -481,7 +481,7 @@ Checked one by one against the filters the rooms, tenants and bookings lists act
 | **Property Wise Occupancy** | | | |
 | Property row | Rooms list | that property, same slice | ✅ |
 
-The aging-bar ❌s are a class the siblings never had: they wait on **a fact the system does not record**, when a room became empty. History to start keeping, not a filter to add, and weeks apart in effort. The never-rented and unknown ❌s are ordinary filters over history that already exists. Either the emptied date becomes something the rooms list can hold and filter on, or the vacancy card ships without drills and says so on its face; a card whose bars promise a tap that does nothing is worse than one that promises nothing.
+The aging-bar ❌s are a class the siblings never had: they wait on **a fact the system does not record**, when a room became empty. History to start keeping, not a filter to add, and weeks apart in effort. The never-rented and unknown ❌s are ordinary filters over history that already exists. Either the emptied date becomes something the rooms list can hold and filter on, or the aging bars ship without drills and the card says so on their faces; a bar that promises a tap that does nothing is worse than one that promises nothing.
 
 ### The gaps, plainly
 
@@ -530,7 +530,7 @@ When the property has no rooms at all: *"Your property is not set up yet. Finish
 | Card | Reads |
 |---|---|
 | Vacant Room Status | "No vacant rooms. Your property is fully occupied." |
-| Upcoming Vacancy | "Nobody is leaving soon. No tenants have given notice." |
+| Upcoming Vacancy | "Nobody is leaving soon. No confirmed move-outs on the books." |
 | Agreements ending soon | "No agreements ending in the next 90 days." |
 | Where is my property losing money? | "No revenue leaking. Every rentable bed is earning." |
 
@@ -611,7 +611,7 @@ Four items from v1 are closed and recorded in the tracker, not here: the tab row
 ## 20. Design file: what needs fixing
 
 <details>
-<summary><strong>Expand:</strong> 41 numbered fixes, grouped Wrong / Missing / Remove / Decide</summary>
+<summary><strong>Expand:</strong> 42 numbered fixes, grouped Wrong / Missing / Remove / Decide</summary>
 
 **Read this first:** every number in the file is placeholder. The fixes are structural, not data.
 
@@ -630,43 +630,44 @@ Four items from v1 are closed and recorded in the tracker, not here: the tab row
 11. Property Wise sorted arbitrarily; sort highest to lowest by vacant space (section 13).
 12. Empty-state copy is stale on every card: previous-draft titles ("Occupancy (Live)", "How long are my rooms vacant", "Rooms to be vacated soon", one for a card only this sheet restored) and a truncated Complaints-module body line. Rewrite per section 16.
 13. Tab row: redraw to the settled suite row (section 2); Issues and the floating Leads tab go.
+14. The second money tile's label reads "Avg. Revenue per Available Unit"; Available is this screen's word for vacant space with nothing lined up, so the label becomes **Rentable** (section 7).
 
 ### Missing, needs drawing
 
-14. Semi-Vacant slice in the Unit View donut.
-15. Never-rented and Unknown bars on Vacant Room Status.
-16. The revenue-loss total at the top of the losing-money card, with its basis line.
-17. Agreements ending soon: a redesigned card is already staged beside the phone (horizontal bars, 90/60/30) and needs three things before it goes in: the axis reads "No. of lease" and becomes "No. of agreements"; the subtitle typo "agreements endings soon" loses its s; and the **Notify Tenant** button comes off. This screen diagnoses; the tap opens the tenants list, where notifying already lives.
-18. Healthy states for the four cards in section 16, and the whole-screen not-set-up state.
-19. The Under Notice chip's second line: "N past their date · N already replaced".
-20. The View all sheet: only the link exists today.
-21. Change-chip states: unfinished-period marker, the "vs this day last month" label on Now, the no-chip state on Coming up, the neutral grey chip.
-22. Loading skeletons, failed states, and the Restricted lock.
-23. In-progress bar treatment on the trend chart.
-24. Bed View variants of every card: tile labels, the "Total Beds" header, donut slices are all drawn in Unit language only.
-25. Coming up, entirely undrawn: chip, date picker, 30-day default, each card's projected reading, tiles without chips.
-26. The Vacant legend row's two-layer split, both views: "Vacant 38: 17 booked, 21 available".
-27. Overview Snapshot header: the hardcoded window comes out of the title; the active window shows beside it.
-28. The over-100% sentence on Occupancy Status, stating over-occupancy and vacancy together.
-29. The per-card insight line, both states: plain text positive, button negative.
-30. Days to Fill with its open tail, not a bare average.
-31. The Occupancy Status header carrying both totals, total and rentable, so the legend and the percentage reconcile.
+15. Semi-Vacant slice in the Unit View donut.
+16. Never-rented and Unknown bars on Vacant Room Status.
+17. The revenue-loss total at the top of the losing-money card, with its basis line.
+18. Agreements ending soon: a redesigned card is already staged beside the phone (horizontal bars, 90/60/30) and needs three things before it goes in: the axis reads "No. of lease" and becomes "No. of agreements"; the subtitle typo "agreements endings soon" loses its s; and the **Notify Tenant** button comes off. This screen diagnoses; the tap opens the tenants list, where notifying already lives.
+19. Healthy states for the four cards in section 16, and the whole-screen not-set-up state.
+20. The Under Notice chip's second line: "N past their date · N already replaced".
+21. The View all sheet: only the link exists today.
+22. Change-chip states: unfinished-period marker, the "vs this day last month" label on Now, the no-chip state on Coming up, the neutral grey chip.
+23. Loading skeletons, failed states, and the Restricted lock.
+24. In-progress bar treatment on the trend chart.
+25. Bed View variants of every card: tile labels, the "Total Beds" header, donut slices are all drawn in Unit language only.
+26. Coming up, entirely undrawn: chip, date picker, 30-day default, each card's projected reading, tiles without chips.
+27. The Vacant legend row's two-layer split, both views: "Vacant 38: 17 booked, 21 available".
+28. Overview Snapshot header: the hardcoded window comes out of the title; the active window shows beside it.
+29. The over-100% sentence on Occupancy Status, stating over-occupancy and vacancy together.
+30. The per-card insight line, both states: plain text positive, button negative.
+31. Days to Fill with its open tail, not a bare average.
+32. The Occupancy Status header carrying both totals, total and rentable, so the legend and the percentage reconcile.
 
 ### Leftover content, needs removing
 
-32. Two of the four Occupancy Status chips: "Overbooked occupancy" (cut) and "Booked Beds" (lives in the Vacant legend split). Under Notice and Over-occupied remain.
-33. Hidden duplicate delta chips stacked under three Overview tiles, in-screen and in the orphan copy.
-34. The orphan tile row parked outside the phone frame, with its own hidden chips.
-35. The stale single-row card ("1 BHK") parked outside the phone, disagreeing with the live card's first row.
-36. Hidden "Paid by / Paid to" buttons inside Property Wise: leftover expense chrome; the card's internal name still says Expense.
-37. Stray artwork parked outside the frame edge.
+33. Two of the four Occupancy Status chips: "Overbooked occupancy" (cut) and "Booked Beds" (lives in the Vacant legend split). Under Notice and Over-occupied remain.
+34. Hidden duplicate delta chips stacked under three Overview tiles, in-screen and in the orphan copy.
+35. The orphan tile row parked outside the phone frame, with its own hidden chips.
+36. The stale single-row card ("1 BHK") parked outside the phone, disagreeing with the live card's first row.
+37. Hidden "Paid by / Paid to" buttons inside Property Wise: leftover expense chrome; the card's internal name still says Expense.
+38. Stray artwork parked outside the frame edge.
 
 ### Needs deciding, then drawing
 
-38. The Overview tile row and the chips row both overflow their card with no scroll affordance; decide the treatment.
-39. Info icons sit on three of five Overview tiles; all five or none.
-40. No card has both an info icon and a chevron; cards that do both need both.
-41. The losing-money rows and Property Wise rows carry no chevron, though every one opens a list.
+39. The Overview tile row and the chips row both overflow their card with no scroll affordance; decide the treatment.
+40. Info icons sit on three of five Overview tiles; all five or none.
+41. No card has both an info icon and a chevron; cards that do both need both.
+42. The losing-money rows and Property Wise rows carry no chevron, though every one opens a list.
 
 </details>
 
