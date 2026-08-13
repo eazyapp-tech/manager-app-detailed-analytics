@@ -22,8 +22,15 @@ tags:
 
 > [!NOTE] Corrected 2026-08-09, View all sheet re-audited against Figma
 > - Section 6 rewritten as a Row | Meaning table, built from the current "Dues Overview" frame. It is no longer treated as a stale draft.
-> - Design file fixes: items 2 and 3 renamed Defaulter to Overdue Breakup, item 7 notes its malformed amounts recur in the View all sheet, item 9 now covers a chip the View all sheet draws where §4 allows none, item 25 now covers the Duration segments hide-or-zero question. Items 26 to 28 added.
+> - Design file fixes: items 2 and 3 renamed Defaulter to Overdue Breakup, item 7 notes its wrongly written amounts recur in the View all sheet, item 9 now covers a chip the View all sheet draws where §4 allows none, item 25 now covers the Duration segments hide-or-zero question. Items 26 to 28 added.
 > - Build status no longer lists the view-all sheet as an exception.
+
+
+> [!NOTE] Corrected 2026-08-13, how the change chip gets its comparison figure
+> - Section 4 gains **Where the comparison number comes from**: nothing stores a daily record of dues, and none is needed. A bill carries its due date and its payment date, so what was owed on a past date is every bill due by then that had not been paid yet on that date. Part payments need no special handling, since a part-paid bill becomes two ordinary bills.
+> - Named the trap: reading today's unpaid bills as last month's figure runs about a quarter too small, which would show a steady property red every month.
+> - Two rules stated: nothing to compare against means no chip at all, and the past figure describes the period as we understand it today.
+> - Build guidance 13 to 16 added, including the one known gap, an edited bill reads at its corrected amount.
 
 
 Everything on the Dues analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
@@ -166,6 +173,24 @@ An unfinished period compares against the same elapsed days of the previous peri
 ### Change chips
 
 Exactly two numbers carry one: **This Month's Due** and **Current FY Dues**. Up is bad here: a rising chip shows red, a falling one green, an unchanged number shows a neutral chip. No other number on this screen carries a chip, and nothing carries one on Coming up. The other four tiles have no previous period of the same shape, and a chip on a forecast would be a guess.
+
+**When there is nothing to compare against, there is no chip.** A property in its first month shows the number alone, never a neutral chip and never a green one.
+
+A rising chip means dues grew. It cannot say whether collections slipped or the property simply filled up and billed more people. Both read red, and the screen does not claim to tell them apart.
+
+### Where the comparison number comes from
+
+The chip needs one figure the screen does not store: what was owed at the same point last month. Nothing keeps a daily record of dues, and nothing needs to.
+
+Every bill carries the date it was due and, once paid, the date it was paid. That is enough to look back:
+
+> **What was owed on a past date** = every bill due on or before that date that had not been paid yet on that date. A bill counts if it is still unpaid today, or if it was paid after that date.
+
+Part payments need no special handling. When somebody pays half a bill, it becomes two bills: the unpaid part, and a paid part carrying the same due date and the date it was paid. Both are ordinary bills, so the rule above already covers them.
+
+**The trap this avoids.** Asking what is still unpaid from last month gives the wrong answer, because a month of collections has happened since. That figure is roughly a quarter too small, so a property collecting exactly as well as before would show red every month. See the measured figures.
+
+**What the past figure means.** It describes the period as we understand it today, not as the screen looked back then. A bill since deleted does not count. A bill added later, but dated to that period, does count.
 
 ### When a number is red
 
@@ -442,15 +467,19 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 10. **Future windows must reach the list.** *Test it:* tap Due Later; the list opens showing bills due after the shown date.
 11. **Chips compare unfinished periods fairly.** *Test it:* on the 8th, the This Month's Due chip compares against the first 8 days of last month, marked as unfinished, and drops the mark once the month completes.
 12. **Chip direction is up-is-bad on this screen.** *Test it:* a rising This Month's Due shows red; a falling one shows green.
-13. **The stay card hides rather than restating.** *Test it:* a property with zero short-term tenants shows no stay card.
-14. **The property card needs two properties with data.** *Test it:* a single-property account never sees it; a two-property account sees both rows with shares summing to 100%.
-15. **Cross-tab arrivals carry their slice.** *Test it:* tap deposit Received; the Collection list opens on deposit payments, back control names this screen.
-16. **A window labelled forward must look forward.** *Test it:* set the list to a "Next 30 days" option on a property with bills due next month; the list shows those bills. Seeing last month's bills instead is the failure this test exists to catch.
-17. **Coming up counts bills that exist, never bills that might.** *Test it:* on Coming up set to 60 days, the breakdown cards count only bills already raised with due dates in that window; anything the recurring setup has yet to raise appears in Upcoming Dues and nowhere else.
-18. **Bills Summary sits out Coming up.** *Test it:* switch to Coming up; the card shows its sitting-out state, not a Received figure near zero that reads as a collections failure.
-19. **Every category chart shows the top few plus one Others row.** *Test it:* a property with six categories shows the top four or five and one Others row, and the top rows plus Others sum to the card's total.
-20. **The tenant-status sub-breakdown that once sat inside the gauge is not built.** It duplicates §9's Tenant status view; that view is its only home.
-21. **No narrowed self-added-tenant view is built for this screen.** Product has confirmed nobody is granted that permission; if that changes, this screen needs the same scoping the dues list already has, see open item 1.
+13. **The comparison figure counts what was unpaid then, not what is unpaid now.** *Test it:* a ₹10,000 bill due the 5th of last month, paid in full on the 20th, counts its whole ₹10,000 towards last month's comparison figure and nothing towards this month's.
+14. **A part-paid bill counts in full for a date before the payment.** *Test it:* a ₹10,000 bill due the 5th of last month that took ₹4,000 on the 20th contributes ₹10,000 to the figure for the 8th, and ₹6,000 to today's.
+15. **No previous period, no chip.** *Test it:* a property in its first month shows the number with no chip at all, not a neutral one.
+16. **A corrected bill reads at its corrected amount.** Editing a bill's amount after the fact leaves no record of the earlier one, so past figures use the new amount and read slightly small. Rare, and always in that direction. *Test it:* raise a bill, edit its amount down, and confirm nothing else on the screen breaks.
+17. **The stay card hides rather than restating.** *Test it:* a property with zero short-term tenants shows no stay card.
+18. **The property card needs two properties with data.** *Test it:* a single-property account never sees it; a two-property account sees both rows with shares summing to 100%.
+19. **Cross-tab arrivals carry their slice.** *Test it:* tap deposit Received; the Collection list opens on deposit payments, back control names this screen.
+20. **A window labelled forward must look forward.** *Test it:* set the list to a "Next 30 days" option on a property with bills due next month; the list shows those bills. Seeing last month's bills instead is the failure this test exists to catch.
+21. **Coming up counts bills that exist, never bills that might.** *Test it:* on Coming up set to 60 days, the breakdown cards count only bills already raised with due dates in that window; anything the recurring setup has yet to raise appears in Upcoming Dues and nowhere else.
+22. **Bills Summary sits out Coming up.** *Test it:* switch to Coming up; the card shows its sitting-out state, not a Received figure near zero that reads as a collections failure.
+23. **Every category chart shows the top few plus one Others row.** *Test it:* a property with six categories shows the top four or five and one Others row, and the top rows plus Others sum to the card's total.
+24. **The tenant-status sub-breakdown that once sat inside the gauge is not built.** It duplicates §9's Tenant status view; that view is its only home.
+25. **No narrowed self-added-tenant view is built for this screen.** Product has confirmed nobody is granted that permission; if that changes, this screen needs the same scoping the dues list already has, see open item 1.
 
 ## 20. Open items
 
@@ -474,7 +503,7 @@ Breakup by Stay Duration hides when the property has no short-term tenants. Dues
 4. The forecast card is titled "Upcoming Rent (to be added)". It counts every configured type: **Upcoming Dues**. Its chart also carries the axis label "Overdue Timeline", left over from a copied chart; it is a forward-looking card and needs its own label.
 5. Change chips are drawn on four tiles (May's Due, May's Projected Due, All Past Dues, Current FY Dues). Only two carry a chip: This Month's Due and Current FY Dues.
 6. **Change chip colours are inverted.** A rising, worse number is drawn green; it must be red. Up is bad on this whole card.
-7. The gauge and Deposit Dues headlines show wrongly written amounts ("₹15,00,000 L", a full number plus a stray unit letter). Format as ₹15L. The View all sheet repeats the same malformed pattern on nearly every one of its own amounts.
+7. The gauge and Deposit Dues headlines show wrongly written amounts ("₹15,00,000 L", a full number plus a stray unit letter). Format as ₹15L. The View all sheet writes nearly every one of its own amounts the same wrong way.
 8. The global filter chip at the top of the screen reads "Today". It should show one of the five locked options, defaulting to This Month.
 9. The View all sheet draws a change chip on Past Dues, a number §4 says should carry none. The arrow is also the wrong colour, red for a fall, the same inversion as item 6.
 10. The Restricted-state mockup's gauge shows a different Due Later window ("08 Aug–31 Aug") than the live card ("After 08 Aug"). Sync the two.
@@ -522,6 +551,9 @@ Measured on production, 7 August 2026 evening, amounts in rupees. Totals exclude
 |---|---|---|
 | Unpaid dues, live tenants and bookings | 3.56 million dues, ₹3,294 crore | the scale every total must survive |
 | Bills already raised with a due date more than a week out | 8,703 dues, ₹28.5 crore | Coming up: real money with future dates that no period setting could reach |
+| Bills due in the first eight days of last month: owed at the time, against still unpaid today | ₹173.0 crore against ₹133.5 crore, 23% smaller | the comparison figure has to be rolled back, never read off today's unpaid bills |
+| Paid bills with no payment date recorded | 74 out of 6.56 million, 0.001% | the roll-back rests on the payment date, and it is there |
+| Bills split by a part payment | 186,716 since January, 37,510 in the last 30 days | part payments leave both halves on file, so they need no special handling |
 | Share already overdue | 99.5% of unpaid money | the gauge's dominant-slice treatment (§21.23) |
 | Ageing: 22+ days | 92% of overdue money | the fifth bucket: 22–90 split from 90+ |
 | Old tenants' unpaid dues | 0.23% of the total, median due ₹10 | one row is enough, never a full card |

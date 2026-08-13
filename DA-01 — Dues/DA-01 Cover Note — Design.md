@@ -13,9 +13,9 @@ owner: Sanchay
 
 [[DA-01 Dues — Handoff Sheet]] is the spec. Your sections: **21** (the full fix list), **17** (what each card shows when it is empty, healthy or broken), **6 and 10** (the view all sheet and the Overdue Breakup card both need real design work, not just a copy fix), and **3** if you are writing the info-icon content.
 
-## The view all sheet needs a fresh pass, not a fix
+## The view all sheet
 
-The current frame for this sheet (§6) is an old draft built on different vocabulary ("Invoice Breakdown," a different total format) and shouldn't be used as a reference. Build it fresh off the six Overview tiles plus this month's category and stay-duration rows, fully drillable, same as every other list on this screen.
+Section 6 is now written from the current frame, row by row. It restates the six Overview tiles, then breaks this month's dues down by category and by stay length, every row opening its own filtered list. Its fixes sit in the numbered list with everything else: the amounts are written the same wrong way as the gauge, and it draws a chip on a row that section 4 gives no chip to.
 
 ## The six biggest fixes
 
