@@ -46,7 +46,7 @@ Everything on the Complaints analytics screen: what each number means, what wind
 
 **Building the backend?** Read everything except sections 19 and 23. Start with Build guidance. Section 3 is the wording for every info icon, one row per number.
 
-**Working on the design?** Sections 4 to 16, 19, and 23, which collects every fix in one list. Nothing for this screen's empty, healthy or failed states is drawn yet; section 19 is the brief for all of them.
+**Working on the design?** Sections 4 to 16, 19, and 23, which collects every fix in one list. Only two states are drawn, both on Current Status; section 19 is the brief for the rest.
 
 **Just need the decisions?** Sections 1, 20 and 22, plus the measured figures at the end.
 
@@ -64,7 +64,7 @@ Everything on the Complaints analytics screen: what each number means, what wind
 - **A record of when a complaint escalates.** The system sends the escalation notifications and keeps no record that it did. Escalation Rate cannot be built until each escalation is written down.
 - **The homescreen's Issues card counts differently from this screen.** It counts complaints raised in the period; this screen counts complaints active in the period. Both are meant to move to the same model, already ticketed as a priority fix on the homescreen. Build it once and both agree.
 
-**The design is not signed off.** Every other analytics section in the design file carries a "done" marker. This one does not, and it has no empty, healthy or failed states drawn.
+**The design is not signed off.** Every other analytics section in the design file carries a "done" marker. This one does not. Two states are drawn, both on Current Status; the other ten cards have none, and nothing has a failed state.
 
 ---
 
@@ -133,7 +133,7 @@ Every card carries an info icon that opens a sheet, one row per number, in the h
 
 **Ageing Distribution.** Open complaints grouped by how long they have been waiting. Bars past 7 days show red. Always live.
 
-**Response Time.** Time to Assign, Time before someone is put in charge of a complaint. · First Response, Time before anything first happens on it: picked up, a note added, or the status moved.
+**Response Time.** Time to Assign, Time before someone is put in charge of a complaint. · First Response, Time before anything first happens on it: assigned, a note added, or the status moved.
 
 **Cost of Issues.** Total Impacted, Money spent on complaints in the selected period. · Open Issues, Of those complaints, how many are still open. · Avg Cost, Average spend per complaint that had money on it. · Resol. Time, Average time to resolve, for complaints with money on them.
 
@@ -162,7 +162,7 @@ The homescreen's Issues card says "Unresolved" and "Active" where this screen sa
 
 ### The time filter
 
-Options: **Last 7 days · This Month (default) · Last Month · Current FY · All Time · Custom.** Custom stops at today: a complaint is raised when someone complains, so there is nothing ahead of today to show, and this screen has no forward setting. The filter stays where the manager put it while the app is open; a fresh launch opens on This Month. Coming back from a drill returns to the screen as it was left, with fresh numbers. A day runs midnight to midnight, India time.
+Options: **Last 7 days · This Month (default) · Last Month · Current FY · Custom · All Time.** Last 7 days is this screen's own: complaints move in days where money moves in months, and half are resolved inside two, so a week is the window a manager actually asks about. Custom stops at today: a complaint is raised when someone complains, so there is nothing ahead of today to show, and this screen has no forward setting. The filter stays where the manager put it while the app is open; a fresh launch opens on This Month. Coming back from a drill returns to the screen as it was left, with fresh numbers. A day runs midnight to midnight, India time.
 
 Two kinds of number sit side by side on this screen.
 
@@ -206,15 +206,17 @@ On the default view most of the time the period is still running. Change chips c
 
 ### Change chips
 
-The six Overview tiles, the four Cost of Issues numbers, and SLA Rate carry one. Nothing else does: the breakdowns, the ageing bars and the trend already show a shape, and an arrow on a shape is noise. Direction is set per number: **Issues Resolved and SLA Rate are green when rising; every other number is red when rising.** Nothing carries a chip on All Time, and the View all sheet carries none.
+The six Overview tiles, the four Cost of Issues numbers, and SLA Rate carry one. Nothing else does: the breakdowns, the ageing bars and the trend already show a shape, and an arrow on a shape is noise. Direction is set per number: **Issues Resolved and SLA Rate are green when rising; every other number is red when rising.** Where the previous period had nothing at all, the chip shows the change as a count and drops the percentage; where both periods are zero, no chip. Nothing carries a chip on All Time, and the View all sheet carries none.
+
+⚠ Good-up and bad-up on one screen is component work: the shared chip defaults to one direction per screen, and this row needs both. Inventory, Collection and Expense log the same need.
 
 ### When a number is red
 
-Red where a promise to a tenant is broken. The overdue bar. The ageing bars past seven days, because no target time on this screen is longer than seven days, so anything still waiting past a week is late whatever its category. A change chip moving the wrong way. Nothing else: a slow average is a fact, not a missed promise, and a property just starting out must not open red.
+Red only where somebody can be held to it. On this screen that is a promise to a tenant, broken. The overdue bar. The ageing bars past seven days, because no target time on this screen is longer than seven days, so anything still waiting past a week is late whatever its category. A change chip moving the wrong way. Nothing else: a slow average is a fact, not a missed promise, and a property just starting out must not open red.
 
 ### The action bar
 
-Two, both on cards where the number names the work. On Current Status: the overdue count with **Send Reminder**, which nudges the tenants and assignees of every overdue complaint in view; never at zero. On Ratings & Feedback: the pending-rating count with **Send Reminder**, which asks the tenants of resolved, unrated complaints in view to rate; never at zero, and never the same person about the same complaint twice in a week. Both act on the complaints the filter is showing, so the manager sees the number before pressing.
+Two, both on cards where the number names the work. On Current Status: the overdue count with **Send Reminder**, which nudges the tenants and assignees of every overdue complaint in view; never at zero. It confirms before sending, naming how many complaints, tenants and team members; an overdue complaint with nobody assigned goes to the property's manager; and it never sends for the same complaint twice within a day, showing "Reminded 2h ago" in the meantime. On Ratings & Feedback: the pending-rating count with **Send Reminder**, which asks the tenants of resolved, unrated complaints in view to rate; never at zero, and never the same person about the same complaint twice in a week. Both act on the complaints the filter is showing, so the manager sees the number before pressing.
 
 ### Loading, failure, sorting, entry
 
@@ -231,9 +233,9 @@ Six tiles. All Time-scoped. All carry a change chip.
 | **Issues Created** | Complaints raised in the window | Time-scoped |
 | **Issues Resolved** | Complaints resolved in the window, whenever raised. A Closed complaint is not counted | Time-scoped |
 | **Open Backlog** | Complaints open at any point in the window, still open today. Shrinks over time for a past window | Time-scoped |
-| **Reopened** | Complaints that were resolved and came back, in the window | Time-scoped |
+| **Reopened** | Complaints that were resolved and came back, in the window. Once per complaint, however many times it bounced | Time-scoped |
 | **Repeat Complaints** | Same room, same category, within 30 days of the last one resolving. Section 3 | Time-scoped |
-| **Average Resolution Time** | Average from raised to resolved, in hours, over complaints resolved in the window. Counts only resolved complaints; a complaint open for a year is not in it. Shows how many it is built on | Time-scoped |
+| **Average Resolution Time** | Average from raised to resolved, over complaints resolved in the window. In hours under a day, in days from a day up, so 137 hours reads "5.7 days". Counts only resolved complaints; a complaint open for a year is not in it. Shows how many it is built on | Time-scoped |
 
 The design labels the fourth tile "Reopen Rate" in one place and "Reopen Issues" in another; it is a count and reads **Reopened**.
 
@@ -258,7 +260,9 @@ The insight for the Overview lives here, not on the tile row, which has no room 
 ---
 ## 7. Current Status
 
-Every complaint in the window, grouped by where it stands now, in a donut. Below it, the urgency split of the open ones. At the bottom, the overdue count with its action.
+Every complaint that was open at any point in the window, grouped by where it stands now, in a donut: the same population as Open Backlog, so the two agree. The five slices sum to the centre. Below it, the urgency split of the open ones. At the bottom, the overdue count with its action.
+
+On a past window a complaint that was resolved inside the window and later reopened stays in Resolved for that window; the reopen shows in the window it happened in. **Test it:** a complaint resolved in March and reopened in April sits in March's Resolved and April's Reopened, and March's donut does not change when April happens.
 
 | Row | Meaning |
 |---|---|
@@ -290,18 +294,18 @@ Two numbers, both over complaints raised in the window, both showing how many co
 | Row | Meaning |
 |---|---|
 | **Time to Assign** | Time from raised until a named team member is put in charge. Only complaints that were assigned; where none were, a dash, never zero |
-| **First Response** | Time from raised until anything first happens: someone picks it up, adds a note, or moves the status. Where the first thing that happens is the resolution, that counts |
+| **First Response** | Time from raised until anything first happens: someone is assigned, adds a note, or moves the status. Where the first thing that happens is the resolution, that counts |
 
 The clock counts every hour, day and night. A complaint raised at 11pm and assigned at 8am waited nine hours. Whether to count working hours only is an open item, section 22.
 
 ## 10. Cost of Issues
 
-Only complaints with money spent on them: an expense linked to the complaint. All four Time-scoped, and all carry a change chip. No red on this card.
+Only complaints with money spent on them: an expense linked to the complaint. All four Time-scoped, and all carry a change chip. No red on this card. This card was once described as a live card about open complaints only; it is not, because a period view is what lets a manager see whether complaint spend is rising.
 
 | Row | Meaning |
 |---|---|
 | **Total Impacted** | Money spent fixing complaints in the window. Shows how many complaints it covers |
-| **Open Issues** | Of those complaints, how many are still open |
+| **Open Issues** | Of those complaints, how many are still open, and the money spent on them so far |
 | **Avg Cost** | Total Impacted divided by the complaints it covers |
 | **Resol. Time** | Average from raised to resolved, for complaints with money on them |
 
@@ -317,13 +321,13 @@ Three numbers over complaints raised in the window.
 | **Escalation Rate** | Complaints that moved up to the next responder, as a share of complaints raised. Cannot be built until escalations are recorded, section 1 |
 | **SLA Rate** | Complaints finished within their target time, as a share of every complaint whose outcome is decided. Carries a change chip, green when rising |
 
-SLA Rate counts a complaint the moment its outcome is known: resolved inside the target is a keep, past the target is a miss whether or not it has been resolved. Complaints still inside their target are not yet counted either way, so a recent window's figure settles a few days after it ends. Shows how many complaints it is built on. **Test it:** a complaint raised on the 28th with a seven-day target has not passed or kept by the 31st, and is not in the month's figure until the 4th.
+A past window is judged against the target that applied when the complaint was raised, so changing a target today does not rewrite last month. SLA Rate counts a complaint the moment its outcome is known: resolved inside the target is a keep, past the target is a miss whether or not it has been resolved. Complaints still inside their target are not yet counted either way, so a recent window's figure settles a few days after it ends. Shows how many complaints it is built on. **Test it:** a complaint raised on the 28th with a seven-day target has not passed or kept by the 31st, and is not in the month's figure until the 4th.
 
 ## 12. Team Performance
 
 Two tabs. Both Time-scoped.
 
-**Top Performer.** Team members ranked by promises kept: complaints finished within their target, shown as a count out of a count, "9 of 10 on time", never a bare percentage. A complaint past its target counts against whoever holds it, resolved or not. A complaint that moves between people counts for whoever holds it now. Someone who has left the team gets no row; their open complaints move to unassigned.
+**Top Performer.** The five team members with the most complaints in the window, ranked by promises kept, with View more when there are others: complaints finished within their target, shown as a count out of a count, "9 of 10 on time", never a bare percentage. A complaint past its target counts against whoever holds it, resolved or not. A complaint that moves between people counts for whoever holds it now. Someone who has left the team gets no row; their open complaints move to unassigned. Keeping a departed name on a live chart makes work look owned that is not.
 
 **Team.** Two bars per person: complaints that became theirs in the window, and complaints they resolved in the window. Both cover the same window, so the pair says whether someone is keeping up with what they are given, not what is on their desk right now: the two bars are different complaints. One more pair at the end for **Unassigned**: complaints that arrived in the window and never got an owner, and complaints resolved with nobody assigned.
 
@@ -337,13 +341,13 @@ One card, two tabs. Both Time-scoped; both sort highest to lowest and carry each
 
 **Reporter.** Where complaints come from: **Tenant App · Complaint Bot · Team Members · Admin**, plus **Unknown** for complaints with no recorded source, hidden at zero. Each complaint lands in exactly one bar: a tenant complaint that came through the bot is Complaint Bot only. Admin and Team Members are told apart by role.
 
-**Category.** The four largest categories in the window, then **Others**, which holds everything else and opens in two steps: tapping it lists the full remainder, and each row inside drills on its own. Four rather than the suite's usual three because complaints spread wider across categories than money does across bill types; four named rows cover about three fifths of everything.
+**Category.** The four largest categories in the window, then **Others**, which holds everything else and holds everything else; complaints with no category recorded appear as **Unknown**, hidden at zero, so the rows sum to Issues Created. Others opens in two steps: tapping it lists the full remainder, and each row inside drills on its own. Four rather than the suite's usual three because complaints spread wider across categories than money does across bill types; four named rows cover about three fifths of everything.
 
 The category names in the design are placeholders. Real ones are Electrical Appliances, Plumbing, Furnishings/Carpentry, Electricity and Power, Cleaning, Internet, House Keeping. Maintenance is not a category anyone uses and not a separate module.
 
 ## 14. Issues Trend
 
-Complaints raised against complaints resolved, month by month, stacked. Its own range control: **6 · 12 · 24 months**. It ignores the filter and says so beside its title. Plot the movement, not the level: a property can sit at forty open complaints all year while handling four hundred, and a line of the level draws straight through all of it.
+Complaints raised against complaints resolved, month by month, stacked. Its own range control: **6 · 12 · 24 months**. It ignores the filter and says so beside its title. The current month's bar is drawn as unfinished, the same mark the chips use. Plot the movement, not the level: a property can sit at forty open complaints all year while handling four hundred, and a line of the level draws straight through all of it.
 
 ## 15. Ratings & Feedback
 
@@ -359,7 +363,7 @@ Only ratings of one to five count. **Test it:** the average can never display ab
 
 ## 16. Property Performance
 
-Only when more than one property is in view. Each property with its complaints resolved out of its total for the window, sorted by open complaints, most first, and each row's share of the total. Its own dropdown, offering the same options as the filter at the top; the top filter pulls it back into line. Raw counts, not per-bed: the question here is where to send someone this week, and forty open complaints is forty pieces of work whatever the building's size. Shows how many complaints each row is built on, since one month at one property is often one or two.
+Only when more than one property is in view. Each property with its complaints resolved out of its total for the window, sorted by open complaints, most first, and each row's share of the total. A property with no complaints in the window sits at the bottom with zero, never hidden. Its own dropdown, offering the same options as the filter at the top; the top filter pulls it back into line, and one card can be deliberately set aside until the top filter next changes. Raw counts, not per-bed: the question here is where to send someone this week, and forty open complaints is forty pieces of work whatever the building's size. Shows how many complaints each row is built on, since one month at one property is often one or two.
 
 ---
 ## 17. What each number opens
@@ -368,7 +372,7 @@ Only when more than one property is in view. Each property with its complaints r
 
 ### The rules
 
-A drill filters the complaints list. It never re-scopes the screen; the trend bars are the one exception and they move the period. The destination opens on the same window and the same properties, and the back control names this screen. Records add back to the number tapped. Rates and averages are not tappable; the counts beside them are.
+A drill filters the complaints list. It never re-scopes the screen; the trend bars are the one exception and they move the window. Everything tappable looks tappable. The destination opens on the same window and the same properties, and the back control names this screen. Records add back to the number tapped. Rates and averages are not tappable; the counts beside them are. On arrival, open complaints sort most overdue first; resolved ones most recently resolved first; rated ones worst rating first.
 
 ### When the window changes what a tap shows
 
@@ -434,7 +438,7 @@ Today the complaints list filters by: when raised, status, category and sub-cate
 
 ### What the destination says when you arrive
 
-The suite's three requirements stand: name the slice in place of the fixed title, show the active filter without scrolling, and name the filter in the empty state with a way on. Shared work, still unowned.
+The suite's three requirements stand: name the slice in place of the fixed title, show the active filter without scrolling, and name the filter in the empty state with a way out. Shared work, still unowned.
 
 </details>
 
@@ -442,12 +446,12 @@ The suite's three requirements stand: name the slice in place of the fixed title
 
 ## 18. Who can see this
 
-**Anyone who can view complaints.** The suite rule: each analytics tab takes the permission of the records it describes. No partial state; every card, including Team Performance, is visible to anyone who can see complaints. If someone's access is narrowed to certain properties, every number counts only those properties and still matches what the drill returns. Without permission: the standard lock, *"Analytics Restricted, You don't have permission to view these analytics. Request access from your admin,"* with Request Access.
+**Anyone who can view complaints.** The suite rule: each analytics tab follows the permission of the records it describes. No partial state; every card, including Team Performance, is visible to anyone who can see complaints. The three actions, both Send Reminders and Add Complaint, follow the permission to write complaints; someone who can only view sees the numbers and not the buttons. If someone's access is narrowed to certain properties, every number counts only those properties and still matches what the drill returns. Without permission: the standard lock, *"Analytics Restricted, You don't have permission to view these analytics. Request access from your admin,"* with Request Access.
 
 ---
 ## 19. What each card shows when it is empty, healthy or broken
 
-An empty card here is usually good news, the opposite of every money screen. Nothing for this screen's states is drawn yet; this section is the brief.
+An empty card here is usually good news, the opposite of every money screen. Two states are drawn, both on Current Status, and one of them reads a good-news zero as a waiting room; this section is the brief for all of them.
 
 ### The zeros, told apart
 
@@ -456,6 +460,7 @@ An empty card here is usually good news, the opposite of every money screen. Not
 | Never raised a complaint here | The whole-screen state below. No cards render. For complaints there is no separate setup stage: raising one is the setup |
 | In-window zero: nothing raised this window, complaints exist elsewhere in time | Cards draw. Time-scoped numbers read zero, plain, no message. Live numbers show what is genuinely open |
 | Complaints came in and none were resolved | A real zero on Issues Resolved with its chip red. Never dressed as good news |
+| An average or a rate with nothing to average | A dash, never zero: Average Resolution Time, Median, SLA Rate, Reopened rate, Repeat rate, Avg Cost, Resol. Time, Average Rating all read "—" when their base is empty. Zero would say instant when the truth is none |
 | Good-news zero | The healthy states below |
 | Not yet in use: no ratings, no money linked, nobody assigned | The empty states below. Not a gap and not success: a part of the product this property has not started on. Shrinks as it does |
 | Not recorded | Rooms, categories and sources that were never captured, named as unknown, never guessed into a bucket |
@@ -463,7 +468,7 @@ An empty card here is usually good news, the opposite of every money screen. Not
 
 ### Not set up
 
-When the property has never had a complaint: *"No complaints have been raised here."* with an **Add Complaint** button, the same action the complaints list already offers. This is the most common state the screen will ever show; eleven boxes each explaining their own emptiness is the wrong answer to one situation. Plainly factual, no exclamation: an empty complaints screen almost never means perfection, it means the feature is not in use.
+When the property has never had a complaint: *"No complaints yet. Add your first complaint and this page fills in."* with an **Add Complaint** button, the same action the complaints list already offers. This is the most common state the screen will ever show; eleven boxes each explaining their own emptiness is the wrong answer to one situation. Plainly factual, no exclamation: an empty complaints screen almost never means perfection, it means the feature is not in use.
 
 ### Healthy: good news, no CTA
 
@@ -481,7 +486,7 @@ No button on any: there is nothing to do, which is the point.
 
 | Card | Reads | Button |
 |---|---|---|
-| Ratings & Feedback, resolved complaints but none rated | *"No ratings yet. Tenants are asked to rate a complaint once it's closed."* | **Send Reminder**, when there are resolved complaints to remind about |
+| Ratings & Feedback, resolved complaints but none rated | *"No ratings yet. Tenants are asked to rate a complaint once it's resolved."* | **Send Reminder**, when there are resolved complaints to remind about |
 | Cost of Issues, no money linked | *"No costs linked to complaints yet."* | none |
 | Team Performance, nobody assigned | *"Nobody has been assigned a complaint here yet."* No chart on either tab | none |
 | Response Time, Time to Assign with nothing assigned | A dash in that half, never a zero. First Response still draws | none |
@@ -515,7 +520,7 @@ Per the suite rule, per card, with Retry refetching that card alone.
 2. **Repeat Complaints, Reopened, resolution time and first response all read from a complaint's history, not from the complaint alone.** A complaint's own record does not carry when it was resolved, assigned or reopened. History begins May 2024; nothing before that can be measured, and the sheet says so where it bites.
 3. **Reopened is read from a status moving out of Resolved, never from a reopen label.** *Test it:* on a property with recent reopens, the tile shows more than the handful the label would find.
 4. **The ageing wait for a reopened complaint counts from when it came back.** *Test it:* raised 200 days ago, resolved, reopened 10 days ago, still open: it sits in the 8–15 bar.
-5. **Unassigned is a layer inside every status, never a slice beside them.** *Test it:* New plus In Progress plus Reopened plus Closed equals every open complaint, with unassigned counted once, inside those.
+5. **Unassigned is a layer inside every status, never a slice beside them.** *Test it:* New plus In Progress plus Reopened equals every open complaint, with unassigned counted once, inside those.
 6. **The average rating counts only one to five.** *Test it:* the screen can never show a figure above five.
 7. **Category rows group on the name people see, not on the stored string.** *Test it:* Internet with and without a trailing space is one row; Waterproofing & Paint however its ampersand is stored is one row.
 8. **The reporter bars never overlap.** *Test it:* the bars sum to Issues Created; a bot complaint sits in Complaint Bot and not in Tenant App.
@@ -541,7 +546,6 @@ Per the suite rule, per card, with Retry refetching that card alone.
 8. **The homescreen's Issues card and this screen count differently** until its ticketed fix lands. Engineering.
 9. **The complaints list's Issue Time filter changes nothing; its Reopened option matches nothing; Unassigned is missing on web.** Engineering.
 10. **Ratings are being written with the value 6, still, this year.** Something other than the app is writing them; find it. Engineering.
-11. **The Expense screen's empty states are built from a duplicated Complaints card**, and one Inventory card sits among them. Goes back to those two sheets. Design.
 
 ---
 
@@ -558,34 +562,40 @@ Per the suite rule, per card, with Retry refetching that card alone.
 5. The Trend chart says "Last 6 Months" and draws five points.
 6. The ratings gradient has four colour bands for five stars.
 7. A loose copy of the Overview tiles outside the frame says "Reopen Issues"; the live one says "Reopen Rate"; both become **Reopened**.
-8. SLA Rate is a dial with no mark on it.
+8. SLA Rate is a dial with no mark on it. The dial goes: SLA Rate is a percentage with a chip like the tiles beside it, since no target percentage has been agreed and a mark without one is decoration.
 9. The Trend chart's legend reads Resolved and Pending; it becomes Raised and Resolved, section 14.
 10. The Team tab's legend reads Created; it means assigned, section 12.
 11. The category examples are placeholders, section 13.
 12. Team Performance's sample names are the engineering team.
+13. The filter chips drawn are Today · This Week · This Month · Last Month; the set is section 4's, and Today and This Week go.
+14. The Team tab is drawn as one stacked bar per person; it is two bars side by side, section 12, so the two can be read against each other.
+15. Top Performer is drawn ranked by resolution time; it ranks by promises kept, section 12.
+16. Team Performance and Issues Sources each carry a "This Month" dropdown of their own; neither has one, section 4.
+17. Reporter rows are drawn unsorted and without their share; both sort highest to lowest and carry the share, section 13.
+18. Cost of Issues draws "Resol. Time" in red; no red on that card, section 10.
 
 **Missing**
 
-13. Every empty, healthy and failed state, section 19. Nothing is drawn.
-14. The View all sheet, section 6.
-15. A time dropdown on Property Performance.
-16. Insight lines on Cost of Issues, Team Performance and Ratings, and one on the View all sheet.
-17. An unassigned row on both Team Performance tabs; an Unknown bar on Reporter.
-18. Add Complaint on the whole-screen empty state; Send Reminder on the empty Ratings card.
-19. Room for three short lines, section by importance: how many complaints Average Resolution Time is built on; that the overdue count is using the standard target; that the ageing bars are not tappable yet.
+19. Every empty, healthy and failed state, section 19. Two exist, both on Current Status; the healthy one reads "All complaints resolved! New complaints will appear here as they come in.", which turns good news into a waiting room and does not ship. Nothing else is drawn.
+20. The View all sheet, section 6.
+21. A time dropdown on Property Performance.
+22. Insight lines on Cost of Issues, Team Performance and Ratings, and one on the View all sheet.
+23. An unassigned row on both Team Performance tabs; an Unknown bar on Reporter.
+24. Add Complaint on the whole-screen empty state; Send Reminder on the empty Ratings card.
+25. Room for three short lines, section by importance: how many complaints Average Resolution Time is built on; that the overdue count is using the standard target; that the ageing bars are not tappable yet.
 
 **Remove**
 
-20. The Trend chart's fifth bar labelled "Move-out", clipped past the right edge, copied from Tenants.
-21. The Team chart's fifth bar labelled "Move-out", the same.
-22. The hidden "Paid by / Paid to" switch inside Property Performance, and its layer name "Property Expense", both from Expense.
-23. The hidden text about short-term guest approvals inside the Overview Snapshot.
-24. The onboarding tooltip about swipe gestures rendering over the Team chart.
-25. The Advanced Insights frames beside the screen. Everything of value in them has landed on the main screen; deleted.
+26. The Trend chart's fifth bar labelled "Move-out", clipped past the right edge, copied from Tenants.
+27. The Team chart's fifth bar labelled "Move-out", the same.
+28. The hidden "Paid by / Paid to" switch inside Property Performance, and its layer name "Property Expense", both from Expense.
+29. The hidden text about short-term guest approvals inside the Overview Snapshot.
+30. The onboarding tooltip about swipe gestures rendering over the Team chart.
+31. The older draft screen beside this one, with its Advanced Insights blocks. Everything of value in it has landed on the main screen, and it is ruled dead: delete it. Before deleting, note it still carries three things the live screen lost that this sheet asks for: the "31-45 +" ageing label, the Team legend reading "Assigned", and an insight line on the cost card.
 
 **Decide**
 
-26. Whether the design's face set has a face for no ratings, or the average and face both hide.
+32. Whether the design's face set has a face for no ratings, or the average and face both hide.
 
 </details>
 

@@ -30,7 +30,7 @@ Handoff documentation for the RentOk Manager App analytics suite: nine screens, 
 | 5 | Tenants | [DA-09 sheet](DA-09%20—%20Tenants/DA-09%20Tenants%20—%20Handoff%20Sheet.md) | [read me first](DA-09%20—%20Tenants/DA-09%20Cover%20Note%20—%20Nimit.md) | [design map](DA-09%20—%20Tenants/DA-09%20Cover%20Note%20—%20Design.md) | ✅ v2.1 · voice exemplar |
 | 6 | Old Tenants | — | — | — | 🟡 next up |
 | 7 | Bookings | — | — | — | ⬜ |
-| 8 | Complaints | [DA-10 sheet](DA-10%20—%20Complaints/DA-10%20Complaints%20—%20Handoff%20Sheet.md) | — | — | ✅ v1 · cover notes to follow |
+| 8 | Complaints | [DA-10 sheet](DA-10%20—%20Complaints/DA-10%20Complaints%20—%20Handoff%20Sheet.md) | [read me first](DA-10%20—%20Complaints/DA-10%20Cover%20Note%20—%20Nimit.md) | [design map](DA-10%20—%20Complaints/DA-10%20Cover%20Note%20—%20Design.md) | ✅ v1.1 · audited |
 | 9 | Leads | — | — | — | ⬜ newest addition |
 
 ## Jump straight into a sheet
