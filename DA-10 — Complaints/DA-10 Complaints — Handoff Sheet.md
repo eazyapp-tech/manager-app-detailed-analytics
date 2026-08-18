@@ -6,7 +6,7 @@ tags:
   - complaints
   - detailed-analytics
   - handoff
-status: v1 · developer handoff
+status: v1.1 · design verification, source sweep and sibling check applied · developer handoff
 owner: Sanchay
 ---
 # Complaints — Handoff Sheet
@@ -118,6 +118,10 @@ Every complaint has a target time, from its category. Where the property has set
 ### Ratings
 
 A tenant may rate a complaint after it is resolved, one to five stars, and leave a comment. Only ratings of one to five count. **Test it:** the average can never display a figure above five.
+
+### How long something took
+
+Shown in the unit that fits it: **minutes under an hour, hours under a day, days from a day up.** So 40 minutes reads "40 mins", six hours reads "6 hrs", and 137 hours reads "5.7 days". Every duration on this screen does this, so two numbers sitting side by side can carry different units, which is correct: a first response measured in minutes beside a resolution measured in days is the useful comparison, not a mismatch.
 
 ### Money on this screen
 
@@ -235,7 +239,7 @@ Six tiles. All Time-scoped. All carry a change chip.
 | **Open Backlog** | Complaints open at any point in the window, still open today. Shrinks over time for a past window | Time-scoped |
 | **Reopened** | Complaints that were resolved and came back, in the window. Once per complaint, however many times it bounced | Time-scoped |
 | **Repeat Complaints** | Same room, same category, within 30 days of the last one resolving. Section 3 | Time-scoped |
-| **Average Resolution Time** | Average from raised to resolved, over complaints resolved in the window. In hours under a day, in days from a day up, so 137 hours reads "5.7 days". Counts only resolved complaints; a complaint open for a year is not in it. Shows how many it is built on | Time-scoped |
+| **Average Resolution Time** | Average from raised to resolved, over complaints resolved in the window, in the unit that fits it. Counts only resolved complaints; a complaint open for a year is not in it. Shows how many it is built on | Time-scoped |
 
 The design labels the fourth tile "Reopen Rate" in one place and "Reopen Issues" in another; it is a count and reads **Reopened**.
 
@@ -296,7 +300,7 @@ Two numbers, both over complaints raised in the window, both showing how many co
 | **Time to Assign** | Time from raised until a named team member is put in charge. Only complaints that were assigned; where none were, a dash, never zero |
 | **First Response** | Time from raised until anything first happens: someone is assigned, adds a note, or moves the status. Where the first thing that happens is the resolution, that counts |
 
-The clock counts every hour, day and night. A complaint raised at 11pm and assigned at 8am waited nine hours. Whether to count working hours only is an open item, section 22.
+Each reads in the unit that fits it, so one box can say minutes while the other says hours. The clock counts every hour, day and night. A complaint raised at 11pm and assigned at 8am waited nine hours. Whether to count working hours only is an open item, section 22.
 
 ## 10. Cost of Issues
 
@@ -521,16 +525,17 @@ Per the suite rule, per card, with Retry refetching that card alone.
 3. **Reopened is read from a status moving out of Resolved, never from a reopen label.** *Test it:* on a property with recent reopens, the tile shows more than the handful the label would find.
 4. **The ageing wait for a reopened complaint counts from when it came back.** *Test it:* raised 200 days ago, resolved, reopened 10 days ago, still open: it sits in the 8–15 bar.
 5. **Unassigned is a layer inside every status, never a slice beside them.** *Test it:* New plus In Progress plus Reopened equals every open complaint, with unassigned counted once, inside those.
-6. **The average rating counts only one to five.** *Test it:* the screen can never show a figure above five.
-7. **Category rows group on the name people see, not on the stored string.** *Test it:* Internet with and without a trailing space is one row; Waterproofing & Paint however its ampersand is stored is one row.
-8. **The reporter bars never overlap.** *Test it:* the bars sum to Issues Created; a bot complaint sits in Complaint Bot and not in Tenant App.
-9. **The overdue count and SLA Rate use each complaint's own target time, sub-category first, then category, then the default.** *Test it:* two complaints of the same category but different sub-categories with different targets go overdue at different times.
-10. **SLA Rate counts a past-target complaint as missed whether or not it has been resolved.** *Test it:* a property that never resolves its worst complaint cannot keep a perfect rate.
-11. **Team Performance counts a complaint for whoever holds it now.** *Test it:* a complaint moved from one person to another shows on the second person only.
-12. **The Send Reminder on ratings never messages the same person about the same complaint twice within seven days.**
-13. **Every average and rate shows how many complaints it is built on.** The typical property raises a handful a quarter; a bare average of three complaints is not a trend.
-14. **The Last 7 days option must count backward.** The shared date control offers presets that read forward and resolve backward. *Test it:* a complaint raised yesterday appears; one raised three weeks ago does not.
-15. **The whole-screen empty state fires only when the property has never had a complaint.** A quiet week with history draws plain zeros, not the takeover.
+6. **Every duration reads in the unit that fits it.** *Test it:* a complaint resolved in 40 minutes reads in minutes, one resolved in six hours reads in hours, and one resolved in six days reads in days. None of them reads "0 days".
+7. **The average rating counts only one to five.** *Test it:* the screen can never show a figure above five.
+8. **Category rows group on the name people see, not on the stored string.** *Test it:* Internet with and without a trailing space is one row; Waterproofing & Paint however its ampersand is stored is one row.
+9. **The reporter bars never overlap.** *Test it:* the bars sum to Issues Created; a bot complaint sits in Complaint Bot and not in Tenant App.
+10. **The overdue count and SLA Rate use each complaint's own target time, sub-category first, then category, then the default.** *Test it:* two complaints of the same category but different sub-categories with different targets go overdue at different times.
+11. **SLA Rate counts a past-target complaint as missed whether or not it has been resolved.** *Test it:* a property that never resolves its worst complaint cannot keep a perfect rate.
+12. **Team Performance counts a complaint for whoever holds it now.** *Test it:* a complaint moved from one person to another shows on the second person only.
+13. **The Send Reminder on ratings never messages the same person about the same complaint twice within seven days.**
+14. **Every average and rate shows how many complaints it is built on.** The typical property raises a handful a quarter; a bare average of three complaints is not a trend.
+15. **The Last 7 days option must count backward.** The shared date control offers presets that read forward and resolve backward. *Test it:* a complaint raised yesterday appears; one raised three weeks ago does not.
+16. **The whole-screen empty state fires only when the property has never had a complaint.** A quiet week with history draws plain zeros, not the takeover.
 
 ---
 
