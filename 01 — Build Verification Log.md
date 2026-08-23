@@ -47,7 +47,13 @@ Three sources, and only one is authority on what shipped:
 | `src/v1/analytics/` in rentok-backend | What the code actually does |
 
 Doc against doc would pass a block where both documents agree and the code does neither, so every
-block is checked all three ways. Where a claim depends on live data it is measured on production,
+block is checked all three ways.
+
+**The guide has two halves and both count.** Its prose describes each block; its appendix, "the actual
+queries", restates the SQL per service. The Dues pass first read only the prose, and the appendix was
+read afterwards, on 2026-08-24, when the owner asked whether it had been used. It overturned nothing,
+independently corroborated F2's package defect, and its pointer to `i.added_by` led to F26. **Read
+both halves per tab.** Where a claim depends on live data it is measured on production,
 test and deleted properties excluded, and the query's scope is stated next to the number.
 
 **A difference is not automatically a defect.** Some were decided during the build with the owner in
@@ -117,7 +123,7 @@ A block being wired does not prove every field inside it is. That is checked per
 
 | Tab | Blocks | Reviewed | Findings | State |
 |---|---|---|---|---|
-| Dues | 9, plus the View all screen | All | 25 | Complete |
+| Dues | 9, plus the View all screen | All | 26 | Complete |
 | Collection | 7 | 0 | 0 | Not started |
 | Expense | 5 | 0 | 0 | Not started |
 | Occupancy | 8 | 0 | 0 | Not started |
@@ -169,6 +175,7 @@ Everything still waiting, by who it waits on. An item leaves this table when its
 | Dues by Property | Hide on a single-property account | F23 |
 | Forward window | Carry the D9 rules onto the Custom path: no chip, dash for event counts, forecasts extend | F17, D9 |
 | Bookings | Confirm whether `is_confirmed = 0` means pending or cancelled; two places in the code disagree | F4 |
+| Added By | Say what creator codes 5 and 6 are; they are shown as RentOk today | F26 |
 
 **Waits on the owner**
 
@@ -178,6 +185,7 @@ Everything still waiting, by who it waits on. An item leaves this table when its
 | Forward window | What an event count shows on a window that straddles today | D9 |
 | Occupancy | What an unapproved booking's bed reads as | F4 |
 | Under notice rename | Whether the Tenants label becomes Under eviction with two named parts | S3 in the register |
+| Added By | Name creator codes 5 and 6, once Vivek says what they are | F26 |
 
 **Waits on the other sheets**
 
@@ -591,6 +599,47 @@ there corrects both. But the choice of `current_fy` over `fy_ytd` is written sep
 
 It also carries `// TODO: hide this section when the property has no short-stay tenants.` Third site
 for the F23 rule, and the only one where it was read and deferred rather than missed.
+
+### F26. Two creator codes have no name and are silently shown as RentOk
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek, and the owner for the naming
+
+DA-01 §20, open item 2, asked engineering to settle this before the view shipped: "Dues worth about
+₹2.8 crore carry a creator category that has no display name. Added By needs a name for it before
+that view ships."
+
+It shipped with `addedByLabel`'s `default: return 'RentOk'`, so every unnamed code is folded into
+RentOk's own bar rather than named.
+
+**Measured on production**, unpaid dues on live properties, counted with `EXISTS` rather than a join
+so duplicate tenant rows cannot inflate it, and capped at ₹1 crore a bill to keep outlier rows out:
+
+| Code | Shown as | Unpaid bills | Unpaid amount | Properties |
+|---|---|---|---|---|
+| 1 | RentOk | 3,391,377 | ₹314.4 Cr | 21,864 |
+| 0 | Owner | 85,756 | ₹89.7 Cr | 13,878 |
+| 2 | Partner | 44,601 | ₹52.2 Cr | 3,125 |
+| **6** | **RentOk, unnamed** | **3,725** | **₹2.78 Cr** | **264** |
+| **5** | **RentOk, unnamed** | **2,665** | **₹2.07 Cr** | **271** |
+| 4 | Tenant | 9 | ₹55,060 | 8 |
+
+**There are two unnamed codes, not one.** The sheet found code 6 and measured it at "about ₹2.8
+crore", which matches exactly. Code 5 is a second one, ₹2.07 crore across 271 properties, and neither
+document mentions it. Together they put ₹4.85 crore of bills into RentOk's bar that RentOk did not
+raise, on roughly 500 properties.
+
+**Two things are needed.** Vivek should say what codes 5 and 6 are, and the owner should name them.
+Folding an unknown into an existing named bucket is the one resolution that cannot be checked later,
+because the bar stops being able to tell you it is wrong.
+
+**Also correct as built, checked in the same pass:** Added By takes the top four and folds the rest
+into Others, matching §20's open item 5. `foldTop` suppresses the Others row when there is nothing to
+fold, which is §9's "fewer than four real contributors, no empty Others row". Each bar carries its
+bill count. RentOk gets a bar only when it has an amount, which holds by construction since the base
+pool requires at least ₹1.
+
+**How this was found.** By reading the guide's appendix, which this review had not opened. See the
+audit note under How this review works.
 
 ---
 
