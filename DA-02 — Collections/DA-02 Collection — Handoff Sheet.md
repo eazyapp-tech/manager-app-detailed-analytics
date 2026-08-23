@@ -13,6 +13,13 @@ tags:
 ---
 # Collection — Handoff Sheet
 
+> [!NOTE] Corrected 2026-08-24, at the build verification review
+> - §1 build status: the backend now serves every block from real queries.
+> - D6 applied: the Status tab's five bars, the eviction vocabulary, and the false line about the Dues Active bar removed.
+> - D9 applied: Coming up removed; the forward view is a Due Date Custom window ending after today.
+> - D11 to D15 applied, ruled at the review: running periods end at today, Advance sits outside Total Collection, collection counts the bill amount, no Settlement Pending chip, Collection by Property follows the toggle.
+> - The rulings live in [[01 — Build Verification Log]].
+
 > [!NOTE] Corrected 2026-08-08, from the Inventory uplift's sibling check
 > - Two banned time words swept.
 > - The trend-bar drill now names that it deliberately differs from the suite's re-window rule, and why.
@@ -49,7 +56,7 @@ Everything on the Collection analytics screen: what each number means, what wind
 
 ## 1. Build status
 
-The Paid Date view of the screen is designed and signed off in the design file. The Due Date view, Coming up, the View all sheet and the special states are not drawn yet; §19 lists all of it, and the design file is being actively edited, so §19 should be re-checked at build kickoff. The backend serves this screen as a scaffold: the block is wired and reachable but answers with nothing while the real calculations wait to be written. Nothing in this sheet describes a live defect; it describes what each number must do once built. The three Due Date tiles and the Due Date trend need counting from bills; everything this screen counts today comes from payments, so that is new ground, not a variant. The collections list that most taps land on already exists and works, and its filter drawer already reaches most of the slices this screen needs (§13).
+The Paid Date view of the screen is designed and signed off in the design file. The Due Date view, the forward Custom window, the View all sheet and the special states are not drawn yet; §19 lists all of it, and the design file is being actively edited, so §19 should be re-checked at build kickoff. The backend now serves every block on this screen from real queries, verified block by block on 2026-08-24 against this sheet and the code; every difference found is logged in [[01 — Build Verification Log]] from F27; the five owner rulings from that review are done, D11 to D15, and the remaining fixes sit with engineering in the log's open items. The collections list that most taps land on already exists and works, and its filter drawer already reaches most of the slices this screen needs (§13).
 
 Today the numbers a manager can see disagree with each other: the homescreen's collection figure, the collections list and the old collection widgets do not produce one answer. Making them one answer is part of this build, and the tests in §17 hold every card to it.
 
@@ -83,7 +90,13 @@ A **payment** is one record of money received: a tenant, an amount, a date it ar
 
 ### The base rule
 
-A payment counts if it completed and is still active. A payment that failed, is pending, or was cancelled appears in no number here. The amount counted is what the owner receives: payment processing charges come off first, so a ₹10,000 online payment carrying a ₹200 charge counts as ₹9,800. **Refunds come off everywhere**, not only the headline: every tab, every bar, every property row and every View all row drops when a refund is made against its slice. Part payments count their paid amount; a tenant paying half their rent is collection.
+A payment counts if it completed and is still active. A payment that failed, is pending, or was cancelled appears in no number here. The rules, one per line:
+
+- **Counted at the bill's amount** (D13): a fully paid ₹10,000 bill reads ₹10,000 collected, so bills, dues and collection reconcile exactly.
+- **Processing charges are not subtracted here.** They show on the Payment Settlement card, which counts money net of charges; the gap between the two is the charge.
+- **Advance is the one net exception.** It has no bill, so it counts the payment net of charges, the amount the owner actually holds.
+- **Refunds come off everywhere**, not only the headline: every tab, every bar, every property row and every View all row drops when a refund is made against its slice.
+- **Part payments count their paid amount**: a tenant paying half their rent is collection.
 
 ### The two dates every payment carries
 
@@ -96,7 +109,7 @@ The date money **arrived**, and the date its bill was **due**. The whole screen 
 | **Settled** | Reserved for one meaning: money that has physically reached the owner's bank. Only the Payment Settlement card uses it. A bill being dealt with is "collected" or "adjusted", never "settled". |
 | **Advance** | Two moments of one story. The Overview tile counts advance **received**. The Adjusted Collection row counts advance **used up** against a bill. Same money, entering and leaving. |
 | **Bill** | On this screen and Dues, a bill is a due raised to a tenant. On Expense the same word means a receipt for spending. |
-| **Under notice** | The suite's word for a tenant with a confirmed leaving date. The design's "Under Eviction" label is renamed to match (§19). |
+| **Eviction** | The product's own neutral word for a tenant leaving, whoever raised it. Two states, shown as two rows: **Eviction pending**, a notice raised and not yet approved, and **Eviction approved**, a leaving date approved. No date bound: a tenant past their approved date is still living and still being billed, so they stay counted (D6 in the Build Verification Log). |
 | **Others** | Every overflow list on this screen opens the same way: a bottomsheet naming everything left out of the top rows, each row carrying its own total, each row drillable onward to its own filtered list. One pattern, used everywhere it applies. |
 
 ## 4. How the screen behaves
@@ -120,7 +133,8 @@ What changes when the toggle flips:
 | Collection Breakup | Category and Status gain a billed comparison; Mode and Received by show Collected & Adjusted only (§6) |
 | Collection Status | Hidden (§7) |
 | Collection Trend | The collection bar counts differently (§9) |
-| Adjusted Collection, Collection by Property, Payment Settlement | No change |
+| Collection by Property | Ranks by Collected & Adjusted against the window's bills (§10, D15) |
+| Adjusted Collection, Payment Settlement | No change |
 
 **In Due Date view, adjustments count as dealt with.** A tenant moving out has their ₹10,000 May rent cleared from their deposit: the bill is done and nobody owes anything. If that ₹10,000 sat in Still Unpaid, a manager would chase a tenant who owes nothing. So money cleared from deposit, advance, caution money or a discount all count towards **Collected & Adjusted**, all four, and a discounted bill is just as dealt with as a deposit-adjusted one.
 
@@ -128,13 +142,13 @@ What changes when the toggle flips:
 
 ### The time filter
 
-Options: **This Month (default) · Last Month · Current FY · Custom · All Time · Coming up.**
+Options: **This Month (default) · Last Month · Current FY · Custom · All Time.**
 
-**Custom stops at today. The future belongs to Coming up**, the same forward setting Dues, Tenants and Inventory carry: pick a future date, see the window from tomorrow to that date, default 30 days. On Collection everything in it is a record, never a guess: bills already raised with future due dates, and the money already received against them. Coming up only means something in Due Date view, because money cannot arrive in the future; picking it in Paid Date view shows one line and a way across:
+**Custom may end after today, in Due Date view only.** There is no separate forward setting; a Custom window whose end date is after today is the forward view. Everything in it is a record, never a guess: bills already raised with future due dates, and the money already received against them. In Paid Date view the picker stops at today, because money cannot arrive in the future.
 
-> **Nothing received yet.** Collection counts money as it arrives. Switch to Due Date to see what's billed for this window.
+A window that ends after today changes two things and nothing else: no number carries a change chip, because an unfinished period has nothing of the same shape to compare against; and a number that counts money arriving (the Advance tile, Settlement Pending, Adjusted Collection, Payment Settlement) shows a dash with a one-line reason instead of a figure. The Due Date tiles simply keep counting, because a bill due next month is a fact with a date on it. A Custom window may start in the past and end in the future; what a money-arrived number shows on such a straddling window is an open ruling (D9 in the Build Verification Log).
 
-The switch is tappable. No window can span today: Custom ends at it, Coming up starts after it.
+**A running period ends at today, in both views** (D11). This Month reads the 1st through today; Current FY reads 1 April through today. A bill already raised with a due date later in the month enters when its date arrives, and is readable immediately through a Custom window ending on a future date. This keeps Still Unpaid to money someone owes right now, and keeps every chip comparing the same elapsed days.
 
 Three cards can be set to their own period: Adjusted Collection, Collection by Property and Payment Settlement, each with its own dropdown carrying the same options as the top filter. Changing the top filter pulls every card back into line. The filter stays where the manager put it while the app is open; a fresh launch opens on the default. Coming back from a drill returns to the screen as it was left, with fresh numbers. A day runs midnight to midnight, India time.
 
@@ -149,19 +163,20 @@ Collection has no Live number and no forecast. Everything is a record inside som
 
 ### What every number does on every filter setting
 
-| Number | This Month · Last Month · Current FY · Custom · All Time | Coming up |
+| Number | This Month · Last Month · Current FY · Custom · All Time | Custom ending after today (Due Date view only) |
 |---|---|---|
-| Total Collection + the three source tiles + Advance tile | Counted inside the window | The Paid Date tiles sit out; the view switches to Due Date |
-| Billed · Collected & Adjusted · Still Unpaid (Due Date tiles) | Counted inside the window | Counted inside the window: bills due tomorrow to the chosen date, money already in against them |
-| Current FY tile | Each tile keeps its own fixed window; the filter does not change it | Each tile keeps its own fixed window; the filter does not change it |
-| Settlement Pending tile | Counted inside the window | The card sits out; money cannot arrive in a future window |
+| Total Collection + the three source tiles | Counted inside the window | Not shown: Due Date view replaces these tiles (§5) |
+| Billed · Collected & Adjusted · Still Unpaid (Due Date tiles) | Counted inside the window | Counted inside the window: bills already raised, due tomorrow to the chosen date, and the money already in against them. No chip |
+| Advance tile | Counted inside the window | A dash with the reason: advance is money arriving, and money cannot arrive in the future |
+| Current FY tile | Keeps its own fixed window; the filter does not change it | Unchanged |
+| Settlement Pending tile | Counted inside the window | A dash with the reason; money cannot arrive in a future window |
 | Collection Breakup, all four tabs | Counted inside the window | Counted inside the window, Due Date reading |
 | Collection Status | Counted inside the window | Hidden, with the rest of Paid Date view |
-| Adjusted Collection | Counted inside the window; its own dropdown can pick a different one | The card sits out; money cannot arrive in a future window |
+| Adjusted Collection | Counted inside the window; its own dropdown can pick a different one | A dash with the reason: adjustments are recorded when they happen |
 | Collection by Property | Counted inside the window; its own dropdown can pick a different one | Counted inside the window, Due Date reading: which property has most landing, and how much is already in |
-| Collection Trend | Each keeps its own range; the filter does not change it | Each keeps its own range; the filter does not change it |
-| Payment Settlement | Counted inside the window; its own dropdown can pick a different one | The card sits out; money cannot arrive in a future window |
-| View all sheet | Counted inside the window, except the rows that state their own fixed window | Counted inside the window, Due Date reading |
+| Collection Trend | Each keeps its own range; the filter does not change it | Unchanged |
+| Payment Settlement | Counted inside the window; its own dropdown can pick a different one | A dash with the reason; money cannot arrive in a future window |
+| View all sheet | Counted inside the window, except the rows that state their own fixed window | Counted inside the window, Due Date reading; rows that count money arriving show a dash |
 
 When the filter is on Current FY, the Current FY tile and Total Collection show the same figure. The tile stays: a row that reshuffles under the thumb is worse than a number that repeats, and at every other setting the tile puts the year beside the month.
 
@@ -171,12 +186,13 @@ An unfinished period compares against the same elapsed days of the previous one,
 
 ### Change chips
 
-Every Overview tile carries a chip except on All Time, which has no previous period, and on Coming up, where there is nothing fair to compare. Direction is per number, not per screen:
+Every Overview tile carries a chip except on All Time, which has no previous period, and on a window ending after today, where there is nothing fair to compare. Direction is per number, not per screen:
 
 | Number | Rising means | Chip |
 |---|---|---|
 | Total Collection, the three source tiles, Advance, Current FY, Collected & Adjusted | more money in | green up, red down |
-| Settlement Pending, Still Unpaid | more money stuck or owed | red up, green down |
+| Still Unpaid | more money owed | red up, green down |
+| Settlement Pending | more money stuck | no chip: a past window's pending figure, measured today, has mostly settled since, so any comparison would flatter the present (D14) |
 | Billed | more billing, neither good nor bad | neutral grey |
 
 The neutral chip is a state the shared chip component does not have yet; Inventory logged the same need.
@@ -195,15 +211,15 @@ Seven tiles in Paid Date view. Each shows an amount and a change chip per §4.
 
 | Tile | Counts | Kind |
 |---|---|---|
-| Total Collection | all money received in the window, refunds off | Time-scoped |
+| Total Collection | money received against bills in the window, refunds off. Advance is not inside it (D12), so this figure matches the homescreen to the rupee | Time-scoped |
 | This Period's Bills Collected | the part that paid bills due inside the same window. The face carries the month's own name | Time-scoped |
 | Past Dues Collected | the part that paid bills due before the window: old dues recovered | Time-scoped |
 | Paid Early | the part that paid bills due after the window. Advance is not here, it has its own tile | Time-scoped |
 | Advance | money received against no bill | Time-scoped |
-| Current FY | money received since 1 April | Time-scoped, window fixed |
+| Current FY | money received against bills since 1 April | Time-scoped, window fixed |
 | Settlement Pending | online money received in the window not yet in the owner's bank | Time-scoped |
 
-The middle four tiles add up to Total Collection exactly. Adjustments are never counted in any of them; they clear a bill without new money arriving and live in Adjusted Collection (§8).
+The three bill tiles add up to Total Collection exactly; Advance sits beside them, counted separately, so Total Collection matches the homescreen's collection figure (D12). Adjustments are never counted in any of them; they clear a bill without new money arriving and live in Adjusted Collection (§8).
 
 **Due Date view** replaces the first four tiles with three; Advance, Current FY and Settlement Pending stay, so it shows six:
 
@@ -227,7 +243,7 @@ One card, four tabs, all splitting the same total for the window. The window's t
 | Tab | Splits by | Rows |
 |---|---|---|
 | Category | bill type | top 3 by amount, rest in **Others** |
-| Status | tenant state | Active, not under notice · Under notice · Bookings · Old tenants. All four, always |
+| Status | tenant state | Active, no eviction · Eviction pending · Eviction approved · Bookings · Old tenants. All five, always |
 | Mode | how it was paid | top 3 by amount, rest in **Others** |
 | Received by | who took the payment: staff by name, plus RentOk itself for money tenants paid directly online | top 3 by amount, rest in **Others** |
 
@@ -235,7 +251,7 @@ Top three means purely by amount: whatever is largest in the window shows by its
 
 A badge marks the largest row on the Mode and Received by tabs, moving with the data. Category and Status carry none; a winning bill type means nothing.
 
-**Under notice** here means an active tenant with a confirmed leaving date, split out as its own row. The Dues screen keeps these tenants inside its Active bar; on Collection the split is deliberate.
+**The two eviction rows** split what one under-notice row used to hold (D6). Eviction pending is a notice raised and not yet approved; Eviction approved is an approved leaving date, whether or not that date has passed. Dues carries the same five bars, so the two money screens read alike.
 
 **Payments with no tenant attached stay in the total** and in the Mode and Received by tabs. The Status tab says in one line that they are not counted there; they are a handful a month platform-wide, and the list's own "Non Tenant" filter reaches them.
 
@@ -318,13 +334,13 @@ If managers ever ask to pick their own range here: the chart should choose its o
 
 ## 10. Collection by Property
 
-*Multi-property accounts only. The same in both views. Can be set to its own period.*
+*Multi-property accounts only. Follows the toggle (D15). Can be set to its own period.*
 
 The window's total split by property, highest to lowest, and **every row carries its share of the account total**: one property carrying 70% is a different risk picture from four at 25%, and only share-of-total makes that readable at a glance.
 
 **Properties with zero collection stay in the list.** A property that collected nothing all window is the row most likely to need a phone call; sorting drops it to the bottom, so showing it costs nothing. Its drill opens an empty list whose empty state names the property and the window and offers the next question: *"See what was due there."*
 
-The rows add up to Total Collection when both are on the same window; when this card is set to its own period, its dropdown says so.
+The rows add up to the view's own total, Total Collection in Paid Date and Collected & Adjusted in Due Date, when both are on the same window; when this card is set to its own period, its dropdown says so.
 
 ## 11. Payment Settlement
 
@@ -344,7 +360,7 @@ Collected via RentOk is the total; Settled and Unsettled are its two parts and a
 
 **The destination comes from the settlement record, whichever settlement system wrote it.** Most properties' records live on the older system and still name their destination; those rows draw. A row only falls back to the placeholder when its record does not resolve to a nameable destination: *"Bank details aren't available for this settlement. Contact support."* Never predict a destination for unsettled money; which account money lands in can depend on the order payments arrive, so a guess can turn out wrong. Unsettled money simply is not in the destination rows.
 
-One thing engineering must confirm before the Unsettled tile ships (§18): a third of online money currently has no settlement record in any system, and this card would show all of it as Unsettled. Whether that is the truth or a record-keeping gap decides whether the tile can be trusted on day one.
+One thing engineering must confirm before the Unsettled tile ships (§18): the two measurements of settlement coverage point opposite ways. An earlier one found a third of online money with no settlement record; the build review measured near-everything reading settled the same day it arrives (F43 in the log). Which signal tells the truth about the bank decides whether the tile can be trusted on day one.
 
 ## 12. View all sheet
 
@@ -378,7 +394,7 @@ A drill filters a list, it never re-scopes the screen, and the list arrives sort
 | The screen's window | What travels to the list |
 |---|---|
 | A period, running or finished | The window travels. Paid Date numbers carry it as a collected-on range; Due Date numbers carry it as a due-on range |
-| Coming up | The forward window travels as a due-on range, tomorrow through the chosen date. Real bills, real payments, a real list |
+| Custom ending after today | The forward part travels as a due-on range. Real bills, real payments, a real list |
 | A fixed-window row (Current FY, all time) | That row's own window travels, not the screen's |
 
 ### The tap matrix
@@ -399,8 +415,9 @@ A drill filters a list, it never re-scopes the screen, and the list arrives sort
 | Still Unpaid | Dues screen | bills due inside the window, still unpaid | ✅ |
 | **Collection Breakup** | | | |
 | a Category row | collections list | that category, the window | ✅ "Collection Types" |
-| Status: Active, not under notice | collections list | active tenants' payments, the window | ✅ |
-| Status: Under notice | collections list | under-notice tenants' payments | ❌ under-notice filter to wire in from the tenants list |
+| Status: Active, no eviction | collections list | active tenants' payments, the window | ✅ |
+| Status: Eviction pending | collections list | payments from tenants with a notice awaiting approval | ❌ eviction-state filter to wire in from the tenants list |
+| Status: Eviction approved | collections list | payments from tenants with an approved leaving date | ❌ same filter |
 | Status: Bookings | collections list | bookings' payments | ✅ |
 | Status: Old tenants | collections list | old tenants' payments | ✅ |
 | a Mode row | collections list | that payment mode, the window | ✅ |
@@ -438,13 +455,15 @@ The collections list already filters by property, collected-on window, due-on wi
 
 | New filter to add | Which numbers wait on it |
 |---|---|
-| Settlement status | Settlement Pending tile, Unsettled tile, the View all unsettled row. Partly built already: a six-state settlement filter exists in the mobile app, constructed but never switched on. Finishing it also fixes the deeper problem that today's settlement arrival codes wipe every other filter, so "unsettled in May" is inexpressible |
+| Settlement status | Settlement Pending tile, Unsettled tile, the View all unsettled row. Partly built: a six-state settlement filter exists in the mobile app, never switched on |
 | Discount applied / not applied | the Discount drill. The discount amount already travels with each row's data, so the list can show it per row when this filter is on |
-| Under notice | the Breakup Status tab's Under notice row. The tenants list already has exactly this filter; it is not wired into collections |
+| Eviction state | the Breakup Status tab's two eviction rows. The tenants list already has exactly this filter; it is not wired into collections |
 | "Adjusted from Advance" as a mode option | the advance-adjusted drills. Its two siblings are already options |
 | No receiver recorded | the Not recorded row |
 | Stay type | the View all stay rows, the same filter Dues is already waiting on |
-| A named forward window option | every drill taken from Coming up. The list's due-on filter already accepts future dates through a custom range; what is missing is a named option a manager would find |
+| A named forward window option | every drill taken from a forward window. The list's due-on filter already accepts future dates through a custom range; what is missing is a named option a manager would find |
+
+Finishing the settlement filter also fixes a deeper defect: today's settlement arrival codes wipe every other filter, so "unsettled in May" is inexpressible.
 
 ### What the destination says when you arrive
 
@@ -472,7 +491,7 @@ Narrowed property access counts only those properties, and the drill matches.
 | Refunds exceed collection | the negative total with its one line (§5) |
 | Good-news zero | see Healthy below |
 | Not recorded | see Not recorded below |
-| Coming up with nothing due ahead | *"Nothing due in the next 30 days."* Named with the window the manager picked |
+| A forward window with nothing due ahead | *"Nothing due before 24 September."* Named with the date the manager picked |
 | Failed | "Couldn't load this" with Retry, never a healthy message, never a zero |
 
 ### Healthy: good news, no CTA
@@ -514,13 +533,13 @@ The Overview tile row has no empty state drawn at all and needs one; a window wi
 
 ## 17. Build guidance
 
-1. **One total, many views.** Every card slices the same base. *Test it:* the Breakup tabs, the property rows and the window's trend bar each sum to Total Collection on the same window.
+1. **One total, many views.** Every card slices the same base. *Test it:* the Breakup tabs, the property rows and the window's trend bar each sum to the view's own total on the same window: Total Collection in Paid Date, Collected & Adjusted in Due Date (D15).
 2. **The homescreen and this screen agree.** *Test it:* the same property and month show the same collection figure on the homescreen tile and this screen's Total Collection.
 3. **A payment is fresh money or an adjustment, never both.** *Test it:* a deposit-adjusted bill moves Adjusted Collection and no Overview tile.
 4. **Refunds come off everywhere.** *Test it:* refund ₹5,000 against a July rent payment; July's total, the Rent row, July's trend bar and that property's row all drop by ₹5,000.
 5. **Every rupee lands in exactly one category.** *Test it:* a caution-money payment raises exactly one Breakup row, and the rows still sum to the total.
 6. **The three adjustment methods behave identically.** *Test it:* clear three bills, one from deposit, one from advance, one from caution money; all three appear in Adjusted Collection and none in Total Collection.
-7. **A credit payment counts what the owner receives, charges off exactly once.** *Test it:* a ₹10,000 credit payment with a ₹200 processing charge contributes ₹9,800, not ₹9,600. Rare money today; the maths still must be right, and finance signs off the correction since it changes a figure people already watch.
+7. **Collection is at the bill amount; charges live on the settlement side.** *Test it:* a ₹10,000 online payment with a ₹200 processing charge contributes ₹10,000 to Total Collection and ₹9,800 to Collected via RentOk, and no number subtracts the charge twice (D13).
 8. **Cash means all cash.** *Test it:* the Mode tab's cash figure and the cash drill return the same payments, including older cash entries recorded under the earlier cash code.
 9. **Part payments count their paid amount.** *Test it:* pay ₹4,000 of a ₹10,000 bill; every total moves by exactly ₹4,000.
 10. **Due Date view counts all four adjustment kinds as dealt with.** *Test it:* a May bill cleared by discount shows inside Collected & Adjusted and not in Still Unpaid.
@@ -529,11 +548,11 @@ The Overview tile row has no empty state drawn at all and needs one; a window wi
 13. **A trend bar equals its period opened directly.** *Test it:* March's green segment equals Total Collection with the filter on March.
 14. **Settlement Pending and the Unsettled tile are one measure.** *Test it:* on the same window they show the same figure.
 15. **Chips compare unfinished periods fairly.** *Test it:* on the 8th, the chip compares against the first 8 days of last month, marked unfinished, and the mark drops when the month completes.
-16. **Chip direction is per number.** *Test it:* rising Total Collection shows green; rising Settlement Pending shows red; rising Billed shows the neutral chip.
+16. **Chip direction is per number.** *Test it:* rising Total Collection shows green; rising Still Unpaid shows red; rising Billed shows the neutral chip; Settlement Pending shows none (D14).
 17. **The top filter pulls every card back.** *Test it:* set Adjusted Collection to Last Month, change the top filter; the card snaps to the new window.
-18. **Custom stops at today; Coming up starts tomorrow.** *Test it:* the Custom picker cannot select a future end date, and Coming up's window never includes today.
-19. **Coming up counts records only.** *Test it:* on Coming up, Billed counts only bills already raised with due dates in the window; nothing is projected.
-20. **The Paid Date family sits out Coming up with the switch line.** *Test it:* pick Coming up in Paid Date view; the sitting-out line appears with a tappable switch, and no tile renders a zero that reads as a collections failure.
+18. **The forward window is one-sided by view.** *Test it:* the Paid Date picker cannot select a future end date; the Due Date picker can, and no number on that window carries a chip.
+19. **A forward window counts records only.** *Test it:* on a Custom window ending 30 days out, Billed counts only bills already raised with due dates in the window; nothing is projected.
+20. **Money-arrived numbers dash on a forward window.** *Test it:* on a Due Date window ending after today, Advance, Settlement Pending, Adjusted Collection and Payment Settlement show a dash with the one-line reason, not a zero that reads as a collections failure.
 21. **A window labelled forward looks forward.** *Test it:* a named forward option on the list shows bills due next month, not last month's. The shared date control's "Next 7 days" preset currently resolves backwards; this test exists to catch exactly that.
 22. **A failed card never renders a number.** *Test it:* fail the settlement card's fetch; it shows "Couldn't load this" and Retry, not ₹0.
 23. **Settled destinations draw from whichever settlement system holds the record.** *Test it:* a property whose settlements live on the older system still shows its destination rows; only a row with no resolvable destination shows the contact-support line.
@@ -542,7 +561,7 @@ The Overview tile row has no empty state drawn at all and needs one; a window wi
 
 ## 18. Open items
 
-1. **Engineering.** A third of online money has no settlement record in any system. Before the Unsettled tile ships, confirm that no-record genuinely means not-settled rather than a record-keeping gap; the tile would show it all as stuck money, and if that is wrong, managers will call support about failures that never happened.
+1. **Engineering.** A third of online money has no settlement record in any system. Before the Unsettled tile ships, confirm that no-record genuinely means not-settled rather than a record-keeping gap; the tile would show it all as stuck money, and if that is wrong, managers will call support about failures that never happened. Re-measured 2026-08-24 at the build review: production showed the opposite under the build's own settled test, near-everything reads settled the same day it arrives. Read F43 in [[01 — Build Verification Log]] before acting here; neither measurement has been checked against a bank statement.
 2. **Engineering.** The live collections widget strip includes a deposit-adjusted shortcut that fails when tapped; its this-financial-year and all-time siblings work. Worth fixing ahead of this build since it is customer-visible today. *Test it:* tapping the deposit-adjusted widget returns a list, not an error.
 3. **Engineering.** The tenant-type filter's "Old Tenants" option needs its meaning verified against real data before the Status tab builds on it; the backend's own notes call the same value "pre-joining", and both cannot be right.
 4. **Owner + engineering.** Do deeper drills ship on day one? Pages below the first list do not all check permissions the way the list does. Ship or hold is undecided, and it blocks nothing else in this sheet.
@@ -558,7 +577,7 @@ The Overview tile row has no empty state drawn at all and needs one; a window wi
 **Wrong**
 
 1. Overview tiles "Past Bill" and "Future Bill" read as an old bill and an upcoming charge. They are **Past Dues Collected** and **Paid Early**.
-2. The Status tab's "Under Eviction" bar is the suite's **Under notice**, and the first bar reads **Active, not under notice**.
+2. The Status tab's "Under Eviction" bar splits into **Eviction pending** and **Eviction approved** (D6), and the first bar reads **Active, no eviction**.
 3. The Mode tab's empty copy promises cash and cheque and omits RentOk; §15 has the replacement, and the built tab needs its Cash row.
 4. Three more empty states are wrong (Collection Status, Adjusted Collection, Collection by Property); §15 holds all replacement copy.
 5. The time filter is drawn as a stepper reading "Today". It is the six-option dropdown, defaulting to This Month.
@@ -574,7 +593,7 @@ The Overview tile row has no empty state drawn at all and needs one; a window wi
 **Missing**
 
 14. The Advance tile, the three Due Date tiles, the billed-comparison Due Date versions of the Category and Status tabs, and the negative-total, adjustments-only and unfinished-window treatments.
-15. The Coming up option, its date picker, and the Paid Date sitting-out state with the tappable switch.
+15. The forward Custom treatment: the Due Date picker accepting a future end date, the dash with its reason on money-arrived numbers, and no chips on that window.
 16. The View all sheet: the link exists and opens nothing.
 17. The weekly trend range, the Due Date trend, and the marked in-progress bar.
 18. The neutral change chip, and "Not recorded" on Received by.
@@ -618,7 +637,7 @@ Measured on production, 8 August 2026, on July 2026 unless stated. Successful, a
 | Newer settlement system reach | 160 properties ever, of 10,500 collecting online | destination rows must draw from the older system's records too |
 | Older-system destinations | 8,326 properties with settled money naming an account, median 1 account, one in ten above 4 | the same decision, and the overflow size for destination rows |
 | Live properties with a zero-collection July | 1,342 of 7,878, one in six | the in-window zero is an ordinary state, not an edge |
-| Money already received against future-dated bills | ₹5.2 crore across 4,688 bills | Coming up counts real money today |
+| Money already received against future-dated bills | ₹5.2 crore across 4,688 bills | The forward window counts real money today |
 | Billing-day spread | 41% of properties bill on one day · a third spread across five or more | the weekly trend's caveat: a curve for some, a rhythm for others |
 | Discount-carrying payments | 992 in July | the discount filter has real material |
 </details>

@@ -27,8 +27,8 @@ says so rather than quietly replacing it.
 | [What is in scope](#what-is-in-scope) | Which blocks are checked, and what is deliberately left out |
 | [Status board](#status-board) | How far the review has got, and the sweeps every remaining tab gets |
 | [Open items](#open-items) | Everything still waiting, by who it waits on |
-| [Findings](#findings) | Every difference found, F1 to F25: what is wrong and the fix |
-| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D10, dated |
+| [Findings](#findings) | Every difference found, F1 to F46: what is wrong and the fix |
+| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D15, dated |
 | [Sheet edits made](#sheet-edits-made) | Exactly what changed in the handoff sheets because of this review |
 | [Doc fixes owed to Vivek](#doc-fixes-owed-to-vivek) | Errors in the calculation guide, harmless to the product |
 | [What shipped better than we specified](#what-shipped-better-than-we-specified) | Things to write back into the sheets as rules |
@@ -62,14 +62,14 @@ the room. So each difference gets a view on which version is right, and the owne
 **Where the reasoning lives.** An F entry says what is wrong and the fix. A D entry says what was
 ruled and why. Reasoning is written once, in the D entry, and the F entry points to it.
 
-**Every finding has the same four-line header:**
+**Every finding has the same four-field header:**
 
 | Field | Values |
 |---|---|
 | Verdict | Pass · Build gap · Accepted change · Specification gap · Doc error · Withdrawn |
 | Status | Open · Ruled · Closed |
 | Owed by | Vivek · Owner · Sheet · Nobody |
-| Note | Free text: which D settles it, what blocks it, what closed it |
+| Note | Free text, when one is needed: which D settles it, what blocks it, what closed it |
 
 Verdicts: a **build gap** is where the sheet asked for something and the code does something else.
 An **accepted change** is where the code differs and is right, so the sheet changes. A
@@ -87,7 +87,9 @@ edit or ticket is done.
 | Tenant status | 0 moved out · 1 living here · 2 booking · 3 lead · 4 invite · 5 to 8 deleted states |
 | Invoice status | 0 unpaid · 1 paid · 2 part paid · 3 refunded · 4 written off as a loss |
 | The base pool | The set of unpaid bills every Dues number starts from: unpaid, active, at least ₹1, payer at status 1 or 2 (sheet §3). Built by `DuesListHelper.buildBaseQuery`, shared with the homescreen |
-| Adjustment payment | A payment recorded in mode 211, which applies a held deposit against a bill |
+| Adjustment payment | A payment recorded in mode 211 (deposit), 288 (advance) or 291 (caution money): a bill cleared using money already held |
+| The collection base | The set of successful, active payments joined to the paid bills they cleared, shared with the homescreen and the collections list. Built in `collectionService.ts` as `COLL_BASE` |
+| Credits | The table where the payment flow records a discount the owner gives at payment time. The bill keeps its full amount; the waived part is a credits row on the payment |
 | Confirmed booking | A booking at status 2 that is approved, or on a property where bookings need no approval. The owner ruled those two are the same thing (D1). The code that decides it is at `tenantService.ts:352` |
 | View all screen | The panel that opens from the Overview strip header, sheet §6. Called a "screen" here so it is never confused with the handoff sheet |
 
@@ -124,13 +126,13 @@ A block being wired does not prove every field inside it is. That is checked per
 | Tab | Blocks | Reviewed | Findings | State |
 |---|---|---|---|---|
 | Dues | 9, plus the View all screen | All | 26 | Complete |
-| Collection | 7 | 0 | 0 | Not started |
+| Collection | 7, plus the View all sheet | All | 20 | Complete; fixes with Vivek |
 | Expense | 5 | 0 | 0 | Not started |
 | Occupancy | 8 | 0 | 0 | Not started |
 | Tenant | 14 | 0 | 0 | Not started |
 
-**Next:** Collection. It is the only screen with a view toggle, Paid Date against Due Date, and its
-two views carry different forward-date settings, so the toggle and the tab's §4 come before the cards.
+**Next:** Expense. All five Collection rulings are done, D11 to D15; the build fixes sit with Vivek
+in the open items.
 
 **Sweeps to run on every remaining tab**, each born from a Dues finding:
 
@@ -146,6 +148,10 @@ two views carry different forward-date settings, so the toggle and the tab's §4
 | Does any block match a free-named category by exact text | F19 |
 | Does any forecast read a status code as if it already contained the approval step | F2, F4 |
 | Does any forecast leave out a tenant filter altogether | F2 |
+| Does every column the code sums actually hold data on production | F40 |
+| Do all rows of one card count on one clock | F40 |
+| Does a tile keep its chip on both sides of a view toggle | F31 |
+| Do a card's tabs still sum to the card's total in every view | F36 |
 
 ---
 
@@ -176,6 +182,21 @@ Everything still waiting, by who it waits on. An item leaves this table when its
 | Forward window | Carry the D9 rules onto the Custom path: no chip, dash for event counts, forecasts extend | F17, D9 |
 | Bookings | Confirm whether `is_confirmed = 0` means pending or cancelled; two places in the code disagree | F4 |
 | Added By | Say what creator codes 5 and 6 are; they are shown as RentOk today | F26 |
+| Collection Custom forward path | The D9 rules: no chip past today, dash the money-arrived numbers, delete the dead `coming_up` branches; confirm the Paid Date picker stops at today | F27, F17 |
+| Collection Overview | Advance and Current FY keep their chips in Due Date view | F31 |
+| Collection Overview | Cap the due window at today in `computeWindows`, both views one rule | F32, D11 |
+| Collection Overview | Collected & Adjusted comparison bounded to the same elapsed moment | F33 |
+| Collection Overview | Adjustments-only line and an empty state for the tile row | F34 |
+| Collection Breakup | Case-insensitive, trimmed category grouping, as Dues does | F35 |
+| Collection Breakup | Adjustment modes as rows on the Due Date Mode and Received by tabs | F36 |
+| Collection Breakup | The one-line no-tenant note on the Status tab | F37 |
+| Collection Breakup | Billed side per row on the Due Date Status tab | F38 |
+| Collection empty copy | Ship §15's replacement copy on four blocks | F39 |
+| Adjusted Collection | Discount reads the credits records, windowed by paid date | F40 |
+| Payment Settlement | Destination rows from the payout and wallet records too | F42 |
+| Payment Settlement | Say what payout status 1 and a wallet UTR each mean; mark reversed and failed transfers | F43 |
+| Collection View all | Window rows and stay rows follow the toggle; Adjusted rows include discount | F44, F45 |
+| Collection healthy states | Emit the three §15 healthy messages | F46 |
 
 **Waits on the owner**
 
@@ -191,8 +212,7 @@ Everything still waiting, by who it waits on. An item leaves this table when its
 
 | Sheet | Change | When |
 |---|---|---|
-| DA-02 Collection | Five tenant status bars per D6; remove the false line "The Dues screen keeps these tenants inside its Active bar" | At the Collection review |
-| DA-02, DA-08, DA-09 | §4: drop Coming up, rewrite the forward column per D9, from each tab's code | At each tab's review |
+| DA-08 Inventory, DA-09 Tenants | §4: drop Coming up, rewrite the forward column per D9, from each tab's code | At each tab's review |
 | DA-08 Inventory | What its under-notice count is called after D6, and the Occupancy booking question | At the Occupancy review |
 
 ---
@@ -365,6 +385,10 @@ Breakdown, Breakup by Stay Duration, Dues by Property and their Collection count
 
 **Fix:** end at today. The pattern: a definition was fixed where it was noticed and left wrong in the
 shared place it came from.
+
+**Collection audit note, 2026-08-24.** Still present at `collectionService.ts:149`. Paid Date view
+hides it, because money windows cap at today anyway; the bite is Due Date view, where Billed runs to
+next 31 March. The F32 ruling inherits it.
 
 ### F10. Refunded and written off dues vanish with nothing said about them
 
@@ -641,6 +665,288 @@ pool requires at least ₹1.
 **How this was found.** By reading the guide's appendix, which this review had not opened. See the
 audit note under How this review works.
 
+Findings from F27 are the Collection tab, reviewed 2026-08-24 in sheet order: the toggle and §4
+first, then the seven blocks and the View all sheet.
+
+### F27. The forward window rules never landed on Collection's Custom path
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** D9 rules it; F17 logged the suite-wide cause
+
+Due Date view lets a Custom window end after today (`masterConfig.ts:126`), which D9 makes the
+forward view. None of D9's safeguards exist here:
+
+| D9 says | The code does |
+|---|---|
+| No chip on a window ending after today | `computeWindows` builds a comparison window for every Custom range (`collectionService.ts:154`), so the three Due Date tiles chip against "vs preceding period" |
+| A number counting money arriving shows a dash with a reason | On a fully future window the Advance tile's paid window ends before it starts, so it renders ₹0, and Settlement Pending renders ₹0. A window that straddles today renders partial figures instead, the case D9 left open |
+| Records keep counting | Correct as built: Billed and Collected & Adjusted count the forward window's bills |
+
+Also for Vivek to confirm: the Custom option carries `allow_future_date: true` at the tab level
+while the Paid Date view carries `false`; the app must let the view win, or Paid Date reaches a
+future window the service caps silently.
+
+**Fix:** the D9 rules on the Custom path: suppress chips when the window ends after today, dash the
+money-arrived numbers with the one-line reason, and delete the four dead `coming_up` branches while
+there (F17). The check that decides whether a tile sits out reads `filter_key === 'coming_up'`
+(`collectionService.ts:343`), an option the app can no longer send.
+
+### F28. Total Collection leaves advance money out, and the sheet says the middle four tiles add up to it
+
+**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D12; sheet §5 corrected
+
+Sheet §5: Total Collection is "all money received in the window", and the four tiles beside it,
+Advance included, "add up to Total Collection exactly". The code counts only money applied to bills:
+a payment against no bill contributes nothing to Total Collection and lives in its own Advance tile
+outside the sum (`COLL_AMT`, `collectionService.ts:247`). Deliberate, commented, and checked against
+production during the build: counting it made the tile disagree with the homescreen's collection
+figure, which §17.2 forbids.
+
+So the sheet asks for two things at once: §5 wants advance inside the total, §17.2 wants agreement
+with a homescreen that keeps it out. The build chose §17.2. The same choice repeats on the Current
+FY tile. Advance is small: 0.008% of July's money, per the sheet's own appendix.
+
+Ruled as built: D12 has the reasoning. Sheet §5 corrected.
+
+### F29. Collection is counted at the bill amount, not at money net of processing charges
+
+**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D13; sheet §3 and §17.7 corrected
+
+Sheet §3, the base rule: "a ₹10,000 online payment carrying a ₹200 charge counts as ₹9,800", and
+§17.7 repeats it as a test. The code values every payment against a bill at the bill's own amount
+(`inv.amount`), gross of gateway charges, matching the homescreen and the collections list. Only the
+Advance tile and the whole Payment Settlement card are net of charges.
+
+Ruled as built: D13 has the reasoning, including the one deliberate exception, the Advance tile
+counting net. Sheet §3 and §17.7 corrected.
+
+### F30. Settlement Pending carries no chip, and the sheet asks for one
+
+**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D14; sheet §4 chip table corrected
+
+Sheet §4's chip table: Settlement Pending rising is bad, red up, green down. The build sends no chip
+on the tile in either view (`collectionService.ts:319`).
+
+Ruled right as built: D14 has the reasoning, and §4's chip table now carries it on the row.
+
+### F31. Advance and Current FY lose their chips when the view flips
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+In Paid Date view both tiles carry a good-kind chip (`collectionService.ts:317-318`). In Due Date
+view the same two tiles, same numbers, same windows, send no chip (`collectionService.ts:352-353`). §4 says
+the never-switching tiles do not change between views; their chips should not either.
+
+**Fix:** compute the same two chips in `overviewDueDate`.
+
+### F32. In Due Date view the window runs to the period's end, and the chip compares elapsed days
+
+**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D11 settles it; F33 is separate and stands
+
+The build read This Month in Due Date view as the full month, 1st to 31st: the due window kept the
+whole period (`collectionService.ts:183`) while the paid window caps at today, and Current FY in
+this view ran to next 31 March (F9). So mid-month, Billed counted the whole month's bills, Still
+Unpaid included bills not due yet, and the chip compared that full period against the previous
+month's first N days while saying "vs same point last month": the same mistake as F1, a chip not
+describing the number it sits under. The sheet never said where this window ends; Vivek's guide
+called the full period deliberate.
+
+D11 ruled it: the window ends at today in both views, one cap in `computeWindows`. Every chip on the
+view then compares like with like automatically. The design argument, and where already-raised
+future bills go, live in D11.
+
+### F33. The Collected & Adjusted comparison is measured as it stands today
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the same mistake as F5; D11 sets the windows it compares
+
+D4 defines collected-against-bills as payments whenever they arrived, which is right for the tile.
+The chip's comparison figure is computed the same way (`collectionService.ts:340`), so last month's
+figure has had a whole extra month of collecting. A property collecting exactly as well as before
+reads worse every month: the defect F5 logged on Dues, in the opposite direction.
+
+**Fix:** the comparison counts only payments received by the equivalent moment of the previous
+period. Applies to the Collected & Adjusted and Still Unpaid chips. Billed does not accumulate
+payments and only needs D11's cap.
+
+### F34. The Overview's special states are half built
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+The negative-total note is built and worded exactly as §5 asks. Not built: the adjustments-only
+state, ₹0 with "No money received. ₹X of bills were cleared from deposits and advances.", and any
+empty state for the tile row (§15: a window with no activity is ordinary, one live property in six).
+Every other Collection block sends its zeros somewhere; the screen's headline block does not.
+
+### F35. Category rows split by spelling, and Dues already solved it
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** found by the F19 sweep
+
+`breakupCategory` groups by raw `inv.due_type` (`collectionService.ts:469`, `:481`); Dues groups the
+same field with `LOWER(TRIM(...))` (`duesService.ts:220`). Measured on production, July 2026, live
+non-test properties, successful active payments joined to their paid bills: at least 20 category
+names carry more than one spelling. Security Deposit alone is ₹32.5 crore across two spellings in
+one month, 34,677 payment rows; Electricity Bill ₹2.6 crore across two.
+
+A split spelling splits its row, misranks the top 3, and pads Others with fragments of real
+categories. The same code path feeds the Due Date billed side and the View all category rows, so one
+fix lands everywhere; note the billed lookup joins on the label and must normalise both sides.
+
+**Fix:** group by `LOWER(TRIM(inv.due_type))` and display `MIN(inv.due_type)`, exactly as
+`duesService.ts:217`.
+
+### F36. In Due Date view the Mode and Received by tabs leave the adjustment money out
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+Sheet §6, Due Date view: all four tabs split Collected & Adjusted "and all four still add up to it".
+`foldModes` and `foldReceivers` skip the three adjustment modes unconditionally
+(`collectionService.ts:529`, `:554`). Harmless in Paid Date view, where an adjustment is worth ₹0.
+In Due Date view an adjustment carries the bill's amount, so both tabs run short by every deposit,
+advance and caution clearance, and stop adding up to the card's total.
+
+It also empties the Mode tab of its stated purpose: §6 keeps it in this view precisely to show how
+much of the billing was cleared with real money against drawn from deposits. As built the tab can
+never show that.
+
+**Fix:** in Due Date view only, keep modes 211, 288 and 291 as their own rows, labelled as §8
+labels them.
+
+### F37. The Status tab's promised one-line note is missing
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§6: payments with no tenant attached stay in the total, and "the Status tab says in one line that
+they are not counted there". `breakupStatus` drops them silently. Ten payments in July platform-wide
+per the sheet's appendix, so the money is small; the sheet's point was never the money, it was that
+the tab's rows visibly sum short of the card's total.
+
+### F38. The Status tab has no billed side in Due Date view
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§6, Due Date view: "Category and Status also show what was billed, row by row". The Category tab
+does; the Status tab returns collected values only (`collectionService.ts:494`). "Rent ₹8L of ₹10L"
+works; its Status twin does not exist.
+
+### F39. Four blocks ship the empty-state copy the sheet replaced
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§15 lists the current copy and its replacement for each. The build ships the current, wrong copy
+verbatim (`EMPTY`, `collectionService.ts:61`):
+
+| Block | Ships | Wrong because |
+|---|---|---|
+| Breakup, Mode tab | "cash, UPI, bank transfer & cheque" | Promises modes the card does not show and omits RentOk, the biggest. Also carries an em dash |
+| Collection Status | "Dues collected and pending will show up here" | The card has no pending row by design |
+| Adjusted Collection | "Advance payments and deposit adjustments" | Names two of four kinds, and reads as the Advance tile |
+| Collection by Property | "No properties added yet" | The card only renders on multi-property accounts; the empty case is no collection, not no properties |
+
+§15 already holds the exact replacement copy for all four.
+
+### F40. The Discount figure reads a column that is empty on production
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the largest finding on this tab
+
+The Adjusted Collection card's Discount figure sums `invoices.discount`
+(`collectionService.ts:631`), and Vivek's guide describes the same, so the two documents agree with
+each other. Production does not: exactly one invoice on the whole platform has ever carried a value
+in that column, worth roughly nothing. The real discounts live in the credits records the payment
+flow writes, one `credits` row per discounted payment: July 2026, live non-test properties,
+successful active payments, 683 payments carrying ₹89 lakh. The sheet's own appendix measured ₹1.07
+crore and 992 payments for the same month through the same flow, on a wider scope: taken 8 August,
+without excluding test properties. The two are different queries and are not expected to match.
+
+So the Discount figure will read ₹0 for every property on every window, while §8 calls the number
+real and the appendix proves it is. This is the exact false pass the three-source method exists to
+catch: sheet, guide and code all in agreement, and the data elsewhere.
+
+Two smaller defects die with the fix: the discount query windows by the bill's due date while the
+card's other three rows window by paid date, one card on two clocks, and it reads any active
+invoice, paid or not.
+
+**Fix:** sum the credits rows joined to their payments, windowed by `p.paid_date` like the other
+three rows. The View all sheet's Adjusted rows need the same source once F45 adds discount there.
+
+### F41. Collection by Property follows the toggle, and the sheet says it does not change
+
+**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D15; sheet §4 and §10 corrected
+
+Sheet §4's card table says the card does not change in Due Date view, and §10 says "the same in both
+views". The build switches with the view: money arrived per property in Paid Date, collected and
+adjusted against the window's bills per property in Due Date (`collectionService.ts:719`).
+
+Ruled as built: D15 has the reasoning. Sheet §4, §10 and test §17.1 corrected.
+
+### F42. The destination rows cover under 3% of settled money
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§11: "the destination comes from the settlement record, whichever settlement system wrote it", and
+the rows break down Total Settled and add up to it. The build reads destinations from
+`settlement_scheduler` alone (`collectionService.ts:800`).
+
+Measured on production, July 2026, live non-test properties, online modes, successful active
+payments: ₹141.55 crore reads settled under the build's own test, and scheduler rows carry ₹3.69
+crore of it. ₹137.86 crore of settled money, 97%, would sit under "Where settled money went" with no
+row at all.
+
+**Fix:** destinations from the payout and wallet records too, falling back to the contact-support
+line only when no system names an account.
+
+### F43. The settled test says yes before money reaches the bank
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** rewrites §18's open item 1, the day-one worry inverted
+
+The build marks a payment settled when its payout row has status 1, its wallet entry has a UTR, or a
+scheduler row succeeded (`collectionService.ts:776`). Measured on production, live non-test
+properties, online modes: money received on 24 August, the day of this review, already reads 100%
+settled, 21 payments, ₹0.7 lakh; the last three days read 98.7% settled, ₹3.92 crore of ₹3.97
+crore. Same-day bank landing for every rupee is not plausible, so at least one signal fires when
+settlement is recorded or initiated, not when money lands.
+
+Two consequences. Settlement Pending and Unsettled will read near ₹0 always, so the §15 healthy
+state would show permanently and mean nothing. And §18's open item 1 held the opposite worry from an
+earlier measurement, that a third of online money had no settlement record and would all show as
+stuck. Both cannot describe the same bank reality, and neither has been checked against a bank
+statement.
+
+Also absent: §11's marking of reversed and failed transfers inside Unsettled.
+
+**Fix:** engineering states what payout status 1 and a wallet UTR each mean, for each step of the
+transfer, before this card ships, and adds the reversed marking. The card's shape is right; its yes
+test is what needs proving.
+
+### F44. The View all sheet half follows the toggle
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§12: the sheet "reads by the screen's window and toggle". In Due Date view the category rows switch
+correctly and carry their billed side. The rest does not: the "This window's collection" rows and
+the stay-duration rows still read by paid date (`collectionService.ts:827`), so the sheet's headline
+rows disagree with the tiles the manager just left.
+
+**Fix:** in Due Date view the window rows show Billed and Collected & Adjusted, and the stay rows
+split Collected & Adjusted.
+
+### F45. The View all Adjusted rows leave Discount out
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+`adjustedTotal` sums the three adjustment modes only (`collectionService.ts:879`). §3 defines
+adjustment as four kinds, discount included, and the Adjusted Collection card shows four. The View
+all rows labelled "Adjusted collection" run short of the card by exactly the discount. After F40,
+the discount source is the credits records.
+
+### F46. The healthy states are not emitted
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§15's healthy table: Still Unpaid at zero reads "Everything billed for this period is collected",
+Unsettled at zero reads "All online money has reached your bank", Settlement Pending at zero says
+the same in tile form. The service emits empty states and nothing else, so a zero that is good news
+renders as a bare zero. Blocked in spirit by F43: until the settled test is proven, Unsettled at
+zero is the default, not news.
+
 ---
 
 ## Decisions ruled
@@ -657,6 +963,11 @@ audit note under How this review works.
 | D8 | 23 Aug | Block 6 | Upcoming Dues becomes the day-by-day breakdown of the Projected Due tile |
 | D9 | 24 Aug | F17 | The forward window rules, and every block declares its own time on its face |
 | D10 | 24 Aug | F22 | Deposits held for departed tenants get their own line under the gauge |
+| D11 | 24 Aug | F32 | The Due Date window on a running period ends at today, like every money window |
+| D12 | 24 Aug | F28 | Advance stays outside Total Collection, which matches the homescreen |
+| D13 | 24 Aug | F29 | Collection is counted at the bill amount; processing charges live on the settlement side |
+| D14 | 24 Aug | F30 | Settlement Pending carries no chip; nothing records what it stood at before |
+| D15 | 24 Aug | F41 | Collection by Property follows the toggle, like Breakup |
 
 ### D1. Projected Due counts confirmed bookings only (2026-08-23)
 
@@ -864,6 +1175,93 @@ line useful rather than alarming.
 
 **Does not unblock the card.** F21 stands: two money columns, one total.
 
+### D11. The Due Date window on a running period ends at today (2026-08-24)
+
+Owner: "A."
+
+Applies to This Month and Current FY in Due Date view on Collection, and inherits F9's fix there:
+Current FY in that view reads 1 April through today. The paid window already capped at today, so
+after this ruling both views share one cap.
+
+**Why.** Three reasons, the third raised by the owner's own probe:
+
+1. Every chip on the view repairs itself: Billed, Collected & Adjusted and Still Unpaid compare the
+   same elapsed days of the previous period automatically, which D9's chip table already requires.
+2. Still Unpaid stays money someone actually owes right now. On a full-month window it mixed overdue
+   with not-yet-due, and a mid-month reader would chase money nobody owes yet.
+3. A full-month Billed measures a property's billing setup, not its performance: a property raising
+   the whole month on the 1st and one raising per tenant through the month would read very
+   differently with nothing real between them. D2 cut future-dated bills from Current FY Dues on
+   exactly this argument.
+
+**The probe, kept because it will come up again.** Bills already raised with due dates later in the
+month do not vanish: they enter Billed when their date arrives, they are one Custom window away
+today (the D9 forward view counts them immediately), and money already received against them shows
+today in Paid Date view as Paid Early.
+
+**For Vivek:** cap the due window at today in `computeWindows`, both views one rule. F33 is a
+separate defect on the same chips and is not settled by this.
+
+### D12. Advance stays outside Total Collection (2026-08-24)
+
+Owner: "A."
+
+Total Collection counts money applied to bills, matching the homescreen and the collections list.
+Advance is its own tile beside it, and the sheet's "middle four add up" line becomes three.
+
+**Why.** One answer across surfaces is the point of this build (sheet §1), §17.2 makes it a test,
+and the build already passes it. The Advance tile still shows the money by name next to the total,
+so nothing is hidden. Advance was 0.008% of July's money, but the ruling is about the principle:
+where the sheet's own two rules collide, the cross-surface one wins. The same reading applies to the
+Current FY tile, which also counts money against bills.
+
+No code change. Sheet §5 corrected: the three source tiles add up to Total Collection; Advance sits
+beside them, counted separately.
+
+### D13. Collection is counted at the bill amount; charges live on the settlement side (2026-08-24)
+
+Owner: "A."
+
+A payment against a bill counts at the bill's amount, gross of processing charges, everywhere on
+Dues, Collection and the homescreen. The Payment Settlement card stays net of charges, and the gap
+between Total Collection's online part and Collected via RentOk is the charge, visible rather than
+smeared into every number.
+
+**Why.** A fully paid ₹10,000 bill must read ₹10,000 collected or Billed minus Collected stops
+equalling what is unpaid, which §17.11 tests. §17.2 requires agreement with the homescreen, which is
+gross. The charge is a cost of collecting, not uncollected rent.
+
+**One deliberate exception.** The Advance tile counts the payment net of charges: an advance has no
+bill, so net is the only amount it has, and net is what the owner actually holds.
+
+No code change. Sheet §3's base rule and test §17.7 corrected.
+
+### D14. Settlement Pending carries no chip (2026-08-24)
+
+Owner: "A."
+
+**Why.** The tile measures where money stands right now. A past window's pending figure, measured
+today, has mostly settled since, so any comparison always flatters the present: a chip that trends
+good regardless is worse than no chip. A fair chip would need the figure as it stood at that
+moment, which nothing records. This is the reasoning F5 established and D9's no-chip cases already
+carry; the ruling writes it onto this tile so the next reviewer does not re-raise it.
+
+No code change. Sheet §4's chip table corrected, with the reason on the row.
+
+### D15. Collection by Property follows the toggle (2026-08-24)
+
+Owner: "A."
+
+In Paid Date view the card ranks properties by money arrived; in Due Date view by collected and
+adjusted against the window's bills. In each view the rows sum to the total above them, which
+§17.1 tests.
+
+**Why.** A ranking that reconciles with the screen it sits on beats one frozen while everything
+around it switches. The sheet's own forward-window cell already described the Due Date reading, so
+"the same in both views" was the sheet disagreeing with itself, the same shape as F11 on Dues.
+
+No code change. Sheet §4's card-change table and §10 corrected.
+
 ---
 
 ## Sheet edits made
@@ -892,6 +1290,42 @@ All in DA-01 Dues, 2026-08-23 and 2026-08-24:
 | §15, §17, §19, §21 | Every "Coming up" reference rewritten to the forward Custom window | D9 |
 | §21 design fixes | Item 1 says the design's "Under Eviction" bar splits into pending and approved; item 11 updated | D6 |
 
+All in DA-02 Collection, 2026-08-24. First the edits already ruled before this tab's review:
+
+| Section | Change | From |
+|---|---|---|
+| Note block | Correction note added, naming this review's edits | |
+| §1 | Build status: the backend now serves every block from real queries; the scaffold wording removed | This review |
+| §3 words | The "Under notice" row replaced by "Eviction": two states, no date bound, the product's neutral word | D6 |
+| §4 options | Coming up removed; the forward view is a Due Date Custom window ending after today | D9 |
+| §4 forward rules | Chip suppression, dash with a reason on money-arrived numbers, records keep counting | D9 |
+| §4 matrix | Last column rewritten as Custom ending after today, row by row | D9 |
+| §4 chips | The no-chip case renamed from Coming up to a window ending after today | D9 |
+| §6 Status tab | Five bars: Active, no eviction · Eviction pending · Eviction approved · Bookings · Old tenants | D6 |
+| §6 | The false line "The Dues screen keeps these tenants inside its Active bar" removed | F14, D6 |
+| §13 | Status tap rows are the five bars; the new-filter row renamed Eviction state; the window-travel and forward-option rows rewritten | D6, D9 |
+| §15 | The forward empty-state row renamed from Coming up | D9 |
+| §17 tests 18 to 20 | Rewritten for the one-sided forward Custom window | D9 |
+| §19 items 2 and 15 | The eviction split and the forward treatment | D6, D9 |
+
+Then the edits ruled out of this tab's own findings, and the corrections from the pre-commit review
+pass:
+
+| Section | Change | From |
+|---|---|---|
+| Note block | D11 to D15 named; pointer to where rulings live | Review pass |
+| §1 | The five rulings named as done, not waiting | Review pass |
+| §3 base rule | Counted at the bill amount; charges live on the settlement side; Advance the one net exception; reshaped one rule per line | D13 |
+| §4 windows | A running period ends at today in both views, with where later-dated bills go | D11 |
+| §4 chips | Settlement Pending row: no chip, with the reason | D14 |
+| §4 card table, §10 | Collection by Property follows the toggle; rows sum to the view's own total | D15 |
+| §5 | Three bill tiles add up to Total Collection; Advance beside them, counted separately; Current FY reads money against bills | D12 |
+| §11, §18 item 1 | The settlement worry re-measured and inverted; both sections now point at F43 | F43 |
+| §13 | The settlement-filter cell shortened; its deeper defect moved to a line under the table | Review pass |
+| §17 test 1 | Each card sums to the view's own total | D15 |
+| §17 test 7 | Rewritten: bill amount to Total Collection, net to Collected via RentOk | D13 |
+| §17 test 16 | Settlement Pending shows no chip | D14 |
+
 ---
 
 ## Doc fixes owed to Vivek
@@ -904,6 +1338,8 @@ These do not affect the product. They matter because the guide is written for su
 | G2 | The status glossary lists tenant statuses 0 to 3 only. The table also has 4 (invite) and 5 to 8 (deleted states). A support reader tracing a status 4 person will not find them |
 | G3 | The guide contradicts itself on Current FY: the glossary says 1 Apr to today, the tile description says within this financial year. D2 settled it as year to date; both places should say so |
 | G4 | Upcoming Dues: "Food/Others appear only when configured" is not true of the build, which is rent only. After D8 it will be true; until then the line describes a card that does not exist |
+| G5 | The guide marks Settlement Pending "(Live)" and calls Collection Overview "Period, with two live tiles". The tile is window-scoped in the sheet and the build; Current FY keeps a fixed window, which is not the same as live |
+| G6 | The guide's Collection filter list still names Coming up, an option the app cannot send (F17) |
 
 ---
 
@@ -955,3 +1391,57 @@ empty state, View more appears past five rows.
 **View all screen.** All six tiles restated, each carrying the real month name and financial year on
 its face. Chips on exactly the two allowed rows. Category rows in the specified form, "Aug Rent
 Dues", top five with Others folded below and suppressed at zero. Stay rows carry their exact labels.
+
+### Collection, verified 2026-08-24
+
+**The toggle and §4.** The toggle is screen-level, Paid Date default; only Due Date may take a Custom
+window past today. Every block answers to the view. The five filter options match the app's list, and
+no Collection block carries a one-option filter (F16 sweep). The three cards the sheet gives their
+own dropdown have one, following the top filter's options; the Trend's range control is 8 weeks, 6
+months default, 12 months. A chip is suppressed when there is nothing to compare against; Custom
+compares an equal-length window immediately before the range. The Current FY tile itself is 1 April
+to today with "This financial year" on its face; only the filter option carries F9's 31 March.
+Per-tile chip direction is right everywhere it is built: collection tiles green for up, Still Unpaid
+red for up, Billed neutral grey.
+
+**Collection Overview.** The three source buckets add up to Total Collection exactly, each payment
+in exactly one bucket by the due date of the bill it cleared, and the bucket boundary agrees with
+§3's "due date still ahead" reading of Paid Early. The negative-total state is built with §5's exact
+line. Part payments hold together: a part payment splits its bill, so the paid split counts and the
+unpaid split stays on Dues. Measured on production, live non-test properties: exactly one part-paid
+invoice exists, so Billed, which reads only unpaid and paid bills, statuses 0 and 1, loses nothing.
+Billed excludes written off and refunded bills as §5 asks, and Billed minus Collected & Adjusted
+equals the unpaid amount exactly.
+
+**Collection Breakup.** Top 3 plus Others fold, Others carrying its drill and, on Received by, its
+staff count. Old cash codes 202 and 207 fold into Cash (§17.8). Online modes collapse to RentOk on
+both tabs. Blank receivers read "Not recorded" (§6). Adjustment modes excluded in Paid Date view,
+where they are worth ₹0.
+
+**Collection Status.** Paid Date only, hidden in Due Date with a real hidden return
+(`collectionService.ts:587`, F23 sweep). The four bars are the same four numbers as the tiles. The
+first bar carries the window's own name, matching design-fix item §19.12. Empty state fires when all
+four are zero.
+
+**Adjusted Collection.** Grid order matches §8. Deposit, advance and caution each sum the bill
+amounts their mode cleared, by paid date. Empty state fires on four zeros; its copy is wrong (F39)
+and its Discount figure reads a dead column (F40).
+
+**Collection Trend.** Own range, the top filter has no hold. Collection is the bottom segment in
+both views. Paid Date green counts money arrived, capped at today on the running period, yellow the
+period's billing, two independent numbers as §9 says. Due Date yellow is the remainder, so the bar's
+top is exactly Billed, the reading §9 recommends. The running bar is marked in progress, weekly bars
+are calendar weeks, and the empty state fires on no data.
+
+**Collection by Property.** Hidden below two properties with a real hidden return
+(`collectionService.ts:714`, F23 sweep). Zero-collection properties stay listed at the bottom. Each
+row carries its share of the account total, §19.21 done right; bars are relative to the top
+property; View more appears past five rows.
+
+**Payment Settlement.** Collected, Settled and Unsettled add up; the bar is two segments, §19.8 done
+right. Destination naming falls back to the contact-support line per row. The card's yes test and
+coverage are F42 and F43.
+
+**View all sheet.** Six groups as §12 lists them. Category rows are every category, largest first,
+with the billed side in Due Date view. FY rows carry the year on their face. Adjusted rows carry
+window, FY and all time, short of discount (F45).
