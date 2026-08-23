@@ -43,7 +43,7 @@ Three sources, and only one is authority on what shipped:
 | Source | What it is |
 |---|---|
 | The handoff sheet | What we asked for |
-| Vivek's calculation guide | What Vivek says the code does |
+| Vivek's calculation guide | What Vivek says the code does. Owned by him in the backend repo at `docs/analytics/ANALYTICS_GUIDE.md`; a read-only copy sits here as [[03 — Analytics Calculation Guide (Vivek)]] with the commit it was taken from. The Google Docs export circulating as a file is lossy, it ate the `$` from every SQL placeholder in the appendix, so never cite the export |
 | `src/v1/analytics/` in rentok-backend | What the code actually does |
 
 Doc against doc would pass a block where both documents agree and the code does neither, so every
