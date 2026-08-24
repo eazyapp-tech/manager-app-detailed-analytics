@@ -28,7 +28,7 @@ says so rather than quietly replacing it. Occupancy was added the same day and a
 | [Status board](#status-board) | How far the review has got, and the sweeps every remaining tab gets |
 | [Open items](#open-items) | Everything still waiting, by who it waits on |
 | [Findings](#findings) | Every difference found, F1 to F84: what is wrong and the fix |
-| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D24, dated |
+| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D25, dated |
 | [Sheet edits made](#sheet-edits-made) | Exactly what changed in the handoff sheets because of this review |
 | [Doc fixes owed to Vivek](#doc-fixes-owed-to-vivek) | Errors in the calculation guide, harmless to the product |
 | [What shipped better than we specified](#what-shipped-better-than-we-specified) | Things to write back into the sheets as rules |
@@ -43,6 +43,7 @@ Three sources, and only one is authority on what shipped:
 | Source | What it is |
 |---|---|
 | The handoff sheet | What we asked for |
+| A line number in this log | **Every `file.ts:NNN` in here resolves against commit `3a13e08ac`**, the state of the code when each tab was reviewed. Line numbers move whenever anyone edits a file, so each finding also names the function or block it is about, and that never moves. If a cited line does not say what the entry says, check the function, not the number (D25) |
 | Vivek's calculation guide | What Vivek says the code does. Owned by him in the backend repo at `docs/analytics/ANALYTICS_GUIDE.md`; a read-only copy sits here as [[03 — Analytics Calculation Guide (Vivek)]] with the commit it was taken from. The Google Docs export circulating as a file is lossy, it ate the `$` from every SQL placeholder in the appendix, so never cite the export |
 | `src/v1/analytics/` in rentok-backend | What the code actually does |
 
@@ -141,7 +142,7 @@ A block being wired does not prove every field inside it is. That is checked per
 | Collection | 7, plus the View all sheet | All | 20 | Complete; fixes with Vivek |
 | Expense | 5, plus the View all sheet and the Others sheet | All | 18 | Complete; fixes with Vivek |
 | Occupancy | 8, plus the View all sheet | All | 20 | Complete; fixes with Vivek |
-| Tenant | 14 | 0 | 0 | Not started |
+| Tenant | 14 | 0 | 0 | Next |
 
 **Next:** Tenant. All five Occupancy rulings are done, D20 to D24; the build fixes sit with Vivek in
 the open items. Occupancy was the hardest tab to check, five tables across two property structures,
@@ -182,6 +183,16 @@ the entry it came from is named beside it.
 ## Open items
 
 Everything still waiting, by who it waits on. An item leaves this table when its entry is Closed.
+
+⚠ **Fixes have started landing on Collection, and this table has not been re-checked against them.**
+Two commits after the reviews, `4bce93d21` "payment settlement logic changed" and `a2d839ea1`
+"collection due view all sheet data", rewrote parts of `collectionService.ts`. What they visibly
+touch: `settlementDestinations` no longer reads the scheduler alone (F42), refunds are now netted off
+collected money (new behaviour nobody logged), advance payments carry the label "Advance" instead of
+a blank (F39 territory), and rows worth nothing are filtered out. **The settled test was also
+changed, from three specific signals to "a payout or wallet record exists at all", which is looser
+than what F43 already called too loose.** None of this is verified. Re-check Collection against these
+two commits before working this table, and close or re-open each row on what the code now does.
 
 **Waits on Vivek, Dues and Collection**
 
@@ -1924,6 +1935,7 @@ The fix is F52's one guard in the caller, not nine here.
 | D22 | 24 Aug | F66 | In Unit view the tile counts units holding someone under eviction, not people |
 | D23 | 24 Aug | F75 | Upcoming Vacancy follows the view toggle, and the sheet was wrong |
 | D24 | 24 Aug | F77 | The eleven-month assumption stays, named in the info sheet with its count, and the count opens the list of tenants missing it |
+| D25 | 25 Aug | All citations | Line numbers are pinned to the commit each tab was reviewed against, not re-mapped as the code moves |
 
 ### D1. Projected Due counts confirmed bookings only (2026-08-23)
 
@@ -2427,9 +2439,26 @@ Agreement Expiry card, so the same treatment belongs there.
 the repair; asking for the length where the agreement is created is what stops the gap reopening. S7
 keeps items 1 and 2 and loses its urgency.
 
----
+### D25. Line numbers are pinned to the reviewed commit, not chased (2026-08-25)
 
-## Sheet edits made
+Owner: "A."
+
+**What it settles.** Every `file.ts:NNN` in this log resolves against **`3a13e08ac`**, the state of
+the code each tab was reviewed against. They are not re-mapped as the code moves. Each finding names
+the function or block as well, and that is what to trust when a number and the code disagree.
+
+**Why this came up.** A day after the Occupancy commit, `950d46d1e`, "fix: improved comments",
+rewrote comments across six analytics service files. It changed no behaviour, so every finding
+survived untouched, and it moved **79 of this log's 98 citations** off the lines they name.
+
+**Why pin rather than chase.** Two edits in one week moved these files. Re-mapping produces a doc
+that is right on the day it is written and wrong again by the next commit, with no signal that it has
+gone wrong. Worse, re-mapping by hand is the exact mistake this review has already made twice, once
+with a multi-file `awk` using `NR` (F47) and once carrying a guide's line number onto a code file
+(F71). A named baseline cannot rot: it either matches or it visibly does not.
+
+**What this asks of Vivek.** Nothing extra. He works from the open-items tables, which name the file
+and the function; the line number is a convenience for finding it faster, not the finding itself.
 
 All in DA-01 Dues, 2026-08-23 and 2026-08-24:
 
