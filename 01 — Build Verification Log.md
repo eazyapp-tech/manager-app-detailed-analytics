@@ -27,8 +27,8 @@ says so rather than quietly replacing it.
 | [What is in scope](#what-is-in-scope) | Which blocks are checked, and what is deliberately left out |
 | [Status board](#status-board) | How far the review has got, and the sweeps every remaining tab gets |
 | [Open items](#open-items) | Everything still waiting, by who it waits on |
-| [Findings](#findings) | Every difference found, F1 to F46: what is wrong and the fix |
-| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D15, dated |
+| [Findings](#findings) | Every difference found, F1 to F64: what is wrong and the fix |
+| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D19, dated |
 | [Sheet edits made](#sheet-edits-made) | Exactly what changed in the handoff sheets because of this review |
 | [Doc fixes owed to Vivek](#doc-fixes-owed-to-vivek) | Errors in the calculation guide, harmless to the product |
 | [What shipped better than we specified](#what-shipped-better-than-we-specified) | Things to write back into the sheets as rules |
@@ -54,7 +54,10 @@ queries", restates the SQL per service. The Dues pass first read only the prose,
 read afterwards, on 2026-08-24, when the owner asked whether it had been used. It overturned nothing,
 independently corroborated F2's package defect, and its pointer to `i.added_by` led to F26. **Read
 both halves per tab.** Where a claim depends on live data it is measured on production,
-test and deleted properties excluded, and the query's scope is stated next to the number.
+test and deleted properties excluded, and the query's scope is stated next to the number. Where an
+Expense figure is a share of all twelve-month spend, the base is ₹185.1 crore; the table is written to
+continuously, so separate runs of the same query move it by a few lakh, which is the data moving and
+not an error.
 
 **A difference is not automatically a defect.** Some were decided during the build with the owner in
 the room. So each difference gets a view on which version is right, and the owner rules.
@@ -92,6 +95,10 @@ edit or ticket is done.
 | Credits | The table where the payment flow records a discount the owner gives at payment time. The bill keeps its full amount; the waived part is a credits row on the payment |
 | Confirmed booking | A booking at status 2 that is approved, or on a property where bookings need no approval. The owner ruled those two are the same thing (D1). The code that decides it is at `tenantService.ts:352` |
 | View all screen | The panel that opens from the Overview strip header, sheet §6. Called a "screen" here so it is never confused with the handoff sheet |
+| Team passbook | The record of money each staff member holds or is owed, per property. Rows carry a fund and a category. `team_member_transactions` |
+| Fund | Whose money paid for something, recorded on the passbook row, not on the expense: `NPNAF` collected money · `PF` the staff member's own pocket · `AF` petty cash · `EF` exchange between staff. These are not the screen's four fund rows: FlexiPe is found by its wallet link and writes no passbook row at all, and `EF` never reaches the screen |
+| Balance type | Which way a passbook row moves the balance: 1 money in, 2 money out. The passbook screen and the Expense tile read the same rows with opposite signs, on purpose |
+| FlexiPe | A wallet spending leaves through. An expense paid this way carries a wallet link and no passbook row, so it is identified by that link and never by its payment mode |
 
 ---
 
@@ -127,12 +134,14 @@ A block being wired does not prove every field inside it is. That is checked per
 |---|---|---|---|---|
 | Dues | 9, plus the View all screen | All | 26 | Complete |
 | Collection | 7, plus the View all sheet | All | 20 | Complete; fixes with Vivek |
-| Expense | 5 | 0 | 0 | Not started |
+| Expense | 5, plus the View all sheet and the Others sheet | All | 18 | Complete; fixes with Vivek |
 | Occupancy | 8 | 0 | 0 | Not started |
 | Tenant | 14 | 0 | 0 | Not started |
 
-**Next:** Expense. All five Collection rulings are done, D11 to D15; the build fixes sit with Vivek
-in the open items.
+**Next:** Occupancy. All four Expense rulings are done, D16 to D19; the build fixes sit with Vivek
+in the open items. Expense was the cleanest tab so far on windows and filters and the only one with
+no forecast, and it still returned 18 findings, most of them in the zeros and in how free text is
+grouped.
 
 **Sweeps to run on every remaining tab**, each born from a Dues finding:
 
@@ -152,6 +161,10 @@ in the open items.
 | Do all rows of one card count on one clock | F40 |
 | Does a tile keep its chip on both sides of a view toggle | F31 |
 | Do a card's tabs still sum to the card's total in every view | F36 |
+| Is a number clamped so it can never go below zero, where a negative is the real answer | F55 |
+| Does every card on a screen end its window on the same day | F63 |
+| Is an empty state defined in the code and never sent | F64 |
+| Does any of our own code save an internal string that ends up on a bar the manager reads | F62 |
 
 ---
 
@@ -159,7 +172,7 @@ in the open items.
 
 Everything still waiting, by who it waits on. An item leaves this table when its entry is Closed.
 
-**Waits on Vivek**
+**Waits on Vivek, Dues and Collection**
 
 | Item | One-line action | Entry |
 |---|---|---|
@@ -198,6 +211,24 @@ Everything still waiting, by who it waits on. An item leaves this table when its
 | Collection View all | Window rows and stay rows follow the toggle; Adjusted rows include discount | F44, F45 |
 | Collection healthy states | Emit the three §15 healthy messages | F46 |
 
+**Waits on Vivek, Expense**
+
+| Item | One-line action | Entry |
+|---|---|---|
+| Every chip, all five tabs | End the "same point last month" window at the end of the previous month. The same two lines sit in duesService, collectionService, expenseService, tenantService and occupancyService | F47 |
+| Four empty states | Send the in-window zero copy where the property has spent before; keep the setup line for a property that never has | F50 |
+| Overview row | Give it an empty state, the screen's own in-window zero | F51 |
+| Expense healthy state | Emit "Nothing owed to staff right now." on the tile and on the View all row that repeats it | F51 |
+| Every block, all five tabs | An unresolved property must not fall back to sample data; fix once in the caller | F52 |
+| View all, quarantine row | Take the absolute value before the two helpers that floor it at zero | F55 |
+| View all, no-bill row | Print the amount once, not as value and sub-label both | F56 |
+| View all sheet | Carry the window's own name, not today's date | F57 |
+| Every window on the tab | Say which clock `paid_date` is stored on; convert if it is UTC | F58 |
+| Expense Breakdown, Category | Group the catch-all on the lower-cased trimmed name, display the first spelling | F59 |
+| Top Payers, Paid by | Label FlexiPe spending "FlexiPe (Owner)"; never show the raw `(Owner)` | F62, D19 |
+| Expense Trend | End the range at today, like the other six blocks | F63 |
+| Expenses by Property | Send the empty state that is already written, when the window's total is zero | F64 |
+
 **Waits on the owner**
 
 | Item | The question | Entry |
@@ -207,12 +238,15 @@ Everything still waiting, by who it waits on. An item leaves this table when its
 | Occupancy | What an unapproved booking's bed reads as | F4 |
 | Under notice rename | Whether the Tenants label becomes Under eviction with two named parts | S3 in the register |
 | Added By | Name creator codes 5 and 6, once Vivek says what they are | F26 |
+| Paying staff back | Whether a way to record it ships before the Still owed to staff tile does | S6 in the register |
+| The word "Others" | Whether the rollup row is renamed across Dues, Collection and Expense together | S5 in the register |
 
 **Waits on the other sheets**
 
 | Sheet | Change | When |
 |---|---|---|
 | DA-08 Inventory, DA-09 Tenants | §4: drop Coming up, rewrite the forward column per D9, from each tab's code | At each tab's review |
+| DA-04 Expense | §4 explains its own no-forward rule by pointing at Coming up, an option D9 deleted. The rule is right; the reason needs rewriting without the dead name | Done, 2026-08-24 |
 | DA-08 Inventory | What its under-notice count is called after D6, and the Occupancy booking question | At the Occupancy review |
 
 ---
@@ -947,6 +981,375 @@ the same in tile form. The service emits empty states and nothing else, so a zer
 renders as a bare zero. Blocked in spirit by F43: until the settled test is proven, Unsettled at
 zero is the default, not news.
 
+Findings from F47 are the Expense tab, reviewed 2026-08-24 in sheet order: §4 and the filters
+first, then the five blocks and the View all sheet.
+
+### F47. The "same point last month" chip reaches into the current month seven days a year
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** all five services carry the same two lines
+
+The comparison window is built as "first of last month, plus today's date minus one"
+(`expenseService.ts:158`). When the previous month is shorter than today's date, that overflows past
+the end of it. On 31 May the comparison runs 1 April to 1 May, so it counts a day of the month it is
+supposed to be measured against, and the chip flatters or damns the current month with its own
+money.
+
+It bites on seven days a normal year, six in a leap year: 31 May, 31 July, 31 October, 31 December,
+and 29, 30 and 31 March. Every other day of the year the window is right.
+
+**Fix:** stop the comparison at the end of the previous month. **This is not an Expense mistake.**
+The same two lines are written into all five services: `duesService.ts:151`,
+`collectionService.ts:177`, `expenseService.ts:158`, `tenantService.ts:167` and
+`occupancyService.ts:72`. The fix lands five times or four tabs keep it.
+
+**Audit note, two errors in this entry.** It first said Dues built its window differently and was not
+affected. Wrong, and asserted without opening the file. The citations for Collection, Tenant and
+Occupancy were then wrong as well: they were read off a multi-file `awk` using `NR`, which counts
+lines across all files rather than restarting at each one, so three of the five addresses were
+cumulative offsets and pointed past the end of their files. The claim itself held; the addresses did
+not. Any citation gathered from more than one file at a time is re-checked per file from now on.
+
+On the Dues half: it feeds `lastMonthSamePoint` straight into `this_month_prev` at
+`duesService.ts:207`, the same figure F5 is about, so the Dues chip carries both defects at once and
+F5's fix must not be written as if this one were already handled.
+
+### F48. The sheet says three totals must always match, and its own filter rule lets them differ
+
+**Verdict:** Specification gap · **Status:** Closed · **Owed by:** Nobody · **Note:** sheet §3 corrected
+
+§3 read, before this edit: Total Expense on the Overview, on Expense Breakdown and on Top Payers
+"must always be the same number". §4: a card can be deliberately set aside on its own dropdown until the top filter next
+changes. When a card is set aside the three are correctly different, and the card says which window
+it is on.
+
+The build is right: the three are separate queries over one and the same set of rows, so they cannot drift while
+they share a window. §3 now carries the exception.
+
+### F49. No chip where the sheet asked for a rupee change
+
+**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D16; sheet §4 corrected
+
+§4 asked for the rupee change with the percentage dropped where the previous period had no spend.
+`chipMoney` and `chipCount` both return null when the previous figure is zero or less
+(`expenseService.ts:84`, `:92`), so no chip is sent. Ruled as built, reasoning in D16.
+
+### F50. Four properties in five are told to add their first expense
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the largest finding on this tab
+
+§13 separates two zeros and states the rule outright: a property with real history and a quiet month
+gets the plain line, and the setup message "appears only where no expense has ever existed". The
+build ships one empty state per card and never two (`EMPTY`, `expenseService.ts:64`), so no card can
+tell the two zeros apart. On one card the single message is the setup line: Expense Breakdown sends
+"No expense recorded yet. Add your first expense to start tracking costs." whenever its window
+returns no rows (`expenseService.ts:389` and `:391`). The other three send a neutral line each, which
+is not wrong for either zero and is not right for either.
+
+**Measured on production**, live properties with test and deleted excluded, counting only properties
+that have ever recorded an expense:
+
+| Window | Properties reading zero | Share |
+|---|---|---|
+| This month to date | 4,197 of 5,183 | 81% |
+| Last month, whole month | 4,087 of 5,183 | 78.9% |
+
+So the wrong message is the one almost everybody sees, and it tells an operator with years of
+records to start recording. It also invites an action, "Add your first expense", on a card that has
+no button (§17.30).
+
+**Fix:** two states per card. The setup copy needs a second test, whether the property has any
+expense at all, which is one existence check per card and not per row.
+
+### F51. The Overview row sends its zero nowhere
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F24 sweep; same shape as F34
+
+§4 puts the screen-level in-window zero on the Overview row in as many words: "the entry point is
+the Overview row... the in-window zero and the narrowed-access note both show there". §17 item 29
+lists the same thing as a missing design state. `getOverview`
+never emits an empty state, so a window with no spend renders four bare zeros with nothing said.
+Every other block on the tab sends its zero somewhere; the screen's headline block does not.
+
+The healthy state is missing too. §13's one piece of good news, "Nothing owed to staff right now.",
+is not emitted on the tile or on the View all row that repeats it (§6). 20 live properties read
+exactly zero owed today.
+
+### F52. A property the app cannot find shows made-up numbers as though they were real
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** suite-wide, 51 places across five services
+
+Ask for a property that has been deleted, or send a stale property number, and the screen fills with
+₹26.3K, 128 expenses, "Jatin" and "Sharma PG". §13 asks for "Select a property to view expenses."
+
+Every block returns null when no live property matches the request
+(`if (props.length === 0) return null`), and the caller falls back to the sample data the block was scaffolded with
+(`service.ts:174`, `block_data: data ?? def.mock_data`). So a filter naming a property that has been
+deleted, or a stale pg_number, renders ₹26.3K, 128 expenses, "Jatin" and "Sharma PG" as though they
+were real. §13 asks for "Select a property to view expenses."
+
+The request already refuses an empty property list, so this is the unresolved case, not the
+empty one. Counted by service: Dues 11, Tenant 15, Collection 9, Occupancy 9, Expense 7. The lock
+path is handled properly and returns a real restricted payload, so only this one branch leaks.
+
+**Fix:** one guard in `toBlock`, not 51 in the services: a null from a real service is an empty
+state, and only an unbuilt block falls back to mock.
+
+### F53. Still owed to staff will read fifty crore and can only grow
+
+**Verdict:** Specification gap · **Status:** Closed · **Owed by:** Nobody · **Note:** the same shape as D10; sheet §5 carries the caution; S6 proposes the fix at the source
+
+The tile is built correctly. It is the exact negative of the Personal funds balance the Passbook
+screen shows for the same people, same rows, same formula (`teamPassbook.ts:1444` against
+`expenseService.ts:260`), so §15.15's test passes properly rather than by luck.
+
+What the sheet did not say is what the number does in practice. The subtracting side barely exists:
+reimbursement was first recorded on 19 March 2026 and has been used 23 times platform-wide since,
+₹1,100 of it on live non-test properties.
+
+**Measured on production**, live properties with test and deleted excluded, every property with any
+personal-funds activity:
+
+| | |
+|---|---|
+| Platform total | ₹50.77 crore |
+| Properties with a positive figure | 1,165 |
+| Properties reading exactly zero | 20 |
+| Properties reading negative | 0 |
+| Median | ₹60,100 |
+| Largest on one property | ₹1.90 crore |
+
+Not one property has ever settled below zero. So the tile is honest about the system of record and
+alarming about the business, exactly as the held-deposit line is under D10, and the same "I paid him
+back in cash" conversation is coming. Sheet §5 now carries the caution and the measurement.
+
+### F54. The staff tile counts refunds staff fronted, and the sheet said two things
+
+**Verdict:** Accepted change · **Status:** Ruled · **Owed by:** Owner for one question · **Note:** D17 settles the refunds; the passbook rows with no property are still open
+
+₹2.32 crore of the ₹50.77 crore is tenant refunds a staff member paid from their own pocket. §5
+defines the tile as money staff fronted that has not been paid back, which takes them in; §15.15
+called it their "open expense payback", which leaves them out; §3 separately says a refund is not an
+expense. The code counts them. Ruled as built, reasoning in D17.
+
+**Also correct as built, checked in the same pass.** The tile reads no date bound of any kind, so it
+is genuinely live. It nets off deleted expenses through the reversal rows. It counts the fund the
+passbook calls Personal funds and no other, so petty cash and collected money cannot leak into it.
+
+**One small gap left standing.** 46 passbook rows worth ₹70.1 lakh across 30 accounts carry no
+property at all, written by the account-level passbook, and the tile reads by property so it cannot
+see them. Small, and it needs a decision about what an account-level row belongs to before it can be
+fixed.
+
+### F55. The quarantine row always reads ₹0, which is the one thing it exists to avoid
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+"Rows with a negative or zero amount" is §6's proof that the totals were worked out on clean rows.
+The row is built as `inr(Math.abs(n(...)))` (`expenseService.ts:300`). `n()`
+(`expenseService.ts:57`) floors the value at zero before `Math.abs` ever sees it, so the absolute
+value is taken of a zero; `inr()` (`expenseService.ts:55`) would floor it a second time anyway. So the value is ₹0 on every property and every window. The row count
+beside it is correct.
+
+**Measured on production**, live properties with test and deleted excluded, expenses paid in the
+twelve months to 24 August 2026: 225 excluded rows across 50 properties, of which 94 carry a
+strictly negative amount worth negative ₹10.33 lakh. Those 94 are the ones rendered wrong; the other
+131 are exactly ₹0 and would read ₹0 correctly either way.
+
+**Fix:** take the absolute value before either helper, or let this one row through unclamped.
+
+### F56. The no-bill row prints its amount twice
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§6 asks for one presentation, an amount and a share together: "₹8.2L of ₹9.8L, 84%". The build sends
+the amount as the row's value and the whole phrase again underneath (`expenseService.ts:294`), so the
+row says its own amount twice.
+
+**And it is the wrong kind of number.** That row uses `inr()` (`expenseService.ts:54`), which writes
+every digit, so it reads "₹1,69,42,000 of ₹1,85,00,000, 92%" where §6 asked for "₹8.2L of ₹9.8L,
+84%". The whole point of the short form here is that this is a number a manager has never seen before
+and has to take in at a glance.
+
+**Audit note.** This entry first quoted the row as reading "₹1.69Cr", which the code cannot produce.
+The wrong quote hid the second defect.
+
+### F57. The View all sheet says today whatever window it is on
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** against D9
+
+The sheet carries `window_label: w.today` (`expenseService.ts:303`), so a Last Month sheet announces
+today's date. D9 requires a block that does not simply follow the filter to declare its own time
+correctly, and the Dues View all screen already does this properly, carrying the real month name and
+financial year on its face.
+
+**Fix:** the window's own name, as Dues builds it.
+
+**Sheet gained a label it never had.** The code adds a row called "Source not recorded" for the
+remainder. §6 described that remainder without naming it, and §13 required only that it be "named as
+its own line, never guessed from who paid". Good label, now written into §6 so it does not get
+renamed later.
+
+### F58. Which clock a paid date is stored on has not been settled
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** a question to answer, not a defect to fix yet
+
+§4 says a day runs midnight to midnight, India time, and §15.14 tests it: an expense recorded at
+23:30 on the window's last day counts inside that window. Every Expense query compares
+`e.paid_date::date` against dates worked out in India time, but `paid_date` is a timestamp with no
+timezone on a database running UTC. If the stored clock is UTC, an expense paid just after midnight
+India time falls into the previous day, and at a month boundary into the previous month.
+
+**Five paths write that column and they do not agree with each other**, which is the finding rather
+than the timezone itself:
+
+| Where | What it stores |
+|---|---|
+| `controllers/expenses.ts:460` | `moment(...).add(330, 'minutes')`, an explicit shift to India time |
+| `controllers/expenses.ts:52` | `new Date(req.body.paid_date)` |
+| `controllers/expenses.ts:1061` | `new Date(req.body.paid_date)`, or now when the field is absent |
+| `controllers/expenses.ts:504` and `:634` | the request value assigned raw, with no conversion at all |
+
+Line 460 is proof that at least one path deliberately stores India time. Whether the others land on
+the same clock is what needs answering.
+
+**Measured on production**, twelve months, all properties including test and deleted, which is why
+this count is larger than F59's: 120,130 of 153,672 rows carry no time of day at all and are
+unambiguous whatever the answer. 6,799 rows, 4.4%, sit between 18:30 and 23:59 on
+the stored clock, which is exactly the band where the two readings disagree.
+
+**The data alone cannot settle it**, because an evening entry stored in India time and a late-night
+entry stored in UTC look identical in the column. Engineering says which it is, and if it
+is UTC every window on the tab needs the conversion. Same treatment as F43: the shape is right, the
+yes test needs proving.
+
+### F59. Outside the six named groups, capitals split the bar, and a tenth of the money is in there
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** found by the F19 sweep; third tab with this fault
+
+The six named groups match on a case-insensitive prefix and are fine. Everything else falls to the
+catch-all, which trims but does not lower-case (`CAT_GROUP`, `expenseService.ts:41`), so a typed
+category only merges with itself when the capitals match. Dues groups the same kind of field with
+`LOWER(TRIM(...))` at `duesService.ts:220`; Collection was caught with the identical fault as F35.
+
+**Measured on production**, live properties with test and deleted excluded, expenses paid in the
+twelve months to 24 August 2026: **323 typed category names differ from another only by capitals,
+carrying ₹18.48 crore across 30,302 expenses**, out of ₹185.1 crore and 151,552 expenses on the
+tab. A tenth of the money is in a bar that has been split in two or three.
+
+| Split across | Rows | Amount |
+|---|---|---|
+| Flat Rent · FLAT RENT · flat rent | 174 | ₹1.24 Cr |
+| New Setup · NEW SETUP | 1,294 | ₹1.73 Cr |
+| Security Refund · security refund · Security refund | 1,371 | ₹1.42 Cr |
+| Vegetables · vegetables · VEGETABLES | 2,592 | ₹88.4 L |
+
+A split spelling splits its bar, pushes the real category out of the top three, and pads the Others
+row with pieces of it.
+
+**Fix:** group on `LOWER(TRIM(...))` and display `MIN(...)`, exactly as `duesService.ts:217` does.
+The named groups need no change.
+
+### F60. The rollup row and a category people actually type share the word "Others"
+
+**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D18; sheet §7 corrected; the repair is parked as S5
+
+§7 read, before this edit: "Nothing in the sheet is ever labelled 'Other', so the word keeps one meaning on this
+screen", and §14 said the screen never renames what somebody typed. Both cannot hold, because people
+type it: **4,566 expenses worth ₹3.97 crore over twelve months are saved under a category literally
+called Other or Others**, on live properties.
+
+`foldTop3` appends a bar labelled "Others" after the top three (`expenseService.ts:108`), so where a
+typed "Others" is one of those three, the card carries two rows of that name and they open different
+things.
+
+**Measured on production**, twelve months to 24 August 2026, per property:
+
+| | Properties |
+|---|---|
+| A typed Other or Others sits in the top three | 207 |
+| ...and a rollup row shows as well, so the card reads Others twice | 111 |
+| A typed Other or Others falls inside the Others sheet | 362 |
+
+Ruled as built, reasoning in D18.
+
+### F61. FlexiPe is a third of the money and the sheet calls it one in seven
+
+**Verdict:** Specification gap · **Status:** Closed · **Owed by:** Nobody · **Note:** sheet §7 corrected
+
+§7 read, before this edit: "This is not a small row. Roughly one expense in seven leaves through FlexiPe." True by count and
+it undersells the row. Measured on live properties over twelve months: 13.4% of expenses, and
+**₹60.2 crore of ₹185.1 crore, 32.5% of the money**. It is the largest row on the Payment Mode tab,
+ahead of Cash. A reader deciding how much care the FlexiPe path deserves would take the wrong view
+from "one in seven".
+
+### F62. A third of all spending shows on the Paid by tab as a bracketed string nobody typed
+
+**Verdict:** Specification gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D19; sheet §8 corrected
+
+`payerItems` reads `e.payer` and trims it (`expenseService.ts:489`), which is exactly what §8 asks.
+The problem is upstream: the FlexiPe path writes the payer as the literal `(Owner)`, brackets
+included, so that string becomes a bar on the Paid by tab.
+
+**Measured on production**, live properties with test and deleted excluded, expenses paid in the
+twelve months to 24 August 2026. The match is exact, not approximate:
+
+| | |
+|---|---|
+| Expenses whose payer is `(Owner)` | 20,301 |
+| Of those, paid through FlexiPe | 20,301, all of them |
+| FlexiPe expenses with any other payer | 0 |
+| What it is worth | ₹60.2 crore, 32.5% of all spending |
+| Properties showing it | 833 |
+| ...that also have a plain `Owner` payer, so the card carries two owner bars | 123 |
+
+§8 defines the tab as "who paid, grouped by the person recorded as having paid". For this money no
+person paid it. Ruled as `FlexiPe (Owner)` in D19.
+
+**The F19 capitals sweep was run here and deliberately not raised.** §8 merges names only when
+identical, on purpose, so that two different vendors are never fused. Measured so it is not
+re-opened: money sitting in a minority spelling is ₹5.67 crore of ₹185.1 crore on Paid to, 3.1%, and
+₹17.36 lakh on Paid by. That does not overturn a deliberate rule. Category folds capitals and names
+do not, because a category is a label people reuse from a short list and a name is a person.
+
+### F63. The trend's running bar counts days that have not happened
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** found by the F40 one-clock sweep
+
+Every block on this tab caps its window at today. The trend does not: its query runs to
+`endOf('month')` (`expenseService.ts:521`). So an expense dated later this month sits in the running
+bar while the Overview's This Month total leaves it out, and two cards on one screen disagree about
+the same month. §3: a future dated expense "joins every total the day its date arrives".
+
+It also argues with the bar's own marking. The bar is drawn as in progress precisely because the
+month is unfinished, and then counts days that have not arrived.
+
+**Measured on production**, live properties with test and deleted excluded, on 24 August 2026:
+
+| | |
+|---|---|
+| Expenses dated after today, right now | 1, worth ₹1,414 |
+| Recorded before their paid date, last twelve months | 4,796, worth ₹8.16 crore |
+| ...of those, dated into a later month than the one they were entered in | 267 |
+
+So the money in flight at any moment is small, and the situation recurs a few hundred times a year.
+
+**Fix:** end the trend's range at today, as the other six blocks do.
+
+### F64. Expenses by Property has its empty copy written and never sends it
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F24 sweep; sheet §10 and §13 reconciled
+
+`EMPTY.by_property` is defined in full at `expenseService.ts:68` and is the only one of the four
+empty states never used. `getByProperty` returns rows and a hint and nothing else
+(`expenseService.ts:571`), so a multi-property account with no spend in the window gets a list of ₹0
+rows with no explanation.
+
+**The sheet argued with itself and is now settled.** §10 says properties with no spend still appear at
+zero; §13 lists empty copy for the card. Both hold under one rule: list every property including the
+zeros while anything at all was spent, and show the empty state only when the window's total is zero.
+Sheet §10 now says so.
+
+
 ---
 
 ## Decisions ruled
@@ -968,6 +1371,10 @@ zero is the default, not news.
 | D13 | 24 Aug | F29 | Collection is counted at the bill amount; processing charges live on the settlement side |
 | D14 | 24 Aug | F30 | Settlement Pending carries no chip; nothing records what it stood at before |
 | D15 | 24 Aug | F41 | Collection by Property follows the toggle, like Breakup |
+| D16 | 24 Aug | F49 | No chip where the previous period had no spend, on every tab |
+| D17 | 24 Aug | F54 | Still owed to staff counts everything staff fronted, refunds included |
+| D18 | 24 Aug | F60 | The two meanings of "Others" stay for now; renaming the rollup is parked |
+| D19 | 24 Aug | F62 | FlexiPe spending is its own payer row, named "FlexiPe (Owner)" |
 
 ### D1. Projected Due counts confirmed bookings only (2026-08-23)
 
@@ -1262,6 +1669,83 @@ around it switches. The sheet's own forward-window cell already described the Du
 
 No code change. Sheet §4's card-change table and §10 corrected.
 
+### D16. No chip where there is nothing to compare against (2026-08-24)
+
+Owner: "A."
+
+§4 had asked for a rupee change with the percentage dropped where the previous period had no spend.
+The build sends no chip. Ruled as built, on all five tabs alike, and §4 corrected.
+
+**Why.** A rupee chip is a third state the shared chip component does not have, and it already lacks
+the second one, the neutral grey the count tile needs (§17.26). More importantly, "no chip" already
+means "nothing to compare against" on the four other tabs, so building this would give one blank
+situation two different looks across the suite. The tile shows its number alone, the same state it
+already uses on All Time.
+
+First Expense case where the build was right and the sheet was not.
+
+### D17. Still owed to staff counts everything staff fronted, refunds included (2026-08-24)
+
+Owner: "A."
+
+The tile counts money a staff member paid from their own pocket whatever they paid it for, so a
+tenant refund they fronted counts alongside an expense they fronted. ₹2.32 crore of today's ₹50.77
+crore. Sheet §15 items 15 and 16 corrected.
+
+**Why.** Two reasons, and the second is the one that would have broken.
+
+1. The tile is a debt to a person, not a spend figure. §5 already says it never adds into any total
+   on the screen, so §3's rule that a refund is not spend is not in play here: nothing about this
+   tile is spend.
+2. It has to keep matching the screen it hands off to. The tile is the Passbook's own Personal funds
+   balance with the sign flipped, and the Passbook counts fronted refunds. Excluding them here would
+   make the tile disagree with the Passbook for the same staff member, and the manager finds that out
+   by tapping the tile.
+
+**The general rule, for the next tile like it.** Where a number's whole job is to hand off to another
+screen, that screen's definition wins over the local one. The same reading settled D12 on Collection,
+where matching the homescreen beat the sheet's own adding-up rule.
+
+### D18. The two meanings of "Others" stay for now (2026-08-24)
+
+Owner: "I am kind of okay with having everything else named as Others only, and upon clicking that,
+Other also comes as a line item. I think I am still okay. That is an anomaly we don't want to solve
+for. However, note it down for later on that something should happen as per the sheet. Maybe we
+should rename, as you suggest, everything else, but for now I am okay with it."
+
+The rollup row keeps the name "Others". A category somebody typed as Other or Others keeps its own
+name too, so on 111 properties the card carries the word twice and on 362 the typed one appears
+inside the Others sheet. Sheet §7 corrected to describe what happens rather than to forbid it.
+
+**Why.** §14's promise is the stronger one: the screen never renames what somebody typed. Given that,
+the only repair left is to rename the rollup, and that is a change to a word Dues and Collection also
+use for their own rollups, so it is a suite decision rather than an Expense one. The owner ruled it
+is not worth holding this build for.
+
+**Not dropped, parked with its trigger.** S5 in the register carries the rename. It should be decided
+alongside the same question on Dues and Collection, where a due type typed as "Others" would produce
+the identical collision and nobody has looked yet.
+
+### D19. FlexiPe spending is its own payer, named "FlexiPe (Owner)" (2026-08-24)
+
+Owner: "Show it as flexi pay, and in brackets mention owner. That makes the most sense to me."
+
+The Paid by tab shows a row named **FlexiPe (Owner)** for every expense paid through the wallet. It
+never merges into the plain Owner bar, and the raw `(Owner)` string never reaches the screen.
+
+**Why.** Two readings were on the table and both were worse. Merging it into Owner tells a manager
+the owner personally paid ₹60.2 crore when the wallet did. Leaving `(Owner)` as it stands puts a
+bracketed internal string on the largest bar of the card, and on 123 properties splits the owner into
+two bars that do not add up. Naming the wallet first and the person second says both true things in
+one label.
+
+**It is the third place FlexiPe is named the same way**, after its own row on the Payment Mode tab and
+its own fund row in the View all sheet, so the tab is consistent with the rest of the screen rather
+than inventing a fourth treatment.
+
+**For Vivek:** the fix belongs in the analytics label, not in the FlexiPe writer. Changing what the
+writer stores would rewrite history on 20,301 records and every other screen reading that field.
+
 ---
 
 ## Sheet edits made
@@ -1326,6 +1810,30 @@ pass:
 | §17 test 7 | Rewritten: bill amount to Total Collection, net to Collected via RentOk | D13 |
 | §17 test 16 | Settlement Pending shows no chip | D14 |
 
+All in DA-04 Expense, 2026-08-24:
+
+| Section | Change | From |
+|---|---|---|
+| §1 build status | "The screen is not built ... every number below has to be built from scratch" replaced: the screen is built, verified, and the sheet is the rule while the log holds what differs | This review |
+| Note block, frontmatter | Correction note naming every changed section; date moved to 24 Aug, status to v3.1 | This review |
+| §3 words | The team passbook defined, since §6's fund rows lean on it and nothing defined it | This review |
+| §4 forward rule | The no-forward reason no longer explains itself by naming Coming up, which D9 removed | D9 |
+| §17 item 32 | Closed: the info-icon words ship in the build | B5 |
+| §3 three totals | "Always the same number" becomes the same number whenever they cover the same window, with the set-aside card named as the one exception | F48 |
+| §4 chips | Where the previous period had no spend, no chip, replacing the rupee-change chip the sheet asked for | D16 |
+| §5 tile table | Still owed to staff counts what staff fronted whatever they fronted it for | D17 |
+| §5 tile | Launch caution: the tile will read fifty crore and can only grow, with the measured figures and who answers "I paid him back" | F53 |
+| §6 fund rows | The remainder row named "Source not recorded"; the adding-back rule confirmed against production | F57 |
+| §7 category groups | How the six groups match: start of the name, ignoring capitals, with the thirty deposit spellings as the worked example | B3 |
+| §7 Others | The two meanings of Others stated as accepted, with the measured scale and the parked repair | D18 |
+| §7 FlexiPe | One in seven by count and a third of the money, the largest row on the tab | F61 |
+| §8 rules | FlexiPe spending is its own payer row, "FlexiPe (Owner)", never merged and never shown raw | D19 |
+| §10 | The empty state replaces a list of zeros when the window's total is zero | F64 |
+| §15 test 2 | Extended from stray spaces to capitals, with the measured scale, and which spelling labels the bar | F59 |
+| §15 test 15 | The tile equals the sum of every member's open personal-funds balance in Passbook, to the rupee | D17 |
+| §15 test 16 | New: a named group never swallows a category belonging elsewhere, with RentOk Software as the worked case | B3 |
+| §15 test 17 | Everything a staff member fronted counts, whatever they fronted it for; was test 16 before test 16 was inserted | D17 |
+
 ---
 
 ## Doc fixes owed to Vivek
@@ -1340,6 +1848,9 @@ These do not affect the product. They matter because the guide is written for su
 | G4 | Upcoming Dues: "Food/Others appear only when configured" is not true of the build, which is rent only. After D8 it will be true; until then the line describes a card that does not exist |
 | G5 | The guide marks Settlement Pending "(Live)" and calls Collection Overview "Period, with two live tiles". The tile is window-scoped in the sheet and the build; Current FY keeps a fixed window, which is not the same as live |
 | G6 | The guide's Collection filter list still names Coming up, an option the app cannot send (F17) |
+| G7 | The guide calls Expense Overview "Period, with one live tile". Two of the four tiles ignore the filter, and Current FY keeps a fixed window, which is not the same as live. Same fault as G5 |
+| G8 | The guide's Expense section describes the five cards. It mentions the View all sheet once, inside a whole-tab assumption, and never describes its rows. Its four fund rows are the least obvious numbers on the tab, and §6 attaches three rules to them that are each a wrong number if missed. A support reader asked where "Paid from staff's own money" comes from has nothing to read |
+| G9 | The guide states as a whole-tab assumption that "the window's upper end never goes past today". True of five blocks and not of the trend, which runs to the end of the month (F63). Once F63 is fixed the sentence becomes true |
 
 ---
 
@@ -1349,6 +1860,9 @@ These do not affect the product. They matter because the guide is written for su
 |---|---|---|
 | B1 | The Dues base pool is not a fresh query. It calls the homescreen's own `DuesListHelper.buildBaseQuery` | Dues on the homescreen and Dues in analytics cannot drift apart. The sheet never asked for this. Worth writing into DA-01 §3 as a rule the next screen inherits |
 | B2 | The View all screen's code refuses to build a chip the design draws on Past Dues, with the comment "Design's chip on Past Dues is a flagged bug (§21.9)" | The sheet caught a design defect, the developer read the sheet and honoured it over the drawn file. The handoff process working as intended, and worth saying to the team |
+| B3 | The six named expense categories match on the start of the saved name, ignoring capitals, rather than on exact text | The sheet asked only that the groups "collect the common spellings" and left the how open. This answer collects thirty spellings of a returned deposit into one bar, including the misspelling "Deposite Refund". It is the rule Dues and Collection should have had, and it is the reason F59 is only about the catch-all and not about the six groups. Its one measured cost: matching the start of a name also catches a name that merely begins the same way, so "RentOk Software", our own subscription fee, lands in the Rent bar, ₹25.5 lakh across 178 expenses in twelve months, 0.014% of the tab. Named in §15 as a test rather than fixed |
+| B5 | Every tile and every card ships its own definition text, ten of them, in `expenseHints.ts` | §17 item 32 flagged eleven info icons with nobody having written a word of what they say, and named Still owed to staff, the fund rows and the bill-or-receipt figure as the three that most needed one. All three have copy. The sheet listed this as outstanding and it was quietly done |
+| B4 | Every FlexiPe expense is found by its wallet link, never by its payment mode | §7 warned that reading the mode would bury FlexiPe in Others and leave its own row permanently empty. The build took the warning. Verified on production: all 20,301 FlexiPe expenses in twelve months are identified this way, and none is double counted in Others |
 
 ---
 
@@ -1445,3 +1959,60 @@ coverage are F42 and F43.
 **View all sheet.** Six groups as §12 lists them. Category rows are every category, largest first,
 with the billed side in Due Date view. FY rows carry the year on their face. Adjusted rows carry
 window, FY and all time, short of discount (F45).
+
+### Expense, verified 2026-08-24
+
+**The filter and the screen's behaviour.** Five options matching the app's list, This Month default.
+Custom is stopped at today twice over, once in the config the app reads and once in the service, and
+Expense is the only tab that does this. Current FY runs 1 April to today as a tile and as a filter
+option, so F9 genuinely does not reach here. The three cards with their own dropdown carry the top
+filter's five options; the trend carries 6, 12 and 24 months and survives a page load on a top filter
+it does not recognise. No card carries a one-option dropdown. Chips hide on All Time. Chip direction
+is right per tile: red for rising spend, neutral grey for the count, none on Still owed to staff.
+There is no view toggle, so the F31 and F36 toggle sweeps do not apply.
+
+**Overview.** Four tiles in the sheet's order with the sheet's labels, the two fixed ones carrying
+their face note where the others put a chip. The block is titled "Overview", not "Overview (Live)",
+so design fix §17.5 is already done. Still owed to staff reads the passbook rather than re-inventing it, so
+§15.15 passes properly; the check and its citations are in F53. §5's claim that a quarter of spending
+comes from staff pockets is true as a share of money: ₹48.65 crore of ₹185.1 crore over twelve
+months, 26.3%. The sheet's own appendix records 26% as a share of expenses, a different measurement
+that this review did not re-run.
+
+**View all sheet.** Eleven rows in §6's order. Average per expense hides at no expenses; petty cash
+and the quarantine row hide at zero; the sheet opens on a dead window with zeros rather than refusing
+to open, as §6 asks. The fund rows are the part most likely to be wrong and are right: an expense
+paid from two sources is counted once in the total and split only across the fund rows, no passbook
+row is attached to more than one expense so nothing is double counted, and deleted expenses drop out
+of the window entirely along with both their passbook rows. **Measured on production**, twelve months,
+live properties: across 2,847 properties that spent anything, not one has fund rows overshooting its
+own total, and the whole platform's unexplained remainder is ₹1.67 lakh out of ₹185.1 crore. The
+no-bill test is sound: no expense carries an array of blank strings that would pass as a receipt.
+
+**Expense Breakdown.** Payment Mode passes in every detail. All nine codes in §7's list map to §7's
+labels and all nine hold real money (the F40 sweep). Unrecognised modes fall to "Online" and are
+almost nothing: 197 expenses carry mode code 0 and a further 4 carry no mode at all, ₹1.22 lakh
+between them, 0.01% of the money. So "Online hides at zero" means most properties never see the row. The tab has no rollup, every mode sorts by
+amount, and the real Others mode carries no drill, which is all three of the rules §7 wrote specially
+for this tab. Category and Payment Mode run the same test over the same set of rows, so the two tabs cannot
+disagree on the card's total (the F36 sweep). The Others sheet lists the remaining named groups first
+and then the typed names by amount, and spend with no category at all appears as "No category" rather
+than folded into anything.
+
+**Top Payers and Vendors.** The tab never derives the payer from the record's creator, which was §8's
+flat prohibition. Names are trimmed and merged only when identical. Blank names get their own row and
+stay in the total, and §8's "a handful of rows across every property" is exactly right: over twelve
+months, 4 expenses worth ₹3,000 have no payer and 7 worth ₹4,900 have no payee. Three largest then
+Others, each row with its amount and share, both tabs summing to one card total.
+
+**Expense Trend.** Its own range, the top filter has no hold. Months oldest to newest, the running
+month marked in progress and drawn lighter, an all-zero range firing the empty state.
+
+**Expenses by Property.** Hidden below two properties with a real `hidden` return
+(`expenseService.ts:545`), the only hiding rule this tab has and the F23 sweep passes on it.
+Zero-spend properties stay listed at the bottom, rows sort high to low, bars are relative to the top
+property, each row carries its share of the account total, and View more appears past five rows.
+
+**Windows, settled earlier and re-checked here.** F9 and F17 both exempt this tab and both exemptions
+hold in the code: Current FY ends at today, Custom caps at today, and there has never been a forward
+branch to leave behind because the sheet never asked for one.

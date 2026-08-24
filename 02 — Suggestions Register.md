@@ -14,6 +14,8 @@ happens today, why it looks wrong, and what is proposed.
 | S2 | Cancelling a booking should clear its unpaid dues and say so | Proposed | Owner |
 | S3 | Rename "Under notice" to "Under eviction", with two named parts | Parked | Owner, after all five tabs are verified |
 | S4 | A list, ageing and a prompt for deposits owed to tenants who have left | Proposed | Owner |
+| S5 | Rename the rollup row so "Others" means one thing | Parked | Owner, alongside Dues and Collection |
+| S6 | A way to record paying staff back, before the tile reads fifty crore | Proposed | Owner |
 
 | Status | Meaning |
 |---|---|
@@ -137,3 +139,51 @@ was never recorded. The product's own exit flow reads the same two records, refu
 payments, so there is nowhere else in the system a settlement could be. The line is right about the
 system of record. Whether it is right about the cash is a recording question, and item 3 above is
 what fixes it at the source.
+
+## S5. Rename the rollup row so "Others" means one thing
+
+**Status:** Parked, 2026-08-24. Owner ruled the collision stays for now (D18 in the log)
+**Where:** Expense Breakdown, Category tab. Very likely Dues and Collection too, unchecked
+
+The Category card shows the three largest groups and folds the rest into a row called **Others**.
+Separately, people type a category called Other or Others: 4,566 expenses worth ₹3.97 crore over the
+twelve months to 24 August 2026. So on 111 properties the card carries two rows reading Others, one
+being what people typed and one being everything else, and they open different things. On another
+362 the typed one turns up inside the Others sheet.
+
+**Why it is parked, not fixed.** Ruled in D18 in the log, where the reasoning lives. In short: the
+only repair that does not break §14 is to rename the rollup, and the owner ruled the anomaly is
+tolerable and not worth holding the Expense build for.
+
+**Why it should not be forgotten.** Dues Breakdown and Collection Breakup fold their own rollup into
+a row called Others over a free-text field, exactly as this one does. Nobody has checked whether a
+due type has ever been typed as "Others". If it has, three tabs have the same collision and the
+rename becomes one decision made once rather than three made separately.
+
+**The trigger:** decide it when the Dues and Collection category grouping is next opened, which is
+already owed there for F35 and F19.
+
+## S6. Nothing records the business paying its staff back
+
+**Status:** Proposed, 2026-08-24. Falls out of F53
+**Where:** Team Passbook, not the analytics screen
+
+Staff front a quarter of all spending from their own pockets, ₹48.65 crore over twelve months. What
+the business has not paid back reads **₹50.77 crore across 1,185 live properties**, and almost nothing has ever
+been taken off it: 1,165 properties positive, 20 at zero, not one negative. The reason is that the way to
+record settling up only appeared in March 2026 and has been used 23 times platform-wide since.
+
+So the new Still owed to staff tile will show a very large number that only grows, and the first
+thing many operators will say is "I paid him back months ago, in cash".
+
+**This is the same shape as S4.** A real obligation, correct about the system of record, with no
+workflow behind it, so it ages quietly and arrives as a complaint about the number.
+
+**Proposed, in order of what it takes:**
+
+1. Make recording a payback easy and obvious from the passbook, so the tile can fall.
+2. A prompt when the amount owed to one person crosses a threshold or gets old.
+3. Ageing on it, the same idea as the Overdue Breakup buckets.
+
+Item 1 alone decides whether the tile is a live figure or a growing monument. It is worth settling
+before the tile launches, not after.

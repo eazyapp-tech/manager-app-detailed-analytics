@@ -1,15 +1,25 @@
 ---
 title: DA-04 Expense — Handoff Sheet
-date: 2026-08-08
+date: 2026-08-24
 tags: [rentok, expenses, financials, detailed-analytics, handoff]
-status: v3 · uplifted to the suite template · definitions carried from v2
+status: v3.1 · corrected from the build verification pass
 owner: Sanchay
 ---
 
 # Expense — Handoff Sheet
 
-> [!NOTE] Corrected 2026-08-08, from the Inventory uplift's sibling check
-> - The no-forward-setting rationale now names all four siblings that carry Coming up, not two.
+> [!NOTE] Corrected 2026-08-24, from the build verification pass
+> The screen has been built since this sheet was written, and verified block by block against the code and against production. Sections 1, 3, 4, 5, 6, 7, 8, 10, 15 and 17 all changed. Full reasoning lives in [[01 — Build Verification Log]], decisions D16 to D19.
+> - **§1** rewritten: the screen is built.
+> - **§3** the three totals match when they cover the same window, not always. The team passbook defined.
+> - **§4** no chip where the previous period had no spend. The no-forward rule no longer explains itself by naming Coming up, an option that has since been removed.
+> - **§5** Still owed to staff counts everything staff fronted, whatever they fronted it for, and carries a launch caution.
+> - **§6** the leftover fund row is named "Source not recorded".
+> - **§7** how the six category groups match; the two meanings of "Others"; FlexiPe by money as well as by count.
+> - **§8** FlexiPe spending is its own payer row.
+> - **§10** the empty state replaces a list of zeros.
+> - **§15** tests 2 and 15 rewritten, a new test 16 added, and the old test 16 renumbered to 17.
+> - **§17** item 32 closed: the info-icon words ship in the build.
 
 
 Everything on the Expense analytics screen: what each number means, what window it covers, what happens when it is tapped, and what it shows when there is nothing to show.
@@ -48,7 +58,9 @@ Everything on the Expense analytics screen: what each number means, what window 
 
 ## 1. Build status
 
-The screen is **not built**. The backend has one empty placeholder block for Expense that returns no numbers. Nothing here is broken, it is unwritten. Every number below has to be built from scratch.
+The screen is **built**. All five cards, the View all sheet and the Others sheet run on real queries, with no sample data anywhere. It was verified block by block on 24 August 2026 against the code and against production, and 18 differences from this sheet were found: four have been ruled and closed, and thirteen items are waiting on the backend.
+
+**Read this sheet as the rule.** Where the build differs from it today, the difference is listed in [[01 — Build Verification Log]] under "Waits on Vivek, Expense", not here. This sheet says what the screen must do; the log says what it does today.
 
 The expense list this screen drills into **is** built. In the app, its filter drawer offers a **date range** and a **Paid to** filter today, plus search. The other arrivals this screen needs are listed in section 11, each named as a filter to add; every one of them is over data the system already records.
 
@@ -63,6 +75,8 @@ Manager app, property header, **Financial** tab, third sub-tab: **Dues · Collec
 ## 3. What every number counts
 
 An **expense** is one recorded spend event: an amount, the date it was paid, a category, who paid it, and who received the money.
+
+The **team passbook** is the running record of what each staff member holds of the business's money, or is owed by it, on a property. Whose money paid for something is recorded there and not on the expense, so every fund row in section 6 reads the passbook. It is also the screen that Still owed to staff opens.
 
 ### What counts as spend
 
@@ -86,7 +100,7 @@ An expense dated in the future joins every total the day its date arrives. These
 
 ### The same total appears three times
 
-Total Expense sits on the Overview, above the Expense Breakdown bars, and above the Top Payers and Vendors bars. That is deliberate, and each is an anchor for the card under it. **All three must always be the same number**, computed once and reused. Three cards each working it out their own way is how they drift apart, and a manager who spots two different totals on one screen stops trusting all of them.
+Total Expense sits on the Overview, above the Expense Breakdown bars, and above the Top Payers and Vendors bars. That is deliberate, and each is an anchor for the card under it. **All three must be the same number whenever they are covering the same window**, computed once and reused. Three cards each working it out their own way is how they drift apart, and a manager who spots two different totals on one screen stops trusting all of them. The one time they legitimately differ is when a card has been set aside on its own dropdown, per section 4; then the card states the window it is on and the difference is the manager's own doing.
 
 ---
 
@@ -96,7 +110,7 @@ Total Expense sits on the Overview, above the Expense Breakdown bars, and above 
 
 Options: **This Month (default) · Last Month · Current FY · Custom · All Time.**
 
-**There is no forward setting here, and Custom stops at today.** Dues and Collection carry Coming up because a bill exists before its date arrives, and Tenants and Inventory carry it as projections. Spending does not: an expense is recorded after money has already left, so a forward window would have nothing to count.
+**There is no forward setting here, and Custom stops at today.** Dues and Collection let a Custom window run past today, because a bill exists before its date arrives, and Tenants and Inventory do the same for their projections. Spending does not work that way: an expense is recorded after money has already left, so a forward window would have nothing to count. Expense is the only tab of the five where a future date is refused, and it is refused twice, once in the filter the app is given and once again in the query.
 
 Cards with their own date dropdown follow three rules: same options as the top filter, the top filter pulls every card back into line, and one card can be deliberately set aside until the top filter next changes. The filter stays where the manager put it while the app is open; a fresh launch opens on the default. Coming back from a drill returns to the screen as it was left, with fresh numbers. A day runs midnight to midnight, India time.
 
@@ -147,7 +161,7 @@ One more, on the trend's own control: its range options are **6, 12 and 24 month
 
 An unfinished period compares against the same elapsed days of the previous period, marked as unfinished on the chip: *"▲ 12% vs same point last month."* The note drops away once the period completes. On Custom, chips compare the same number of days immediately before the range. The unfinished period is marked wherever it appears, the chip and the trend chart's in-progress bar alike.
 
-Where the previous period had no spend at all, show the rupee change and drop the percentage. A percentage measured from zero tells the manager nothing.
+Where the previous period had no spend at all, show no chip. A percentage measured from zero tells the manager nothing, and every other tab in the suite already shows nothing beside the number when there is nothing to compare against. The tile shows its number alone, the same state it uses on All Time.
 
 ### Change chips
 
@@ -184,14 +198,16 @@ Four tiles across the top, scrolling sideways, with a **View all** link in the h
 |---|---|---|
 | **Total Expense** | Everything spent in the window | Time-scoped |
 | **Current FY Expense** | Everything spent since the start of the current financial year, April to March | Time-scoped, window fixed |
-| **Still owed to staff** | Money staff paid out of their own pockets that the business has not paid back yet | Live |
+| **Still owed to staff** | Money staff paid out of their own pockets that the business has not paid back yet, whatever they paid it for | Live |
 | **Number of expenses** | How many expenses were recorded in the window | Time-scoped |
 
 The two fixed tiles say so on their face, in the place the other tiles put their change chip: **Current FY Expense** reads *"This financial year"*, and **Still owed to staff** reads *"as of today"*. Without that, a fixed number sitting in a row of window numbers reads wrong to anyone scanning quickly.
 
 **Still owed to staff is not spend, and never adds into any total on this screen.** It answers a different question: what does the business owe its own people right now. It is a running figure on purpose. A version that followed the filter would show zero for April simply because April's advances had since been settled, which reads as "nothing owed" when lakhs may be outstanding.
 
-This matters more than it looks: **a quarter of all expenses are paid from staff's own money.** It is the most common way money leaves after collected funds.
+This matters more than it looks: **a quarter of all money spent is fronted by staff from their own pockets**, ₹48.65 crore of ₹185.1 crore over the twelve months to 24 August 2026. It is the most common way money leaves after collected funds.
+
+⚠ **Expect this tile to be large, and to grow.** Recording that staff have been paid back is a flow that only started in March 2026 and has been used a couple of dozen times platform-wide, so almost nothing has ever been subtracted. Measured on 24 August 2026: ₹50.77 crore across 1,185 live properties, 1,165 of them positive, 20 at zero, not one negative. Median ₹60,100, largest ₹1.90 crore. The tile is correct about what the system records. Whether the cash went back informally is a recording problem, and the fix is at the source: a way to record settling up, proposed as S6 in the Suggestions Register. Do not launch this tile without deciding who answers "I paid him back months ago".
 
 **Total Expense and Number of expenses open the same list.** That is correct and not a mistake. They are two readings of one set of records, and the list shows both the count and the total at its head.
 
@@ -219,7 +235,7 @@ Opens from the **View all** link in the Overview header. A bottom sheet holding 
 
 **None of the four fund rows can be worked out from the expense record itself.** Whose money paid for something is held in the team passbook, not on the expense. Three rules follow, and each one is a wrong number if missed:
 
-- **An expense can be paid from more than one source.** Count it once in Total Expense and in Number of expenses; split only its amount across the fund rows. The four fund rows plus the small no-record remainder below always add back to Total Expense. If they do not, something is counted twice or dropped.
+- **An expense can be paid from more than one source.** Count it once in Total Expense and in Number of expenses; split only its amount across the fund rows. The four fund rows plus the small no-record remainder below, which is called **"Source not recorded"**, must add back to Total Expense on every property, and no property's fund rows may add up to more than its own total. Across the platform the remainder is small, ₹1.67 lakh out of ₹185.1 crore over twelve months, so a large remainder on one property means something has been dropped.
 - **Deleting an expense leaves its passbook entry behind, reversed.** The reversal has to be subtracted from the fund rows. Skipping this overstates every fund row on any property that has ever deleted an expense.
 - **Paying staff back creates its own passbook entry, and it is not spend.** It must never appear as a fifth source of money. If it does, the screen shows staff paybacks as though the business spent that money twice.
 
@@ -239,7 +255,7 @@ Two tabs: **Category** and **Payment Mode**. Both cover the same spend for the s
 
 Answers **what the money was spent on**.
 
-Categories are grouped as they were recorded, without silently renaming anything. Six named groups collect the common spellings:
+Categories are grouped as they were recorded, without silently renaming anything. Six named groups collect the common spellings, **by matching the start of the saved name and ignoring capitals**. That is what makes "Deposit Refund", "DEPOSITE REFUND" and "Deposit return room no 305" land in one group, thirty spellings of the same thing. The six:
 
 Salary · Maintenance · Rent · Electricity · Food and Mess · Deposit Refunds
 
@@ -247,7 +263,9 @@ Salary · Maintenance · Rent · Electricity · Food and Mess · Deposit Refunds
 
 Each row shows its **amount and its share of the window's total**.
 
-**The card shows the three largest groups, then one Others row.** Others means **everything outside the top three**, nothing more. Tapping it opens a sheet with the full remainder, and the drill happens from a row inside that sheet. Inside the sheet, the remaining named groups come first, then spend that matched no group, listed under its **actual saved category name** and sorted by amount. Nothing in the sheet is ever labelled "Other", so the word keeps one meaning on this screen. Spend recorded with no category at all, a handful of rows across every property, appears there as **"No category"**, never merged into anything.
+**The card shows the three largest groups, then one Others row.** Others means everything outside the top three, nothing more. Tapping it opens a sheet with the full remainder, and the drill happens from a row inside that sheet. Inside the sheet, the remaining named groups come first, then spend that matched no group, listed under its actual saved category name and sorted by amount. Spend recorded with no category at all, a handful of rows across every property, appears there as "No category", never merged into anything.
+
+⚠ **The word "Others" can appear twice on this card, and that is accepted.** Some people save a category literally called Other or Others: 4,566 expenses worth ₹3.97 crore over the twelve months to 24 August 2026. Where one of those is a top-three group, the card shows their typed row and the rollup row side by side. Build both, and never rename either. Reasoning in D18 in the log; the eventual rename is parked as S5.
 
 ### Payment Mode
 
@@ -263,7 +281,7 @@ Modes are: Cash · G Pay · Phone pe · Paytm · UPI · Bank · Card Machine · 
 
 **FlexiPe needs its own handling.** A FlexiPe transfer creates a real expense, but it records its mode as "Others", so reading the mode alone would bury every FlexiPe payment in the wrong row and leave the FlexiPe row permanently empty. Every FlexiPe expense carries a link back to the FlexiPe wallet it was paid from, and no other expense does; that link is how they are identified, never the mode. Show them as their own row, and take them out of Others so nothing is counted twice.
 
-This is not a small row. **Roughly one expense in seven leaves through FlexiPe.**
+This is not a small row. **Roughly one expense in seven leaves through FlexiPe, and it is a third of the money.** Measured over the twelve months to 24 August 2026 on live properties: 13.4% of expenses and ₹60.2 crore of ₹185.1 crore, 32.5%. It is the largest single row on the Payment Mode tab, ahead of Cash.
 
 ---
 
@@ -283,6 +301,7 @@ Rules for both:
 - Where no name was recorded, the spend still counts in the total and appears as its own row, named **"No payer recorded"** or **"No payee recorded"**, so the two sides still add up. In practice this is a handful of rows across every property.
 - Each row shows its **amount and its share of the window's total**. The bar carries the share; the number beside it carries the amount.
 - **Never work out who paid from who created the record.** They are different things and only one of them is recorded.
+- **FlexiPe spending shows as its own payer, named "FlexiPe (Owner)".** The FlexiPe path saves the payer as the literal `(Owner)`, brackets and all, on every one of its expenses. Never show that raw string, and never merge this row into the plain Owner bar. No person paid this money, the wallet did, so the row is named for the wallet and carries the owner in brackets. It is a third of all spending, so on most properties this will be the largest row on the tab. Reasoning in D19 in the log.
 
 Both tabs show the three largest, then Others, with the same two-step behaviour as Category.
 
@@ -308,6 +327,8 @@ Which property the money went out of. One row per property, with a bar and an am
 **Hidden entirely when only one property is in scope.** With one property selected the card can only show a single row equal to the total already at the top of the screen, which tells the manager nothing they did not just read. It comes back on its own as soon as more than one property is selected.
 
 Properties with no spend in the window still appear, at zero. A manager reading a portfolio needs to see which properties spent nothing.
+
+**When every property is at zero, the card shows its empty state instead of a list of zeros.** Listing the zeros is only useful next to something that is not zero. So: anything at all spent in the window, list every property including the zeros; nothing spent at all, the empty state in section 13.
 
 ---
 
@@ -432,7 +453,7 @@ Each of these was considered and ruled out. They are listed so nobody rebuilds t
 ## 15. Build guidance
 
 1. **The total is rounded once, never per row.** *Test it:* a property with thousands of expenses shows a total equal to the sum of its list, not a few rupees off.
-2. **A category saved with stray spaces counts with its category.** *Test it:* expenses saved as "Maintenance" and "Maintenance " chart as one bar.
+2. **A category saved with stray spaces or different capitals counts with its category.** This holds for the six named groups and just as much for every other name people type, which is where the money is: 323 typed names differ from another only by capitals, carrying ₹18.48 crore, a tenth of the tab. *Test it:* expenses saved as "Maintenance" and "Maintenance " chart as one bar, and so do "Flat Rent", "FLAT RENT" and "flat rent". The bar is labelled with one of the recorded spellings, picked the same way Dues picks it, and the screen never invents a spelling of its own.
 3. **Every category name filters to exactly its own expenses.** *Test it:* every saved category name in the system, including any matching internal shorthands, opens only its own rows.
 4. **Every number uses the paid date.** *Test it:* an expense typed in today but paid on 28 July moves last month's totals and this month's not at all.
 5. **The Paid to breakdown covers only the selected window.** *Test it:* a vendor last paid in March appears in March's window and in no other.
@@ -445,8 +466,9 @@ Each of these was considered and ruled out. They are listed so nobody rebuilds t
 12. **One computed total feeds all three cards that show it.** *Test it:* Overview, Expense Breakdown and Top Payers state the same total to the rupee, on every window.
 13. **The tapped number and its list agree.** *Test it:* any number's list adds back to it exactly, before launch, on every drill in section 11.
 14. **An expense paid late on the window's last day counts inside it.** *Test it:* record one at 23:30 on the final day; the window's total includes it.
-15. **This screen shows one staff figure and hands off.** The per-person breakdown belongs to Team Passbook. *Test it:* the tile equals the sum of every team member's open expense payback in Passbook.
-16. **Only paybacks against expenses reduce the staff figure.** *Test it:* recording a payback against a refund changes nothing here; a ₹2,000 part-payback against ₹5,000 leaves ₹3,000.
+15. **This screen shows one staff figure and hands off.** The per-person breakdown belongs to Team Passbook. *Test it:* the tile equals the sum of every team member's open personal-funds balance in Passbook, to the rupee. The two screens must agree or the drill looks broken.
+16. **A named group never swallows a category that belongs somewhere else.** Matching the start of a name is what collects thirty spellings of a returned deposit into one bar, and it is also how a different word beginning the same way gets caught. *Test it:* "RentOk Software", our own subscription fee, must not sit in the Rent bar. Measured over twelve months it is ₹25.5 lakh across 178 expenses, so this is worth watching rather than a rule of its own; check it again whenever a named group is added.
+17. **Everything a staff member fronted counts, whatever they fronted it for.** An expense they paid from their own pocket counts, and so does a tenant refund they paid from their own pocket: both are money the business owes that person. The tile is not a spend figure and never adds into one. *Test it:* a ₹2,000 part-payback against ₹5,000 leaves ₹3,000; a refund of ₹1,000 fronted by staff raises the tile by ₹1,000 and moves no other number on the screen.
 
 ---
 
@@ -502,7 +524,7 @@ None of these change what the numbers mean. **Read this first:** every value dra
 29. **An empty state for the Overview row.** Every other card has one.
 30. **A title line on each empty state**, and a button wherever the copy invites an action. The Breakdown copy says "Add your first expense" with nothing to tap.
 31. **The healthy state**: *"Nothing owed to staff right now."*
-32. **Info-icon content.** Eleven info icons across the cards and empty states, and no screen has written what any of them say. An icon that opens nothing is worse than no icon. The three that most need one: Still owed to staff, the fund rows, and the bill-or-receipt figure, because all three are numbers a manager has never seen before.
+32. **Info-icon content, now written.** The build ships definition text for every tile and every card, ten of them, including the three that most needed one: Still owed to staff, the fund rows and the bill-or-receipt figure. What design still owes is the icon on each card; the words exist.
 
 ### Remove
 
