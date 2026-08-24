@@ -12,11 +12,13 @@ happens today, why it looks wrong, and what is proposed.
 |---|---|---|---|
 | S1 | Stop the biller raising future bills for unconfirmed bookings | Proposed | Owner |
 | S2 | Cancelling a booking should clear its unpaid dues and say so | Proposed | Owner |
-| S3 | Rename "Under notice" to "Under eviction", with two named parts | Parked | Owner, after all five tabs are verified |
+| S3 | Rename "Under notice" to "Under eviction", with two named parts | Agreed, D28, 2026-08-25 | A ticket for the six shipped strings |
 | S4 | A list, ageing and a prompt for deposits owed to tenants who have left | Proposed | Owner |
 | S5 | Rename the rollup row so "Others" means one thing | Parked | Owner, alongside Dues and Collection |
 | S6 | A way to record paying staff back, before the tile reads fifty crore | Proposed | Owner |
 | S7 | Ask for the agreement length at move-in, so the gap stops growing | Proposed | Owner |
+| S8 | Validate the property's agreement-length setting where it is typed | Proposed | Owner |
+| S9 | Add Past their date to Journey's eviction split, so the rows add up to Active | Ruled out of the build; one question open | Owner, on the note against the row |
 
 | Status | Meaning |
 |---|---|
@@ -90,7 +92,7 @@ refund question, not a deletion question. This proposal covers unpaid bills only
 
 ## S3. Rename "Under notice" to "Under eviction", with two named parts
 
-**Status:** Parked, 2026-08-23. Owner raised it. Decide after the five tabs are verified
+**Status:** Agreed, D28, 2026-08-25. Owner raised it, and ruled it once all five tabs were verified
 **Where:** Tenants (DA-09), and any screen that shows the parent group
 
 The owner's suggestion:
@@ -104,10 +106,18 @@ suite has one word for the whole and a different word for both of its parts. Ren
 whole and its parts share the same first word, so a manager can see that the two bars on Dues add up
 to the one group on Tenants without being told.
 
-**Why it is parked.** Counted case-insensitively on 2026-08-24, "under notice" appears 21 times in the
-Inventory sheet, 15 in Tenants, 10 in Collection and 2 in Dues after the D6 edits, plus tile notes and
-empty-state copy in shipped code. That is a suite-wide sweep and it should not ride along inside a build verification. Deciding it after all five tabs are
-verified means the sweep happens once, against a settled picture.
+**Why it was parked.** Counted case-insensitively on 2026-08-24, "under notice" appeared 21 times in
+the Inventory sheet, 15 in Tenants, 10 in Collection and 2 in Dues after the D6 edits, plus tile
+notes and empty-state copy in shipped code. That is a suite-wide sweep and it should not ride along
+inside a build verification. Deciding it after all five tabs were verified meant the sweep happened
+once, against a settled picture.
+
+**Settled 2026-08-25, D28 in the log.** The owner accepted the rename. The sheets are swept, DA-09,
+DA-08 and DA-01, with historical narrative left as written. What remains is the shipped copy: six
+visible strings on the Tenant screen (the Journey bar label, the View all row, the rent at risk
+note, two empty messages, one hint), plus the D6 and D21 label changes already owed on the other
+tabs. D28 in the log carries the reasoning, and the rule that the rename changes words and not
+numbers: nobody moves between groups.
 
 ## S4. Nobody can see deposits owed back to tenants who have already left
 
@@ -228,3 +238,57 @@ register to build.
 **This is a milder version of S4 and S6.** Same shape, a fact the product never captured and a
 workflow missing where it should have been captured, but unlike those two the repair path now exists,
 so this is about the inflow rather than the backlog.
+
+## S8. The agreement-length setting accepts anything, and one "." took a whole tab down
+
+**Status:** Proposed, 2026-08-25. Falls out of F90
+**Where:** the property settings screen, not the analytics screen
+
+The property's default agreement length is stored as free text. On live properties today it holds
+"." on one property and negative numbers, "-5" and "-37", on 61 more. The "." crashes every
+analytics block that computes an agreement end date, which takes the whole Tenant page and an
+Inventory card down for that property (F90 in the log). The negatives quietly put tenants' computed
+end dates years before they joined.
+
+The analytics fix is a guard in two queries, and it is owed under F90 regardless. This suggestion is
+the source fix: the settings field accepts whole months in a sensible range and nothing else. Same
+shape as S7: a fact captured badly where capturing it right costs one input rule.
+
+**Measured on production**, live properties, 25 August 2026: 62 properties carry a value that is not
+a plain positive number, with 1,452 active tenants on them.
+
+## S9. Journey's eviction split leaves out the people whose date has passed
+
+**Status:** Ruled out of the build, 2026-08-25, with one question left open. Falls out of D29, the
+ruling that gave Journey its six rows
+**Where:** Journey, Tenants tab
+
+D29 gave the card four rows that are meant to add up: Active tenants, and its three parts, No
+notices, Eviction pending and Approved eviction. There is a fourth part it does not show: tenants
+whose approved leaving date has passed and whose record was never closed. They are still living
+there and still counted in Active, which is what §3 of the sheet says they are.
+
+**Measured on production**, live properties, test and deleted excluded, 25 August 2026:
+
+| | Tenants | Properties |
+|---|---|---|
+| Active tenants | 352,886 | 26,435 |
+| No notices | 346,621 | |
+| Eviction pending | 1,198 | |
+| Approved eviction | 4,749 | |
+| **Past their date, not on the card** | **318** | **151** |
+
+The three rows under Active add up to it on every property where nobody is past their date, which today is
+26,284 of 26,435. On the other 151 the rows visibly fall short, and a manager who adds them up finds
+the gap with no explanation for it.
+
+**Why it is a suggestion and not a requirement.** The owner ruled it that way. §5 of the sheet gives
+Past their date the Overview tile slot and says no other card surfaces it, so adding a row here is a
+change to a rule that was made on purpose, not a defect to fix. The card is also already carrying
+repetition from the tile strip by design, and this would add a fifth repeat.
+
+**Open for you, one choice.** Leave the card as ruled and add a one-line note saying the rows exclude
+people whose leaving date has passed, or add a fifth row, Past their date, inside the first group so
+the rows add up on every property. **My pick is the note**: it closes the arithmetic gap without
+breaking §5's rule that Past their date lives on one tile and nowhere else, and it costs a line
+instead of a row on a card that is already carrying six.

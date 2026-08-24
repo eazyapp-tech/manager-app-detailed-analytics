@@ -114,7 +114,7 @@ Eviction here means any eviction, whoever raised it. A tenant giving notice and 
 
 **Approved carries no date limit.** A tenant whose approved date has passed but who has not physically moved out is still living here, still being billed for rent and everything else, so they stay in Eviction approved. That is a small group and an anomaly, but their money is real.
 
-**This screen never says "under notice".** On Tenants that word is the one group covering both states at once. Here the two states are separate bars, so each is named for what it is.
+**This screen never shows the two states as one bar.** On Tenants the one group covering both at once is called Under eviction (D28; "Under notice" until 25 August 2026). Here the two states are separate bars, so each is named for what it is.
 
 ### Words to be careful with
 

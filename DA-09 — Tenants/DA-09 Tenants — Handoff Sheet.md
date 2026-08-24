@@ -1,16 +1,40 @@
 ---
 title: DA-09 Tenants — Handoff Sheet
-date: 2026-08-07
+date: 2026-08-25
 tags:
   - rentok
   - tenants
   - people
   - detailed-analytics
   - handoff
-status: v2.1 · share-of-total retrofit from the Dues sibling check · developer handoff
+status: v2.2 · corrected from the build verification · developer handoff
 owner: Sanchay
 ---
 # Tenants — Handoff Sheet
+
+> [!NOTE] Corrected 2026-08-25, from the build verification (F90 to F104 in the log)
+> - §1 said the screen is not built. It is built and verified; §1 now says so.
+> - §4: Coming up removed from the filter list, D9's forward rules written in its place: the forward
+>   view is a Custom window ending after today. The per-number table's last column rewritten to match.
+> - §11: "the Overdue bar and the Past-their-date tile are one number" contradicted §3 and build
+>   guidance 9, which keep notices whose date passed while still awaiting approval out of the tile.
+>   §11 now says the tile equals the approved part of the bar and names the pending gap.
+> - §3 and §12: tenants with no recorded agreement length leave the dated bands and become one stated
+>   "No term recorded" group, its count opening the list where lengths get filled in. Every dated bar
+>   is now a fact, and the 11-month guess is gone from this tab (D26 in the log).
+> - §16: the Renting Type block hides until somebody records a renting type; the build's interim
+>   stay-split donut is removed, not renamed (D27).
+> - Suite-wide: the parent group "Under notice" is renamed "Under eviction", its two parts always
+>   named beside it. Nobody moves between groups; the rename changes words, not numbers. Every label
+>   and copy line in this sheet now carries the new word (D28, accepting the S3 suggestion).
+> - §8: Journey's Tenants tab goes from three bars to six rows in two named groups, the eviction
+>   split under Active tenants and the paperwork pair that overlaps it (D29).
+> - §11 and §12: a bucket sitting outside the run of days hides when it is zero, so Overdue, Already
+>   expired and No term recorded hide; the day bands never do (D30).
+> - §12: every expiry label carries its own days, and Valid becomes "Valid (90+ days)", so no bar has
+>   to be explained by the one beside it (D31).
+> - §16: the short and long term split always shows, even at zero; the B2B and residential split
+>   shows only when either side is above zero (D32).
 
 > [!NOTE] Corrected 2026-08-08, from the Inventory uplift's sibling check
 > - The booked-layer sentence claimed equality with Inventory's booked count; the two totals differ by design and the sentence now says how.
@@ -67,9 +91,13 @@ Everything on the Tenants analytics screen: what each number means, what window 
 
 ## 1. Build status
 
-The screen is **not built**. The backend serves one empty placeholder block for Tenants. Nothing is broken; it is unwritten. Old Tenants and Bookings are in the same state.
+The screen is **built and verified**. All fourteen blocks and the View all sheet run on real
+queries; no sample data survives on a resolved property. This sheet is the rule; what the build does
+differently is recorded per finding in [[01 — Build Verification Log]], F90 to F104, with the fix
+list under "Waits on Vivek, Tenant". Redirection is not built anywhere in the suite yet, so §19
+describes the target, not the present.
 
-What already exists and matters:
+What already exists and matters for the drills:
 
 - The **tenants, bookings and old-tenants lists** are built and live. This screen drills into all three.
 - **Booking confirmations, notices, approvals and renewals are all kept in full**, with who did what and when. The history this screen needs exists.
@@ -112,7 +140,7 @@ The same person throughout. A booking becomes active on move-in day; active beco
 
 ### Active tenant
 
-Somebody living here today. **A tenant under notice is still active**, they live here; they have said they are leaving. Under notice is a layer inside Active, never subtracted from it, exactly as booked is a layer inside vacant on Inventory. The same goes for an approved eviction.
+Somebody living here today. **A tenant under eviction is still active**, they live here; they have said they are leaving. Under eviction is a layer inside Active, never subtracted from it, exactly as booked is a layer inside vacant on Inventory, and its two parts, Eviction pending and Eviction approved, are layers inside it (the suite word since D28; this group was called "Under notice" until 25 August 2026).
 
 ### Booking
 
@@ -155,14 +183,19 @@ An agreement extended instead of ending. **Renewal due** = ends within 30 days, 
 
 ### Agreement end date
 
-Every long-term tenant has one, worked out in this order, first available wins:
+Every long-term tenant either has one, worked out in this order, first available wins:
 
 1. The recorded end date
 2. Start date + the tenant's own agreement duration
 3. Start date + the property's agreement duration
-4. Start date + 11 months
 
-Start date = last renewal date, else joining date. Where step 4 was used, the card says the date is assumed. Whether a **signed document** exists is a different question and lives on Tenancy Details, a tenant can have a known term and no document, or a document and no dates.
+or has **no term recorded**, where none of the three exists. Start date = last renewal date, else
+joining date. A tenant with no term recorded is never placed on a dated band; Agreement Expiry shows
+them as one stated group whose count opens the list where the lengths get filled in (D26 in the log,
+which took the eleven-month guess off this tab). More than
+half of long-term tenants have no term recorded today, so the group is not a corner case, it is the
+biggest number on most properties. Whether a **signed document** exists is a different question and
+lives on Tenancy Details, a tenant can have a known term and no document, or a document and no dates.
 
 ### Verification
 
@@ -182,14 +215,14 @@ Two figures, both risk beside a count, never transactions:
 
 | Figure | Meaning |
 |---|---|
-| **Rent at risk** | Monthly rent of everyone under notice: what stops arriving if nobody is replaced |
+| **Rent at risk** | Monthly rent of everyone under eviction: what stops arriving if nobody is replaced |
 | **Leaving with dues** | What departing tenants still owe: money that walks out unless chased before the leaving date |
 
 Anyone owing anything counts. Collections, settlements and refunds stay on the Financial screens.
 
 ### Words to be careful with
 
-**"Under notice"** is the phrase, matching Dues and Inventory. **"Booking"** here is the person; on Inventory it is the layer inside a vacant bed. Inventory counts confirmed bookings only, so its booked layer draws only from this screen's confirmed bookings, never the awaiting ones. The two totals do not match: a confirmed booking behind a tenant under notice sits inside Inventory's Occupied as "already replaced", and a confirmed booking with no bed assigned sits outside every layer, so Inventory's booked layer is always the smaller number. **"Active"** describes both a tenant (living here) and a booking (waiting to arrive), never sum them.
+**"Under eviction"** is the phrase, matching Dues, Collection and Inventory (D28; "Under notice" until 25 August 2026), and its parts are always named, Eviction pending and Eviction approved. **"Booking"** here is the person; on Inventory it is the layer inside a vacant bed. Inventory counts confirmed bookings only, so its booked layer draws only from this screen's confirmed bookings, never the awaiting ones. The two totals do not match: a confirmed booking behind a tenant under eviction sits inside Inventory's Occupied as "already replaced", and a confirmed booking with no bed assigned sits outside every layer, so Inventory's booked layer is always the smaller number. **"Active"** describes both a tenant (living here) and a booking (waiting to arrive), never sum them.
 
 ---
 
@@ -197,9 +230,9 @@ Anyone owing anything counts. Collections, settlements and refunds stay on the F
 
 ### The time filter
 
-**This Month (default) · Last Month · Current FY · Custom · All Time · Coming up.**
+**This Month (default) · Last Month · Current FY · Custom · All Time.**
 
-Two kinds of number share this screen, two of the suite's three kinds; screens with projections add Forecast:
+This screen uses two kinds of number. The suite has a third, Forecast, which this screen does not use:
 
 | Kind | Meaning |
 |---|---|
@@ -219,28 +252,39 @@ Change the filter to This Month and only the time-scoped numbers change. That is
 
 **Why there is no "Now" chip.** Every number that answers "right now" (the headcount, the pipelines, the verifications) is Live, and Live numbers already show now on every filter setting. A manager asking "how many tenants are active right now" reads the Active Tenants tile, whatever the filter says. A Now chip would add nothing to those numbers and would blank Move-ins, Move-outs, Approved Bookings and Notices Raised, because "movement right now" has no window to count. Whoever wants today's movement picks Custom set to today.
 
-**Coming up** is the forward setting, as on Inventory: pick a future date, see the property then: today's tenants, minus confirmed departures before that date, plus confirmed arrivals. Confirmed only, no guesses. Default 30 days. No change chips and no action bars; nothing can be done today about a state that hasn't arrived.
+**The forward window is a Custom range ending after today** (D9 in the log, the ruling that deleted the old Coming up setting across the suite). There is no separate forward setting in the filter list; Custom is it. What changes on a window that ends after today:
 
-**Custom stops at today.** The past and the present belong to Custom; the future belongs to Coming up. A future window is a projection, not a count, and one question must never have two answer models on one screen.
+| The number | On a forward window |
+|---|---|
+| Live, "as of today" | Unchanged. It ignores the filter and says so |
+| A count of things dated inside the window, where the date can sit in the future: an agreement ending, a confirmed leaving date | Counts them, no chip |
+| Something that happened, like a move-in or a notice raised | A dash, with one short line saying why: "not available for a future period" |
+| The projection, if it ships on this path | Today's tenants, minus confirmed departures before the chosen date, plus confirmed arrivals before it. Confirmed only, no guesses |
+
+**No chip on a window that ends after today**, and no action bars; nothing can be done today about a state that has not arrived. A dash always carries its reason, or the operator reads it as broken. Nothing on a forward window ever invents an event.
 
 The filter stays where the manager put it while the app is open; a fresh launch opens on the default. Coming back from a drill returns to the screen as it was left, with fresh numbers. A day runs midnight to midnight, India time.
 
 ### What every number does on every filter setting
 
-| Number | This Month · Last Month · Current FY · Custom · All Time | Coming up |
+| Number | This Month · Last Month · Current FY · Custom · All Time | Custom ending after today |
 |---|---|---|
-| Active Tenants · Active Bookings | As of today | Projected at the chosen date, from confirmed departures and arrivals only |
-| Eviction Pending · Eviction Approved · Past their date | As of today | As of today |
-| Move-ins · Move-outs | Counted inside the window | Scheduled: confirmed arrivals and departures due before the chosen date |
-| Approved Bookings · Notices Raised | Counted inside the window | Nothing agreed to count; the tile shows "—" |
-| Journey rows | As of today | Projected |
+| Active Tenants · Active Bookings | As of today | As of today, unchanged |
+| Eviction Pending · Eviction Approved · Past their date | As of today | As of today, unchanged |
+| Move-ins · Move-outs | Counted inside the window | A dash with its reason |
+| Approved Bookings · Notices Raised | Counted inside the window | A dash with its reason |
+| Journey live bars | As of today | As of today, unchanged |
+| Journey window strip and Bookings tab | Counted inside the window | A dash with its reason |
 | Verification · Tenancy Details · Profile · Details · Stay Type · Tenure | As of today | As of today. Paperwork and people's details cannot be projected |
-| Upcoming Eviction · Agreement Expiry | From today onwards | From today onwards |
-| Renewal & Retention: Completed, renewed, stayed | Counted inside the window | "—" |
-| Property Wise | As of today | Projected |
-| The two money lines | As of today | Projected from the same confirmed facts |
+| Upcoming Eviction · Agreement Expiry | From today onwards | From today onwards, unchanged |
+| Renewal & Retention: Completed, renewed, stayed | Counted inside the window | A dash with its reason |
+| Property Wise | As of today | As of today, unchanged |
+| The two money lines | As of today | As of today, unchanged |
 
-Nothing on Coming up ever invents an event. A tile with nothing agreed to count shows a dash, never a guess.
+Nothing on a forward window ever invents an event. A tile with nothing agreed to count shows a dash
+with its one-line reason, never a guess. Whether the projected headcount, today's tenants adjusted
+by confirmed departures and arrivals, ships on this path is a design decision still open; its query
+is written, and if it ships, the projected tiles say "projected to" the chosen date on their face.
 
 *Test it:* on a property unchanged for a year, switching This Month to Last Month changes every time-scoped number and no Live one.
 
@@ -248,7 +292,7 @@ Cards with their own date dropdown follow the three suite rules: same options as
 
 ### Change chips
 
-Only time-scoped numbers carry one on this screen; an event count has nothing to compare on a live view. Inventory rules the other way for its state numbers, which do have a predecessor, and says so. Nothing carries one on All Time or Coming up. Which direction counts as good is per number: **up is good** for Move-ins, Approved Bookings, Renewals; **up is bad** for Move-outs and Notices Raised. Unfinished periods compare against the same elapsed days of the previous period, marked as such. On Custom, the comparison is the same number of days immediately before the range.
+Only time-scoped numbers carry one on this screen; an event count has nothing to compare on a live view. Inventory rules the other way for its state numbers, which do have a predecessor, and says so. Nothing carries one on All Time or on a window ending after today. Which direction counts as good is per number: **up is good** for Move-ins, Approved Bookings, Renewals; **up is bad** for Move-outs and Notices Raised. Unfinished periods compare against the same elapsed days of the previous period, marked as such. On Custom, the comparison is the same number of days immediately before the range.
 
 ### When a number is red
 
@@ -263,7 +307,7 @@ A property onboarded this morning must not open red.
 
 ### The action bar
 
-Some cards carry a footer naming what needs attention, with one control that **opens the filtered list where the work happens**. This screen never sends anything itself. Appears only when there is something to say; never at zero, never on Coming up.
+Some cards carry a footer naming what needs attention, with one control that **opens the filtered list where the work happens**. This screen never sends anything itself. Appears only when there is something to say; never at zero, never on a window ending after today.
 
 ### Loading, failure, sorting, entry
 
@@ -289,7 +333,7 @@ Live tiles say "as of today" and carry no chip. **Move-outs is not a tile.** It 
 
 Two money lines ride under the tiles: **rent at risk** under the notice tiles, and **leaving with dues** ("3 leaving owe ₹48K"). This is the one number that pairs a departure with a deadline nobody can extend.
 
-Active Tenants includes everyone under notice and approved eviction, layers, not slices. Nothing on screen should suggest the tiles add up.
+Active Tenants includes everyone under eviction, both parts, layers, not slices. Nothing on screen should suggest the tiles add up.
 
 **View all** opens the sheet below.
 
@@ -302,7 +346,7 @@ Everything the tile row knows, grouped as three plain questions. Indented rows a
 | Row | Meaning |
 |---|---|
 | Active tenants | Everyone living here |
-| — under notice | Have said they are leaving |
+| — under eviction | Have said they are leaving |
 | — of which approved | Leaving date agreed |
 | — of which awaiting approval | Leaving date not agreed yet |
 | — past their date | Confirmed leaving date already passed |
@@ -339,15 +383,31 @@ Move-ins and Move-outs side by side, with the **net stated**, the card exists be
 
 Where people are in their life with the property. **Two tabs: Tenants (default) · Bookings.** No Leads tab, a lead is not a tenant at any stage.
 
-**Tenants tab.** The headcount is stated once at the top, "360 tenants", never drawn as a bar. Three bars below, each Live, each a share of that headcount:
+**Tenants tab.** Six rows, all Live, in **two named groups**, because the card answers two different questions and they must not be read as one list (D29 in the log, which settled the rows):
 
-| Bar | Meaning |
+Every row carries its count and its share of Active tenants. The two group headings render on the card, worded exactly as below.
+
+**Who is staying, who is leaving.** Active tenants is the total. The three rows under it account for everybody except tenants whose leaving date has passed, so on a property where nobody is past their date they add up to Active exactly and the card can be checked by hand:
+
+| Row | Meaning |
 |---|---|
-| Under Notice | Living here, has said they are leaving |
-| Approved Eviction | Living here, departure scheduled |
-| Renewals in 30 days | Agreement ends within 30 days |
+| Active tenants | Everyone living here. The other three rows are shares of this number |
+| No notices | Living here, nobody has said anything about leaving |
+| Eviction pending | A notice is raised and awaiting approval |
+| Approved eviction | Leaving date agreed |
 
-These overlap each other, parallel bars only, never stacked, never slices of a whole.
+**Whose paperwork needs a decision.** These two **overlap the group above**, and **exclude each other**: an agreement has either already ended or it has not. Parallel bars only, never stacked, and the card says they overlap the rows above:
+
+| Row | Meaning |
+|---|---|
+| Renewals in 30 days | Agreement ends within 30 days |
+| Agreements expired | Agreement end date already passed, tenant still here. The same number as Renewal overdue on Renewal & Retention and the Already expired bar on Agreement Expiry, computed once |
+
+A tenant can sit in both groups at once: somebody under eviction can also have an expired agreement. That is why the groups are named and separated rather than run together as six siblings.
+
+**Where this leaves the tiles above.** Active tenants, Eviction pending and Approved eviction are also Overview tiles. That repetition is deliberate and it pays for itself: a tile answers "how many", a row here answers "what share of my house", and these rows add up to Active tenants where the tiles never do, because §5 forbids the tile strip from suggesting its tiles add up to anything. It is the only card that splits Active tenants by the eviction states the tile strip already shows.
+
+**Where the shortfall comes from, and it is deliberate.** The three rows leave out tenants whose leaving date has passed and whose record was never closed, because §5 keeps Past their date on its own tile and nowhere else. Where any exist the three rows fall short of Active by exactly that count. Adding a fifth row is proposed in the register as S9, not required here; a one-line note on the card saying the rows exclude them is the cheaper answer and is the recommendation there.
 
 Below, all time-scoped: **Churn** (left, against who was here) · **Renewal** (agreements extended) · **Net change**. At the foot, also time-scoped: **Tenants who left early** (left before their lock-in period ended) and **Avg. days to raise notice** (joining to first notice).
 
@@ -387,17 +447,40 @@ Who is confirmed to be leaving, and how soon. Notices only, no predictions. Live
 
 Five bars, **Overdue · 0–7 · 8–15 · 16–30 · 31+ days**, each split into awaiting approval and approved, because one can still be changed and the other is a plan. Bucket edges match Inventory exactly.
 
-The Overdue bar and the Past-their-date tile are one number, computed once.
+**Overdue hides when it is zero; the four day bands never hide** (D30 in the log, which set the rule). Overdue sits outside the run of days, so an empty one is just noise on a property where nobody is late. The four day bands are a run of time, and a missing band in the middle of a run reads as a broken chart, so they show at zero. On a property where every bar is zero the card shows its healthy line instead, already written in §21.
+
+The Overdue bar's **approved** part and the Past-their-date tile are one number, computed once. The bar's pending part is the people the tile must exclude, notices whose requested date passed with nobody approving (build guidance 9). So the whole Overdue bar reads higher than the tile by exactly that pending count, and that is correct. An earlier version of this sheet said bar and tile were one number; that contradicted guidance 9 and is withdrawn (F99 in the log).
 
 ## 12. Agreement Expiry Status
 
-When agreement periods run out, using the end-date rule from section 3. Five bars, covering everyone:
+When agreement periods run out, using the end-date rule from section 3. Five bars, covering everyone
+with a recorded or derived term. **Every label carries its own days, so no bar has to be explained
+by the one beside it** (D31 in the log, which set the labels):
 
-**Already expired · 30 days · 60 days · 90 days · Valid.**
+**Already expired · 0–30 days · 31–60 days · 61–90 days · Valid (90+ days).**
 
-Already expired is drawn first because it is the biggest group on most properties. Bands do not overlap: 30 means within thirty days, 60 means thirty-one to sixty, 90 means sixty-one to ninety. One line on the card says dates are assumed at 11 months where no duration is recorded.
+Already expired is drawn first. Bands do not overlap, and each label now says its own range rather
+than leaving the reader to work it out from its neighbour. "Valid" on its own invites the reading
+that every other bar is invalid, which is false: an agreement ending in twenty days is perfectly
+valid today. With the days in brackets the word stops being a verdict on the other bars and starts
+being what it is, how long this one still runs. The range style matches Upcoming Eviction directly
+above, which already labels its bands 0–7, 8–15, 16–30, 31+.
 
-The 30-day bar and Journey's "Renewals in 30 days" are the same people and can never disagree, one sits beside its timeline, the other beside the notices, which is the point.
+Every bar is a fact about paperwork; no date on this card is assumed (D26 in the log took the
+eleven-month guess off this card).
+
+**No term recorded** sits beside the bars as its own stated group, carrying its count, and the count
+opens the tenants list filtered to exactly those tenants so the length can be filled in one by one.
+As lengths get filled the group shrinks and the bars grow, so the card repairs its own coverage.
+Measured 25 August 2026: 187,385 of 346,930 long-term living tenants, 54%, so on most properties this
+group is larger than any of the five bars.
+
+**Already expired and No term recorded hide at zero; the four day bands never hide**
+(D30, the same hide-at-zero rule as Upcoming Eviction's Overdue bar). Both sit outside the run of
+days, so an empty one is a row saying nothing, where a missing day band would leave a hole in a run
+of time.
+
+The 0–30 days bar and Journey's "Renewals in 30 days" are the same people and can never disagree, one sits beside its timeline, the other beside the notices, which is the point.
 
 Footer: "N agreements expiring → Notify Tenant", opening the tenants list filtered to them, where messaging a group already works.
 
@@ -429,7 +512,18 @@ Renewal overdue is the same number as the Already-expired bar on Agreement Expir
 
 ## 16. Stay Type
 
-Two independent splits of today's active tenants: **Short term · Long term**, and **B2B · Residential** (let to a company · let to an individual). Not alternatives: a short-term company letting is both. Where renting type is unrecorded the split does not render; a missing value is not an answer.
+Two independent splits of today's active tenants: **Short term · Long term**, and **B2B · Residential** (let to a company · let to an individual). Not alternatives: a short-term company letting is both.
+
+**The two splits follow opposite showing rules** (D32 in the log, which set them), because one is always answerable and the other often is not:
+
+| Split | When it shows |
+|---|---|
+| Short term · Long term | **Always**, including when one side is zero. Every tenant is one or the other, so a zero is a real answer: "none of my tenants are short term" is worth reading |
+| B2B · Residential | **Only when either side is above zero**. Where nothing is recorded there is no split to show, and a missing value is not an answer |
+
+So a property letting only to individuals still sees the B2B and residential split, with B2B at zero, because the split is answerable there. A property where nobody has ever recorded a renting type sees no second split at all.
+
+D27 in the log settled what that means today: nobody has recorded a renting type anywhere yet, so the **Renting Type card does not appear at all**, the same way Property Wise disappears on a single-property account. It never puts another split up under its name. It comes back the moment either side has somebody in it.
 
 ## 17. How long tenants have been here
 
@@ -461,7 +555,7 @@ Hidden with one property in scope; returns automatically with more. Per property
 |---|---|
 | A Live number, on any window | Nothing. The number was as-of-today, so the list opens as-of-today |
 | A period, running or finished | The window travels, and the list shows those people **as they are today**. Where some have since moved on, the list says so on arrival: "showing 11 of the 14; the rest have since moved out" |
-| Coming up | The destination itself moves to where those people are **today**: scheduled arrivals open the **Bookings list**, scheduled departures open the **Tenants list**. Nothing on Coming up opens the Old Tenants list |
+| A window ending after today | The destination itself moves to where those people are **today**: scheduled arrivals open the **Bookings list**, scheduled departures open the **Tenants list**. Nothing on a forward window opens the Old Tenants list |
 
 *Test it:* filter Last Month, tap Move-ins showing 14. The list opens on last month's joiners as they stand today, and if only 11 remain it says so on arrival. Eleven silent rows under a tile saying 14 is a failed test.
 
@@ -479,11 +573,11 @@ Every tappable thing, what it opens, and what is already applied on arrival. ✅
 | Eviction Approved | Tenants list | The "Approved Eviction" filter | ✅ |
 | Notices Raised | Tenants list | Notice raised during the window | ❌ no notice-date range |
 | Past their date | Tenants list | Confirmed leaving date already passed | ✅ |
-| Rent at risk line | Tenants list | Everyone under notice | ✅ |
-| Leaving with dues line | Tenants list | "Under Notice" plus "Unpaid Dues", together | ✅ |
+| Rent at risk line | Tenants list | Everyone under eviction | ✅ |
+| Leaving with dues line | Tenants list | Under eviction plus "Unpaid Dues", together | ✅ |
 | View all | The View all sheet | — | — |
 | **View all sheet rows** | | | |
-| Under notice | Tenants list | Has a leaving date | ✅ |
+| Under eviction | Tenants list | Has a leaving date | ✅ |
 | Of which approved / awaiting | Tenants list | "Approved Eviction" / "Pending Eviction" | ✅ |
 | Past their date | Tenants list | Leaving date already passed | ✅ |
 | Short term / Long term | Tenants list | That stay type | ✅ |
@@ -495,11 +589,14 @@ Every tappable thing, what it opens, and what is already applied on arrival. ✅
 | **Move-in & Move-out** | | | |
 | Move-ins | Tenants list | Joined during the window | ✅ |
 | Move-outs | Old Tenants list | Left during the window, as above | ✅ |
-| The net | Nothing; two populations, no single list | — | — |
+| The net | Nothing; it counts two different sets of people, so there is no single list to open | — | — |
 | **Journey, Tenants tab** | | | |
-| Under Notice bar | Tenants list | Has a leaving date | ✅ |
-| Approved Eviction bar | Tenants list | The "Approved Eviction" filter | ✅ |
-| Renewals in 30 days bar | Tenants list | Agreement ending within 30 days | ✅ |
+| Active tenants row | Tenants list | Everyone living here | ✅ |
+| No notices row | Tenants list | Living here, no eviction pending and no leaving date | ❌ the list filters for having a notice, not for lacking one |
+| Eviction pending row | Tenants list | The "Pending Eviction" filter | ✅ |
+| Approved eviction row | Tenants list | The "Approved Eviction" filter | ✅ |
+| Renewals in 30 days row | Tenants list | Agreement ending within 30 days | ✅ |
+| Agreements expired row | Tenants list | The agreement-window "Past" filter, same as Renewal overdue | ✅ |
 | Churn · Renewal · Net change | Nothing; rates and nets are not tappable | — | — |
 | Tenants who left early | Old Tenants list | Left before their lock-in ended | ❌ no such filter |
 | Eviction pending footer | Tenants list | The "Pending Eviction" filter | ✅ |
@@ -524,8 +621,9 @@ Every tappable thing, what it opens, and what is already applied on arrival. ✅
 | 0–7 · 8–15 · 16–30 · 31+ bars | Tenants list | Leaving within that many days | ⚠ the list offers within-N windows (3, 7, 15, 30 days), not the card's bands. A band drill opens the nearest window and says so, until band filters exist |
 | **Agreement Expiry Status** | | | |
 | Already expired | Tenants list | The agreement-window "Past" filter | ✅ |
-| 30 days | Tenants list | Agreement ending within 30 days | ✅ |
-| 60 · 90 days · Valid | Tenants list | That band | ⚠ the list offers within-N windows, not bands, and nothing expresses "valid beyond 90" |
+| 0–30 days | Tenants list | Agreement ending within 30 days | ✅ |
+| 31–60 · 61–90 days · Valid (90+ days) | Tenants list | That band | ⚠ the list offers within-N windows, not bands, and nothing expresses "valid beyond 90" |
+| No term recorded, the group D26 added | Tenants list | Long term, living, no recorded agreement length | ❌ no such filter yet; it is the repair path, so it ships with the group |
 | Notify Tenant footer | Tenants list | The tapped band, ready to message | Per the band above |
 | **Tenant Profile** | | | |
 | Any gender row | Tenants list | That gender | ✅ |
@@ -559,7 +657,9 @@ What remains, and nothing else:
 | Notice-raised date range | Tenants | Notices Raised |
 | Confirmation state and date | Bookings | Approved Bookings, the confirmed and awaiting layers |
 | Band filters for the day buckets | Tenants | The lists offer within-N windows; the eviction bars and the 60 and 90 expiry bands need true bands |
-| Valid beyond 90 days | Tenants | The Valid bar |
+| Valid beyond 90 days | Tenants | The Valid (90+ days) bar |
+| No eviction of any kind | Tenants | Journey's No notices row. The list can find tenants who have a notice; it cannot yet find the ones who do not |
+| No agreement length recorded | Tenants | Agreement Expiry's No term recorded group, which is also the repair path D26 asked for |
 | Renewal date range | Tenants | Completed, Tenants who renewed |
 | Cancelled bookings only | Old Tenants | Bookings cancelled |
 | Left before lock-in ended | Old Tenants | Tenants who left early |
@@ -601,7 +701,7 @@ No tenants, no bookings, no history: no cards render. One full-screen state: *"N
 | Agreement Expiry Status | "No agreements ending in the next 90 days." |
 | Renewal & Retention | "Nothing due for renewal." |
 | Past their date at zero | "Every move-out is closed off." |
-| Journey, all three bars at zero | Headcount stays; the bars give way to "All quiet. Nobody is under notice and nothing is due." |
+| Journey, nobody leaving and no paperwork due | Active tenants and No notices stay, since they are the good news; the four rows that would all read zero give way to "All quiet. Nobody is under eviction and nothing is due." |
 
 ### Empty: nothing yet
 
@@ -632,17 +732,23 @@ Its own state, not empty, and the common case on this screen: the card draws its
 ## 23. Build guidance
 
 1. **Live and time-scoped numbers must never blur.** *Test it:* unchanged property, switch This Month → Last Month; every Live number identical, every other changes.
-2. **Under notice, approved eviction and past-their-date sit inside Active.** *Test it:* 100 living, 12 under notice → Active shows 100.
+2. **Under eviction, its two parts, and past-their-date sit inside Active.** *Test it:* 100 living, 12 under eviction → Active shows 100.
 3. **A withdrawn notice stops counting everywhere at once.** *Test it:* raise and withdraw same day → every number back where it started.
 4. **A booking converting moves four numbers together**, Active Bookings −1, Active Tenants +1, Move-ins +1, Converted +1.
-5. **Compute each number once.** Past-their-date is a tile and the Overdue bar; Renewal Due is a figure and the 30-day band; Renewal overdue is a figure and the Already-expired bar. One computation, shown twice.
+5. **Compute each number once**, then show it wherever it is needed:
+
+| One number | Every place it shows |
+|---|---|
+| Past their date | The Overview tile, and the approved part of Upcoming Eviction's Overdue bar |
+| Renewal Due | The figure on Renewal & Retention, the 0–30 days bar on Agreement Expiry, and Journey's Renewals in 30 days |
+| Renewal overdue | The figure on Renewal & Retention, the Already expired bar on Agreement Expiry, and Journey's Agreements expired |
 6. **This screen agrees with the tenant list, the homescreen and Inventory** about the same people. *Test it:* pick a property, compare Active here, the list's count, and Inventory's occupied beds.
 7. **Move-outs counts every departure however it was noted.** *Test it:* a property with known departures never shows zero, and the tapped number equals the rows returned. The Old Tenants list must show the same people.
 8. **A room change is not a move-out.** *Test it:* move a tenant between rooms → Move-ins and Move-outs unchanged.
 9. **Use the confirmed leaving date for departures, the requested date only inside Upcoming Eviction.** *Test it:* a tenant whose requested date passed unapproved appears in Upcoming Eviction, not in Past their date.
 10. **Coverage lines are part of the number** on every sparse breakdown. Unrecorded is excluded, never defaulted.
 11. **Coverage will grow.** These cards are near-empty by intent today; build them to improve on their own as details are backfilled and new properties collect from day one, not to need rewriting when the data arrives.
-12. **Overlapping bars are never stacked.** Journey's three rows overlap; parallel only.
+12. **Overlapping bars are never stacked, and a split that adds up is never mixed in with them.** Journey's paperwork pair, Renewals in 30 days and Agreements expired, overlaps the rows above it, so those two are parallel bars only. Journey's No notices, Eviction pending and Approved eviction are a real split of Active tenants, everyone except those past their date, which is why they sit with it in their own named group. *Test it:* No notices plus Eviction pending plus Approved eviction equals Active tenants on any property where nobody is past their date.
 13. **Bands do not overlap and match Inventory's edges**, 0–7, 8–15, 16–30, 31+.
 14. **Layer rows hide at zero** (awaiting confirmation, past-their-date, the pending/approved split). Change chips do not; an unmoved number shows a neutral chip.
 15. **Zero is real.** A property with no notices this month shows zero with the healthy wording, never "no data".
@@ -662,11 +768,17 @@ Every number in the file is placeholder; these are structural.
 
 **Wrong:** 1. Chips are visible on exactly the two tiles that should never have one (Active Tenants, Active Bookings) and switched off on the two that should (Approved Bookings, Notices Raised). Swap them, and delete the other five. 2. The Move-outs tile is replaced by **Past their date**. 3. Notices Raised chip red when rising. 4. The card internally named "Property Expense" is Property Wise Active Tenants; rename it and remove the hidden Paid by / Paid to. 5. All fourteen empty states carry truncated Complaints copy; rewrite per section 21. 6. Tenant Details third tab: "Office" on two variants, "Institute" on one. It is Institute. 7. Two Tenancy Details variants both named "Default"; name them for their tabs. 8. Journey foot labels: keep the on-screen wording ("Tenants who left early", "Avg. days to raise notice"); fix the component. 9. Upcoming Eviction: the 31+ bar sits outside the card edge with one value instead of two. Bring it in. A stray "Move-out" column sits further out; remove it (the same leftover as Inventory's trend chart). 10. The Renewal & Retention card draws **"Renewal rate after notice"**; the figure is renamed **Stayed after notice**.
 
-**Missing:** 11. Coming up chip, its date picker, and the screen's chipless state. 12. "As of today" on the five Live tiles. 13. The View all sheet. 14. Coverage lines on five cards. 15. The net on Move-in & Move-out. 16. The pending and approved split inside each eviction bar. 17. The Already-expired bar. 18. The **Renewal overdue** figure on Renewal & Retention. 19. The tenure card (section 17), which is new. 20. **The two money lines under the Overview tiles**: rent at risk, and leaving with dues. 21. Healthy, not-set-up, not-recorded, loading, failed and Restricted states. 22. The unfinished-period marker. 23. Counts beside Journey's rates. 31. Section 18's share-of-total figure, drawn on the parked ratio-style Property Wise card; wire it into the shipped card rather than building it fresh.
+**Missing:** 11. The forward Custom window's chipless state and its dashes with reasons (Coming up is gone from the filter list; Custom ending after today replaced it, per D9). 12. "As of today" on the five Live tiles. 13. The View all sheet. 14. Coverage lines on five cards. 15. The net on Move-in & Move-out. 16. The pending and approved split inside each eviction bar. 17. The Already-expired bar. 18. The **Renewal overdue** figure on Renewal & Retention. 19. The tenure card (section 17), which is new. 20. **The two money lines under the Overview tiles**: rent at risk, and leaving with dues. 21. Healthy, not-set-up, not-recorded, loading, failed and Restricted states. 22. The unfinished-period marker. 23. Counts beside Journey's rates. 31. Section 18's share-of-total figure, drawn on the parked ratio-style Property Wise card; wire it into the shipped card rather than building it fresh.
 
-**Remove:** 24. Hidden Collection leftovers in four cards (rupee rows, the "Received by" tab). 25. Hidden duplicate chips under five tiles. 26. The three-tab Lifecycle component with a Leads tab; archive it, the two-tab Journey placed on screen is the build target. 27. Parked cards outside the frame not needed here: Deposit Dues, loose copies. **The parked ratio-style Property Wise card is no longer on this list** — section 18 now requires a share-of-total figure, and that card already draws one; use it as the reference for section 18's rebuild instead of removing it (see Missing, 31).
+**Remove:** 24. Hidden Collection leftovers in four cards (rupee rows, the "Received by" tab). 25. Hidden duplicate chips under five tiles. 26. The three-tab Lifecycle component with a Leads tab; archive it, the two-tab Journey placed on screen is the build target. 27. Parked cards outside the frame not needed here: Deposit Dues, loose copies. **The parked ratio-style Property Wise card is no longer on this list**: section 18 now requires a share-of-total figure, and that card already draws one; use it as the reference for section 18's rebuild instead of removing it (see Missing, 31).
 
-**Decide:** 28. Tile row overflow, scroll or wrap. 29. Info icon and chevron placement; currently inconsistent, and no card has both. 30. Which cards carry their own date dropdown: the expanded Journey variant draws one, the placed card does not.
+**Decide:**
+
+28. Tile row overflow, scroll or wrap.
+29. Info icon and chevron placement; currently inconsistent, and no card has both.
+30. Which cards carry their own date dropdown: the expanded Journey variant draws one, the placed card does not.
+32. **Journey's small rows will be invisible as plain bars.** No notices is 98% of Active tenants platform wide and close to that on most properties, so drawing the six rows D29 gave the card on one axis scaled to the longest bar leaves the thin rows near invisible: Eviction pending is 0.3% of the total, Approved eviction 1.3%, Renewals in 30 days about 2%. Agreements expired is the one small-group row that is genuinely large. The count and the share are printed on every row, so the numbers survive; the picture does not. Design decides how: a minimum bar width, a second axis for the small group, or drawing the split as one segmented bar with the paperwork pair beside it. Do not solve it by dropping rows.
+33. **Are the two groups visually separated, or only labelled?** The card already carries a tab row above it, so a third band of chrome will crowd it. My pick: labels only, with the second group's rows set slightly apart. Design decides.
 
 ---
 
@@ -687,14 +799,14 @@ Production, measured 2026-08-07. Platform-wide; recorded so decisions can be re-
 | Key-handover marker | never set; required by 1 property | The tile cannot split "gone" from "still here" yet |
 | Departures on a second marker | 47,048; sole marker on 1,005 properties | Move-outs counts both; open item 5 |
 | Tenants with >1 room record | 320 of ~1.1M | Room changes cannot inflate move-ins/outs |
-| Agreement end-date sources | recorded 9,067 · own duration 102,823 · property duration 43,280 · assumed 231,000 | The four-step rule; the assumption line |
+| Agreement end-date sources | recorded 9,067 · own duration 102,823 · property duration 43,280 · assumed 231,000 | The three-step rule; the assumed set became the No term recorded group (D26) |
 | Genuinely expired (recorded/derived terms) | ~22,000, not the 188,568 the blanket assumption gives | Already-expired bar, honestly computed |
 | Expiring in 30 days | 9,674 | Renewals-in-30-days appears twice, same number |
 | Police verification on file | 6% of active; 88% overdue at 7 days (barely moves at 14 or 30) | Two-number card; action bar names recent joiners |
 | Profile complete (ten details) | 18% | Pending is plain, not red |
 | Tenant type recorded | 89,819 (23%), a lookalike field is 99% empty | Card buildable; the list-match test |
 | Gender / DOB / address / food recorded | 24% / 22% / 18% / 2.6% | Coverage lines; demographics never red |
-| Rent set | 84.5% of active; 97.3% of under-notice | Money figures ungated |
+| Rent set | 84.5% of active; 97.3% of those under eviction | Money figures ungated |
 | Lock-in recorded | 37% of departures (1/3/6/11/12 months common) | Tenure cut points; "left early" carries coverage |
 | Tenure bands | 11% · 15% · 11% · 15% · 47% | All five bands live |
 | Renewal history | 14,910 records | Renewal & Retention buildable |

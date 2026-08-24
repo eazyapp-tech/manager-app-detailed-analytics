@@ -181,8 +181,8 @@ property shows. Two more layers ride on the approved half and are shown with it 
 
 **Eviction is the product's own neutral word** (D6): a tenant leaving of their own accord and one being
 asked to leave are the same event here, and who raised the notice is what tells them apart. Dues and
-Collection already show the two states as separate bars. Tenants still says "Under notice" for the
-same idea and is expected to follow; that sweep is S3 in the register.
+Collection already show the two states as separate bars. Tenants says "Under eviction" for the
+same idea too, since D28 settled S3 on 25 August 2026.
 
 ### Unknown *(vacancy age only)*
 
@@ -193,7 +193,7 @@ Let before, but with no recorded emptying date, so it cannot be aged. A migratio
 | Word | On this screen | Elsewhere |
 |---|---|---|
 | Unit | A lettable space as defined above | The design file says "Unit View" where older docs said Room View; unit is the settled word, and it is not a synonym for room |
-| Under eviction | Leaving, approved or pending, with both parts always named | Dues and Collection show the two parts as separate bars, same definitions. Tenants still says "Under notice" and is expected to follow, S3 in the register |
+| Under eviction | Leaving, approved or pending, with both parts always named | Dues and Collection show the two parts as separate bars, same definitions. Tenants says "Under eviction" too, since D28 settled S3 |
 | Vacant | Nobody living there, booked included | The rooms list treats a booked bed as taken. D20 corrects it there too; section 14 carries the consequence until it lands |
 | Booked | Confirmed arrivals only | The rooms list counts any booking record, confirmed or not. D20 corrects it there and on the homescreen widget |
 | Now | The filter's present-moment setting | "Live" stays a kind label only (a section no filter changes); this screen never uses it as a filter setting |

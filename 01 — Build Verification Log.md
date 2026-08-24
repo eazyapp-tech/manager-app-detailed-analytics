@@ -27,8 +27,8 @@ says so rather than quietly replacing it. Occupancy was added the same day and a
 | [What is in scope](#what-is-in-scope) | Which blocks are checked, and what is deliberately left out |
 | [Status board](#status-board) | How far the review has got, and the sweeps every remaining tab gets |
 | [Open items](#open-items) | Everything still waiting, by who it waits on |
-| [Findings](#findings) | Every difference found, F1 to F84: what is wrong and the fix |
-| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D25, dated |
+| [Findings](#findings) | Every difference found, F1 to F104: what is wrong and the fix |
+| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D32, dated |
 | [Sheet edits made](#sheet-edits-made) | Exactly what changed in the handoff sheets because of this review |
 | [Doc fixes owed to Vivek](#doc-fixes-owed-to-vivek) | Errors in the calculation guide, harmless to the product |
 | [What shipped better than we specified](#what-shipped-better-than-we-specified) | Things to write back into the sheets as rules |
@@ -65,6 +65,11 @@ the room. So each difference gets a view on which version is right, and the owne
 
 **Where the reasoning lives.** An F entry says what is wrong and the fix. A D entry says what was
 ruled and why. Reasoning is written once, in the D entry, and the F entry points to it.
+
+**Every pointer carries its own meaning.** A reference to another entry always brings a few words of
+what is there, so a sentence can be read where it sits: "D26, which took the eleven-month guess off
+this tab", not "per D26". The numbering is for finding things again, never for carrying the meaning.
+Nobody reads this log in the order it was written, so the small repetition is deliberate.
 
 **Every finding has the same four-field header:**
 
@@ -105,6 +110,7 @@ edit or ticket is done.
 | Stay history | One row per stretch of time a tenant occupied a room or bed, with a start and an end. Every period average and the whole trend are rebuilt from it. A row flagged pending is a move scheduled for the future |
 | Day-averaged | What a period means on Inventory and nowhere else in the suite. "78% last month" is 78% of an average day of it, not the last day of it |
 | Rentable | Space that can be let: total, minus space switched off for rent, minus rooms that declare no capacity |
+| Direct add | A tenant created straight onto the tenant list, never a booking. On an auto-accept property the data cannot tell one from an auto-accepted booking, which is what F93 is about |
 
 ---
 
@@ -139,22 +145,34 @@ A block being wired does not prove every field inside it is. That is checked per
 | Tab | Blocks | Reviewed | Findings | State |
 |---|---|---|---|---|
 | Dues | 9, plus the View all screen | All | 26 | Complete |
-| Collection | 7, plus the View all sheet | All | 20 | Complete; fixes with Vivek |
+| Collection | 7, plus the View all sheet | All | 25 | Complete; re-verified against the fix commits |
 | Expense | 5, plus the View all sheet and the Others sheet | All | 18 | Complete; fixes with Vivek |
 | Occupancy | 8, plus the View all sheet | All | 20 | Complete; fixes with Vivek |
-| Tenant | 14 | 0 | 0 | Next |
+| Tenant | 14, plus the View all sheet | All | 15 | Complete; ruled same day, D26 to D32; fixes with Vivek |
 
-**Next:** Tenant. All five Occupancy rulings are done, D20 to D24; the build fixes sit with Vivek in
-the open items. Occupancy was the hardest tab to check, five tables across two property structures,
-and it returned 20 findings, second only to Dues. Three of them are visible on almost every property:
-a bar chart drawn entirely at zero width, a bar that is permanently red, and half the agreement dates
-invented. It also shipped two things better than the sheet asked for.
+**All five tabs are reviewed, and the owner has ruled on everything this review raised.** Tenant returned 15
+findings, F90 to F104. Two are visible on almost every property: the Approved Bookings tile is really
+a count of tenants added rather than bookings approved (F93), and three quarters of the Already expired bar rested on dates the product invented (F100,
+settled by D26, which moved those tenants into their own stated group). One property's junk settings
+value crashes the whole Tenant page (F90).
+
+**Seven rulings came out of this tab, D26 to D32.** Three closed things this review had raised: no-term tenants get their
+own stated group instead of the red expired bar (D26), Renting Type hides rather than showing the
+stay split under a false name (D27), and the suite renames the parent group to Under eviction,
+settling S3, his own rename suggestion from 23 August, which was parked until all five tabs were
+done (D28). Four came from the owner reading the built screen and asking for
+better: Journey grows to six rows in two named groups (D29), a bucket outside a run of days hides at
+zero (D30), every agreement expiry label carries its own days (D31), and stay type and renting type
+get opposite showing rules (D32). What remains open waits on Vivek's answers, on the fix lists below, and
+on the register's proposals.
 
 **Sweeps to run on every remaining tab.** Each was born from a finding on a tab already checked, and
 the entry it came from is named beside it.
 
 | Sweep | Born from |
 |---|---|
+| Does the code implement every rule the sheet's own base section states, rule by rule | F85 |
+| Does a number agree with the surface its drill lands on | F86 |
 | Is the chip's comparison figure worked out as it stood on that date, or as it stands today | F5 |
 | Is each chip's colour right for what that tile measures | F6 |
 | Does the Current FY option end at today | F9. Already answered: only Dues and Collection get it wrong |
@@ -184,15 +202,15 @@ the entry it came from is named beside it.
 
 Everything still waiting, by who it waits on. An item leaves this table when its entry is Closed.
 
-⚠ **Fixes have started landing on Collection, and this table has not been re-checked against them.**
-Two commits after the reviews, `4bce93d21` "payment settlement logic changed" and `a2d839ea1`
-"collection due view all sheet data", rewrote parts of `collectionService.ts`. What they visibly
-touch: `settlementDestinations` no longer reads the scheduler alone (F42), refunds are now netted off
-collected money (new behaviour nobody logged), advance payments carry the label "Advance" instead of
-a blank (F39 territory), and rows worth nothing are filtered out. **The settled test was also
-changed, from three specific signals to "a payout or wallet record exists at all", which is looser
-than what F43 already called too loose.** None of this is verified. Re-check Collection against these
-two commits before working this table, and close or re-open each row on what the code now does.
+**Collection has been re-verified against the two fix commits**, `4bce93d21` "payment settlement
+logic changed" and `a2d839ea1` "collection due view all sheet data", on 2026-08-25. What they did:
+refunds now come off collected money, a rule the sheet always carried and this review missed (F85);
+the View all sheet now follows the toggle, closing F44 (F89); the destination rows now cover nearly
+all settled money, closing F42's coverage but overstating the total by 14% (F87); and "settled" was
+redefined to include Flexi Pay balances (F88). The refund fix moved Total Collection off the
+collections list it drills into without landing on the homescreen figure, so the screen now agrees
+with neither (F86). Two of the four need an owner ruling before Vivek does anything else on this
+tab.
 
 **Waits on Vivek, Dues and Collection**
 
@@ -228,9 +246,9 @@ two commits before working this table, and close or re-open each row on what the
 | Collection Breakup | Billed side per row on the Due Date Status tab | F38 |
 | Collection empty copy | Ship §15's replacement copy on four blocks | F39 |
 | Adjusted Collection | Discount reads the credits records, windowed by paid date | F40 |
-| Payment Settlement | Destination rows from the payout and wallet records too | F42 |
-| Payment Settlement | Say what payout status 1 and a wallet UTR each mean; mark reversed and failed transfers | F43 |
-| Collection View all | Window rows and stay rows follow the toggle; Adjusted rows include discount | F44, F45 |
+| Payment Settlement | Pick one account record per payout before summing; the rows overstate settled money by 14% | F87 |
+| Payment Settlement | Read the payout's status again, so a failed transfer can be marked inside Unsettled as §11 asks | F88 |
+| Collection View all | Adjusted rows include discount | F45 |
 | Collection healthy states | Emit the three §15 healthy messages | F46 |
 
 **Waits on Vivek, Expense**
@@ -276,9 +294,39 @@ two commits before working this table, and close or re-open each row on what the
 | Losing money | Fall back to the group average at `:547` and `:554`, so an empty room is not priced at zero | F78 |
 | Losing money | Compute the bar and the share from rupees at `:571`, not from the formatted string; sort by revenue loss at `:566`; build the coverage threshold | F79 |
 | Three silent blocks | "As of today" on Status, Property Wise and the View all sheet | F80 |
+| Vacant Room Status | Hide Never rented and Unknown at zero; the four aging bands keep showing at zero. The Unknown half is not new: DA-08 §8 already says that bar hides at zero and the build renders it always, a gap the Occupancy pass missed | D30 |
 | View all sheet | The seven missing rows at `:621` to `:639`, the missing third section, the never-rented number `getVacantRooms` already computes | F81 |
 | Occupancy Trend | Start the chart where the property's data starts, at `:497` | F82 |
 | Custom path | D9's rules in `occupancyService.ts` `computeWindow`; delete the dead `coming_up` branches | F83 |
+
+**Waits on Vivek, Tenant.** Every row is in `tenantService.ts` unless another file is named.
+
+| Item | One-line action | Entry |
+|---|---|---|
+| Agreement end date, two services | Guard the `agreement_period` cast: digits only, else null | F90 |
+| Agreement end date, Tenant only | Null means the No term recorded group, never eleven months. Inventory keeps its eleven-month step | D26 |
+| Any failed block, `service.ts` | Catch it, so one bad settings value cannot kill the whole page | F90 |
+| Custom path | D9's rules; delete the dead `coming_up` branches at `:149`, `:260`, `:265`, `:311`, `:470`, `:1003` | F91, D9 |
+| Ten silent blocks | "As of today" on the live blocks, "From today onwards" on Upcoming Eviction and Agreement Expiry | F92 |
+| Approved Bookings, Journey funnel | Say whether an auto-accepted booking leaves any trace; until then, count real approval rows only, as `movedCounts` already does | F93 |
+| Overview info sheet, `tenantHints.ts` | Add Eviction Approved and Past their date entries; fix the Active Bookings definition, it counts awaiting too | F94 |
+| Move-outs | Exclude cancelled bookings, the delete path stamps them with a leaving date | F95 |
+| Journey, Under Notice bar | Rename it Eviction pending; the number it already computes is right, and D29 gives Approved eviction its own row beside it | F96, D29 |
+| Journey, Tenants tab, group 1 | Heading "Who is staying, who is leaving": Active tenants · No notices · Eviction pending · Approved eviction. The last three add up to Active on any property where nobody is past their date; where somebody is, they fall short by that count, which S9 proposes closing | D29 |
+| Journey, Tenants tab, group 2 | Heading "Whose paperwork needs a decision": Renewals in 30 days · Agreements expired. These overlap group 1, and exclude each other. Parallel bars only. Agreements expired reuses the `renewal_overdue` expression `getRenewalRetention` already runs | D29 |
+| Journey strip | Churn as a share with the count beside it; left early reads `lockin_period`, not the agreement end date, with a coverage line | F97 |
+| Upcoming Eviction | Hide the Overdue bar at zero; the four day bands keep showing at zero | D30 |
+| Agreement Expiry | Relabel to Already expired · 0–30 days · 31–60 days · 61–90 days · Valid (90+ days) | D31 |
+| Agreement Expiry | Hide Already expired and No term recorded at zero; the four day bands keep showing | D30 |
+| Stay Type, Renting Type | Stay type shows always, zero side included. Renting type shows only when either side is above zero, which replaces D27's untestable "until the field is captured"; today that hides the block everywhere, and the interim stay-split donut is removed rather than renamed | D32, D27, F102 |
+| Four colours | Police in-time plain (the default colour, not red), ID not-verified plain, the 30-day band plain, Not signed red; look at the swapped profile pair while there | F98 |
+| Upcoming Eviction | Fall back to the tenant-level date the tiles read, and say which record is authoritative for the list too | F99 |
+| Agreement Expiry | No-term tenants leave the five bands and become the stated "No term recorded" group with its count and its drill to the list | F100, D26 |
+| Renewal figures | Renewal overdue, Renewal Due and Journey's Renewals in 30 days all count real terms only, moving with the bands above | D26 |
+| Renewal & Retention | Stayed after notice as a share of those whose date fell in the window and passed, count beside it | F101 |
+| The rename, five strings | "Under eviction" replaces "Under notice" in the View all sheet's row, the rent at risk note, both Journey empty messages, and the Journey hint in `tenantHints.ts`. The Journey bar label is deliberately not in this list: D29 renames it Eviction pending instead | D28, D29, S3 |
+| Empty and healthy states | The five §21 healthy messages; wire the six unsent empty states; the whole-screen not-set-up state; fix the Bookings-tab copy-paste | F103 |
+| Three breakdowns | An Other bar for unmatched food values; "girls" into the female list; no-joining-date tenants stated, not dropped | F104 |
 
 **Waits on the owner**
 
@@ -286,7 +334,7 @@ two commits before working this table, and close or re-open each row on what the
 |---|---|---|
 | Breakup by Stay Duration | Hide when there are no short-term tenants, or no short-term dues | F23 |
 | Forward window | What an event count shows on a window that straddles today | D9 |
-| Under notice rename | Whether the Tenants label becomes Under eviction with two named parts. D21 has made this near certain | S3 in the register |
+| Approved Bookings | What the tile shows if auto-accepted bookings leave no trace, once Vivek answers | F93 |
 | Added By | Name creator codes 5 and 6, once Vivek says what they are | F26 |
 | Agreement length | Whether the product starts asking for it at move-in, so the gap stops reopening | S7 in the register |
 | Paying staff back | Whether a way to record it ships before the Still owed to staff tile does | S6 in the register |
@@ -296,7 +344,7 @@ two commits before working this table, and close or re-open each row on what the
 
 | Sheet | Change | When |
 |---|---|---|
-| DA-09 Tenants | §4: drop Coming up, rewrite the forward column per D9, from that tab's code | At its review |
+| DA-09 Tenants | §4: drop Coming up, rewrite the forward column per D9, from that tab's code | Done, 2026-08-25 |
 | DA-04 Expense | §4 explains its own no-forward rule by pointing at Coming up, an option D9 deleted. The rule is right; the reason needs rewriting without the dead name | Done, 2026-08-24 |
 | DA-08 Inventory | §4's forward column, the under-eviction naming after D6, and the Occupancy booking question | Done, 2026-08-24 |
 
@@ -964,7 +1012,7 @@ Ruled as built: D15 has the reasoning. Sheet §4, §10 and test §17.1 corrected
 
 ### F42. The destination rows cover under 3% of settled money
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap · **Status:** Closed · **Owed by:** Nobody · **Note:** coverage fixed in `4bce93d21`; the rewrite brought its own defect, F87
 
 §11: "the destination comes from the settlement record, whichever settlement system wrote it", and
 the rows break down Total Settled and add up to it. The build reads destinations from
@@ -980,7 +1028,7 @@ line only when no system names an account.
 
 ### F43. The settled test says yes before money reaches the bank
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** rewrites §18's open item 1, the day-one worry inverted
+**Verdict:** Build gap · **Status:** Closed · **Owed by:** Nobody · **Note:** answered by `4bce93d21` and superseded by F88; rewrote §18's open item 1
 
 The build marks a payment settled when its payout row has status 1, its wallet entry has a UTR, or a
 scheduler row succeeded (`collectionService.ts:776`). Measured on production, live non-test
@@ -1003,7 +1051,7 @@ test is what needs proving.
 
 ### F44. The View all sheet half follows the toggle
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap · **Status:** Closed · **Owed by:** Nobody · **Note:** fixed in `a2d839ea1`, verified at F89
 
 §12: the sheet "reads by the screen's window and toggle". In Due Date view the category rows switch
 correctly and carry their billed side. The rest does not: the "This window's collection" rows and
@@ -1905,6 +1953,472 @@ rather than an invented one.
 The fix is F52's one guard in the caller, not nine here.
 
 
+Findings from F85 verify Collection against the two fix commits, `4bce93d21` "payment settlement
+logic changed" and `a2d839ea1` "collection due view all sheet data", 2026-08-25.
+
+### F85. Refunds never came off collected money, and this review missed it. They do now
+
+**Verdict:** Build gap · **Status:** Closed · **Owed by:** Nobody · **Note:** fixed in `4bce93d21`; the miss is this review's, see the audit note
+
+Sheet §3 says refunds come off everywhere, "every tab, every bar, every property row and every View
+all row", and §17.4 makes it a test. The build did not do it. `COLL_AMT` valued every payment at the
+bill's full amount. A fully refunded bill did drop out, because refunding moves the bill to status 3
+and the base join keeps only status 1, but a **part refund left the bill at status 1 and its full
+amount still counted**.
+
+`4bce93d21` adds a refunds subquery grouped by bill and values each payment at
+`GREATEST(bill amount − refunds, 0)`.
+
+**Measured on production**, July 2026, live non-test properties, successful active payments against
+paid bills, adjustment modes excluded: netting refunds moves Total Collection from ₹238.90 crore to
+₹238.25 crore, ₹64.6 lakh across 1,095 payment rows. No bill is refunded beyond its own amount, so
+the clamp at zero never fires today and is there for safety.
+
+The refunds table carries no status and no active column, so every row is a completed refund and
+needs no filter. One latent flaw, not worth fixing today: the refund is subtracted once per payment
+linked to the bill, so a bill paid by two payments would net its refund twice. On production 107 of
+the 302,114 bills paid in July carry more than one payment, and exactly one of those is refunded.
+
+**Audit note.** This review checked Collection block by block and did not notice that a rule stated
+in §3 and tested in §17.4 was absent from the code. It read the code for what each block claimed to
+do and never asked which of the base rules had been implemented at all. The sweep that would have
+caught it did not exist; it does now, see the status board.
+
+**The fix breaks two other rules.** See F86.
+
+### F86. Collection now matches neither the list it drills into nor the homescreen
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Owner first · **Note:** the §1 goal, now measurable
+
+DA-02 §1 states the goal: "the homescreen's collection figure, the collections list and the old
+collection widgets do not produce one answer. Making them one answer is part of this build." Three
+answers still exist, and after F85 the analytics figure sits between two of them, matching neither.
+
+Measured on production for July 2026, live non-test properties, on one shared base: successful
+active payments against paid bills, adjustment modes excluded.
+
+| Surface | Refunds | Discount, held as `owner_credits` | July |
+|---|---|---|---|
+| Collections list, the total under every drill | not taken off | only on mode 213, which is ₹0 in July | ₹238.90 Cr |
+| Analytics Total Collection, after `4bce93d21` | taken off | not taken off | ₹238.25 Cr |
+| Homescreen collection, the figure on the header | taken off | taken off | ₹237.08 Cr |
+
+The two gaps are exactly the two rules: ₹64.6 lakh of refunds separates analytics from the list,
+₹1.17 crore of discount separates it from the homescreen.
+
+Before `4bce93d21`, analytics agreed with the collections list to the rupee. That is what
+`collectionService.ts` opens by claiming it does, and what D12 and D13 rested on. It no longer does.
+**Test §17.12, "a drill adds back to the number tapped", now fails by ₹64.6 lakh a month across the
+platform**: tap Total Collection, land on the collections list, read a bigger number than the one
+tapped.
+
+The homescreen carries both definitions itself, in two different places: the figure on its header
+takes refunds and discount off, and its Financials block does neither. So this is not analytics
+disagreeing with the product. It is the product disagreeing with itself, which is what §1 said this
+build was for.
+
+**This review's view:** the homescreen header's definition is right and the other two should move to
+it. A refund is money given back and a discount is money never taken, so neither is collection.
+It is also the only one of the three that implements §3 in full. The discount is then the last piece,
+and F40 has to be fixed anyway.
+
+### F87. The destination rows now overstate settled money by 14%
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** F42's coverage is fixed; this is new
+
+F42 found "Where settled money went" reading one settlement table and covering under 3% of settled
+money. `4bce93d21` rewrites it to three sources: direct bank payouts, wallet money moved to a bank
+through the scheduler, and a "Flexi Pay" row for wallet money not yet moved. **The coverage problem
+is fixed.**
+
+The rows no longer add up. §11: "The rows break down Total Settled only and add up to it."
+
+**Measured on production**, live non-test properties, online modes, successful active payments
+received 18 to 24 August 2026: Total Settled reads ₹10.33 crore and the destination rows sum to
+₹11.78 crore, ₹1.45 crore too much, 14% over.
+
+All of the overstatement is in the direct-payout branch, and the cause is the join that names the
+account: it matches an account record on the account number **or** the UPI address, and more than one
+account record can carry the same number. 7,617 payments become 9,367 rows after that join, and every
+duplicate counts its payment again, drawing ₹6.52 crore of direct payouts as ₹7.97 crore.
+
+**Fix:** choose one account record per payout before summing, rather than joining and then grouping.
+Nothing else in the block needs to change. The weighting used to split one payment across several
+banks is right, and masking the account number to its last four digits is better than the sheet asked
+for.
+
+### F88. "Settled" now counts money sitting in Flexi Pay, and the sheet reserves that word for the bank
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Owner first · **Note:** supersedes F43
+
+Sheet §3 reserves the word: "**Settled**, reserved for one meaning: money that has physically reached
+the owner's bank." §11 repeats it for the tile.
+
+`4bce93d21` replaces the settled test with "the payment has a payout record or a wallet record", and
+rewrites the hint text to match: a Flexi Pay balance now counts as settled "even before withdrawal".
+
+**Measured on production**, July 2026, live non-test properties, online modes: of ₹141.55 crore
+counted as settled, ₹90.19 crore went out as a direct bank payout, ₹3.69 crore moved from the wallet
+to a bank, and **₹47.67 crore, 34%, is a Flexi Pay balance that has not moved to a bank.** On money
+received in the last seven days it is ₹3.52 crore of ₹10.33 crore.
+
+The new meaning is defensible: a Flexi Pay balance is the owner's money and they can withdraw it. It
+is also honest on the card, because the rewrite gives it its own named row rather than blending it
+into a bank total. But it is not what the sheet's word means, and that row sits under the heading
+"Where settled money went", which is untrue of money that has gone nowhere.
+
+One rule is lost. §11 says "money whose transfer was reversed or failed is marked within Unsettled".
+The payout's own status is no longer read, so a failed payout now counts as settled purely by
+existing. On July's data no payout carries a failed status, so nothing is mis-stated today. This is a
+rule that will bite the first time a payout fails, not a live defect.
+
+**What this settles about F43.** F43 reported that money received the same day already read as
+settled, and said the yes test could not be describing the bank. That was right, and the mechanism
+now has a name: a wallet entry is written when the money arrives. F43 asked whether the test meant
+the bank. The answer is no, and the product has now decided that it does not have to.
+
+### F89. The View all sheet now follows the toggle
+
+**Verdict:** Pass · **Status:** Closed · **Owed by:** Nobody · **Note:** F44 fixed in `a2d839ea1`
+
+F44 found the View all sheet following the toggle only halfway: the category rows switched with the
+view, the headline rows and the stay rows stayed on money received. `a2d839ea1` fixes both. In Due
+Date view the window group now reads Collected & Adjusted against billed, with Still Unpaid beneath
+it, and the stay rows split Collected & Adjusted and carry their billed side, which is what §12 asks
+and what the category rows already did.
+
+Checked in the same pass and untouched by either commit: F45 stands, the Adjusted rows in this same
+sheet still leave discount out.
+
+Findings from F90 are the Tenant tab, reviewed 2026-08-25 in sheet order: §4 and the filters first,
+then the fourteen blocks and the View all sheet. Tenant line numbers in these entries resolve
+against commit `6797eec6d`, the head this review ran on. The only change to the tenant files since
+the pinned `3a13e08ac` is comments (`950d46d1e`), so behaviour is identical and every earlier
+finding's function name still holds.
+
+### F90. One junk property setting kills the whole Tenant page, and an Occupancy card with it
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** S8 proposes the fix at the source
+
+The agreement end date rule reads the property's default agreement length with a plain cast to a
+number, inside `ENDS_ON` (`tenantService.ts:176`). The column is text and the settings screen
+accepts anything. One live property has "." stored there. On that property the cast throws, the
+query fails, and nothing catches it: the page resolves every block in one `Promise.all`
+(`service.ts:84`), so one failed block fails the whole page. The Tenant tab dies for that property,
+because Journey, Agreement Expiry and Renewal & Retention all read `ENDS_ON`, and the Agreements
+ending soon card on Inventory carries the identical cast (`occupancyService.ts:407` to `:408`).
+
+**Measured on production**, live properties, test and deleted excluded, on 25 August 2026:
+
+| Stored as the property's agreement length | Properties | Active tenants on them |
+|---|---|---|
+| "." , the cast throws | 1 | 37 |
+| A negative number, "-5" or "-37" | 61 | 1,415 |
+
+The negative ones do not crash; they mislead quietly. A default of -37 puts a fallback tenant's end
+date about three years before they joined, so every such tenant reads Already expired.
+
+**Fix:** guard the cast in both services, digits only and otherwise null. What null falls back to now
+differs by tab, because of D26: on Inventory the eleven-month step takes over as before, and on
+Tenant there is no eleven-month step any more, so the tenant joins the No term recorded group. Add a
+catch in the caller too, so one bad block can never take a page down. S8 proposes validating the
+field where it is typed, which is where this class of defect dies.
+
+### F91. The forward window rules never landed on Tenant's Custom path, and F17's dead code is still here
+
+**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D9 rules it; F17 logged the cause; the Tenant twin of F27 and F83
+
+The app lets a Custom window end after today (`allow_future_date: true`, `masterConfig.ts:165`).
+The service caps the end back to today and says nothing (`tenantService.ts:137`), so a manager who
+asks about September is shown August-to-date under September's dates, F83's exact shape. Move-ins,
+Move-outs, Notices Raised, Approved Bookings and the View all's What moved section all quietly read
+the capped window.
+
+Underneath sits the dead code F17 already recorded as the most on any tab: the `coming_up` case in
+the window builder (`tenantService.ts:149`), the projected tile variants (`projectedTiles`, `:311`),
+the scheduled Move metrics branch (`:470`), the two dash tiles (`:260`, `:265`) and the Renewal
+dashes (`:1003`). The filter list carries no Coming up, so none of it can run.
+
+**Fix:** D9's rules on the Custom path, and delete the dead branches while there. Worth saying: the
+dead code is the best forward path in the suite, dashes with reasons and a projection built from
+confirmed facts only, close to what D9 asks Custom to do. The work is mostly moving it, not writing
+it. Sheet §4 is rewritten onto the Custom path in this pass, the edit the open items owed.
+
+### F92. Ten blocks ignore the top filter and not one of them says so on its face
+
+*Ten blocks, plus Journey's live bars, whose card as a whole does follow the filter through its
+window strip.*
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** against D9; the F18 and F80 sweep
+
+Most of this screen is live by design, and §4 requires a live number to say "as of today" on its
+face. Only the Overview tiles and the Renewal overdue card do; the block registry, the code that
+wraps every card, adds no subtitle to any Tenant block. Checked block by block: Verification, Tenancy Details, Profile, Details, Stay Type,
+Renting Type, Tenure, By Property and Journey's live bars offer the filter, ignore it, and say
+nothing. Upcoming Eviction and Agreement Expiry ignore it and are owed "From today onwards" by §11
+and §12.
+
+**Fix:** the D9 face rule, the way Vacant Room Status already does it on Inventory: "As of today" on
+the live blocks, "From today onwards" on the two forward cards.
+
+### F93. Approved Bookings counts every tenant added on an auto-accept property, and the Journey funnel is built on the same mistake
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek, then the owner · **Note:** the largest finding on this tab
+
+How the tile decides "a booking confirmed in the window" (`approvedBookings`,
+`tenantService.ts:330`): take every tenant at status 0, 1 or 2; on properties that need approval,
+keep those whose confirmation row is approved, dated by the approval; on auto-accept properties,
+keep everyone, dated by the day the record was created. A confirmation row is only written when
+somebody acts on a booking (`acceptBooking.ts:531`, `tenant.ts:3621`), and on an auto-accept
+property nobody acts. So there the query cannot tell a booking from a tenant added straight to the
+list, a direct add, and it counts them all.
+
+Most confirmed bookings are auto-accepted (D1's note: 2,838 of 2,880). **Measured on production**,
+July 2026, live properties, test and deleted excluded, the tile's own query run platform-wide:
+
+| | Count |
+|---|---|
+| What the tile counts for July | 43,909 |
+| Of those, a real approval row | 1,189 |
+| Of those, on an auto-accept property with no booking record of any kind | 42,720 |
+| Of the 42,720, still a booking today | 185 |
+| July's Move-ins, for scale | 44,203 |
+
+The tile is within rounding of Move-ins. It is counting tenants added, not bookings approved.
+
+The same test is reused three more times and each inherits the fault:
+
+| Where | Claims | Counts |
+|---|---|---|
+| Journey, Total (`bookingBars`, `:633`) | Booked in the window | Every tenant record created in the window, on every property, no booking test at all |
+| Journey, Approved (`:635`) | Confirmed | Created in the window, on auto-accept or with an approval row |
+| Journey, Converted (`:637`) | A booking became a tenant | Created in the window and now living or moved out, which is every direct add |
+| View all, Bookings confirmed (`movedCounts`, `:518`) | Confirmed in the window | Real approval rows only. Correct, the only one of the four that is |
+
+**What is needed, in order.** Vivek says whether a booking on an auto-accept property leaves any
+trace at all: a marker on the tenant, a row some flow writes, anything. If a trace exists, all four
+numbers count it. If none exists, the honest tile counts explicit approvals only and says so on its
+face, and whether that is acceptable is the owner's call. The clean interim already exists:
+`movedCounts` counts real approval rows only, and the tile could reuse it today.
+
+### F94. The Overview info sheet defines seven of its nine numbers, and one definition is wrong
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+`tenHints.overview` (`tenantHints.ts:62`) has no entry for Eviction Approved or Past their date, the
+two tiles whose meanings most need stating: §3's whole point about Past their date is that the
+action is check and close, not chase. And the Active Bookings entry reads "Confirmed bookings not
+yet moved in" (`tenantHints.ts:10`), which is wrong. The tile counts confirmed and awaiting together
+(sheet §5, and the code counts plain status 2). The definition contradicts the number it defines.
+
+### F95. A cancelled booking counts as a move-out, failing a test the sheet spells out
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** found by the F85 rule-by-rule sweep; S2 is the same flow
+
+§3: "A cancelled booking is not a move-out either", with its own test: cancel a booking, Move-outs
+is unchanged and Cancelled rises by one. The cancellation flow fails it: rejecting a booking calls
+the shared delete path, which stamps the tenant with a leaving date
+(`controllers/tenant.ts:21500`, `UPDATE tenant SET status = 0, date_of_eviction = ...`). Move-outs
+counts status-0 tenants by exactly that date (`movedCounts`, `tenantService.ts:513`), so the
+cancelled booking joins Move-outs, and Journey's Churn figure, built on the same count, rises with
+it.
+
+**Measured on production**, live properties, July 2026: 36 cancelled bookings sit inside the month's
+28,783 move-outs. Small, and it is the one departure the sheet names as never belonging there.
+
+**Fix:** exclude tenants whose latest booking confirmation is cancelled from Move-outs, or exclude
+the delete path's own marker, `reason_of_eviction = 'Booking cancelled'`. The Bookings cancelled
+count already reads the confirmation rows correctly.
+
+### F96. Journey's Under Notice bar counts only the pending half, so one label carries two meanings on one screen
+
+**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D29 rebuilt this card and settles it: the bar becomes Eviction pending under its own name
+
+Sheet §8: the bar is "Living here, has said they are leaving", the parent group, and the three bars
+"overlap each other, parallel bars only". The build's bar tests only a pending notice with no
+approved date (`tenantService.ts:544` to `:545`), so it is Eviction Pending wearing the parent's
+name, sharing nobody with the Approved Eviction bar beside it.
+
+The View all sheet's Under notice row reads the parent test, `UNDER_NOTICE` (`:402`), pending plus
+approved. So "Under notice" means the pending half on Journey and the whole group on the View all
+sheet, on the one screen D6 left unchanged because its labels were consistent.
+
+**Fix, superseded and simpler.** This entry proposed the bar read the parent test `UNDER_NOTICE`
+(already written at `:190`), so that one label meant one thing. D29 then rebuilt the card with both
+states as their own rows, which settles it a better way: the bar keeps the number it already computes
+and gains the honest name, Eviction pending, beside a sibling row for Approved eviction. The View all
+sheet's Under notice row keeps the parent test and gains the D28 name, Under eviction.
+
+### F97. The Journey strip: Churn is a bare count, and "left early" measures against the wrong date
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+**Churn** ships as the raw move-out count (`tenantService.ts:586`). §8 defines it as "left, against
+who was here", and the tap matrix calls the strip figures rates. Fix: the share, with the count
+beside it, which is design fix 23's own rule.
+
+**Tenants who left early**: §3 defines it as left before the lock-in period ended, and the tenant
+record carries `lockin_period`. The build compares the move-out date against the agreement end date
+instead, `ENDS_ON` with its eleven-month fallback (`journeyFooters`, `:607` to `:611`). Lock-in and
+agreement length are different facts: a one-month lock-in inside an eleven-month agreement is
+ordinary, and F100 measures the fallback at more than half of long-term tenants. So the figure reads
+"left before an agreement date the product half invented", overcounting heavily, with no coverage
+line although the sheet's own measurement puts lock-in on 37% of departures.
+
+### F98. Four colour-rule breaches, including a red that every new tenant triggers on arrival
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F73 sweep, does the code honour the colour bound
+
+§4 bounds red to unmet obligations and passed dates, and adds "A property onboarded this morning
+must not open red." Checked on every bar and legend:
+
+| Where | Ships | The rule says |
+|---|---|---|
+| Police verification, "Not done, in time" | Red (`tenantService.ts:690`) | Plain. §9 marks only Overdue red. Every tenant in their first week shows red on arrival |
+| ID verification, "Not verified" | Red (`:686`) | Plain. §4's red list names police past deadline and no agreement, not identity |
+| Agreement Expiry, "30 days" band | Red (`:830`) | Plain. A deadline not yet reached |
+| Tenancy Details, "Not signed" | Orange `#FF9567` (`tenantColors.ts:27`) | Red. §10 marks it in as many words and §4's list carries it |
+
+One oddity to fix in the same file: Profile Completion colours Completed `#FFD99A` and Pending
+`#10B981` (`tenantColors.ts:28` to `:29`), a yellow for done and a green for not done, backwards to
+read even though Pending is rightly not red.
+
+### F99. The eviction tiles and the Upcoming Eviction card read two different records, and §11's one-number rule was impossible as written
+
+**Verdict:** Build gap and Specification gap · **Status:** Open · **Owed by:** Vivek for the source; sheet §11 corrected
+
+**The build gap.** The tiles read the tenant record: an approved eviction is the tenant's own
+confirmed date (`liveTiles`, `tenantService.ts:297`). The card reads only the notice records
+(`getUpcomingEviction`, `:764`). The code's own comment at `:186` names the trap: approval can set
+the tenant's date and leave no active notice row. Measured on production, live properties, 25 August
+2026: **275 living tenants carry a future confirmed leaving date and no active notice row with a
+date.** All 275 are in the Eviction Approved tile and none is on the card. The card needs the
+tenant-level fallback the tiles already use; with it, the card's approved side and the tiles agree
+by construction. The tenant list's eviction tags read the notice records too, so Vivek should say
+which record is authoritative and align all three, the F86 sweep's question.
+
+**The specification gap.** §11 said "The Overdue bar and the Past-their-date tile are one number,
+computed once." §3 and build guidance 9 say a pending notice whose requested date has passed appears
+in Upcoming Eviction and never in Past their date. Both cannot hold: the Overdue bar splits into
+pending and approved, and its pending part is exactly who the tile must exclude. Measured the same
+day: **463 living tenants sit in that pending slice of Overdue.** The build follows guidance 9,
+which is the right half of the contradiction to keep. §11 now says the tile equals the approved part
+of the bar, and names the pending gap.
+
+### F100. Three quarters of the Already expired bar rests on a date the product invented
+
+**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D26 settles it; F77 and D24 are the same defect one screen over
+
+The sheet knew about the fallback and asked for a line, and the line ships: "Dates are assumed at 11
+months where no duration is recorded" (`tenantService.ts:835`, and the hint says the same). What D24
+ruled for Occupancy is not here: no count of the tenants it applies to, and no drill from the count
+to the list where the lengths get filled in.
+
+And this card has a band Occupancy does not. On Inventory an invented date mostly drops a tenant off
+the 90-day card. Here it lands them on the first bar, drawn first and red. **Measured on
+production**, live properties, living long-term tenants with a joining date, 25 August 2026:
+
+| | Tenants | Share |
+|---|---|---|
+| On the card | 346,930 | |
+| On the eleven-month fallback | 187,385 | 54.0% |
+| The Already expired bar | 167,001 | 48.1% |
+| Of that bar, on the fallback | **123,287** | **73.8%** |
+| The 30 days band | 7,504 | |
+| Of that band, on the fallback | 3,208 | 42.8% |
+
+Any tenant with no recorded length who joined more than eleven months ago reads Already expired.
+That is most long-stay tenants, which is why the bar is the biggest on most properties, and Renewal
+overdue, the same number by §15, inherits all of it.
+
+The sheet also argues with itself here: §12 says the five bars cover everyone under §3's rule, while
+the measured-figures table says the Already-expired bar is "honestly computed" at about 22,000 from
+recorded and derived terms, "not the 188,568 the blanket assumption gives". The build built §12.
+D26 ruled for the measured-figures reading: the fallback tenants become their own stated
+"No term recorded" group with the count and drill, and every dated band is a fact.
+
+### F101. Stayed after notice ships as a count where the sheet defines a share, and counts a day early
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§15: "Of those whose leaving date fell in the window, the share still here." The build counts living
+tenants whose confirmed leaving date falls in the window (`tenantService.ts:996` to `:998`) and
+ships that count alone: no denominator, no share. The window also runs through today, so a tenant
+whose date is today counts as having stayed while §3 counts a person "only after the date passes".
+
+**Fix:** the base is everyone whose confirmed leaving date fell in the window and has already passed,
+whatever their status now; the figure is the share of them still living here, with the count beside
+it.
+
+### F102. Renting Type renders the stay split under another name, which the sheet forbade in as many words
+
+**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D27 settles it; the build says out loud that it is interim
+
+§16: the B2B and Residential split renders only where renting type is recorded, "a missing value is
+not an answer." The field is unpopulated on production, and the build substitutes the short against
+long term split, marked interim in the code (`tenantService.ts:1040` to `:1042`) and in Vivek's
+guide. So the screen carries the same two numbers twice in a row: Stay Type as two cards, then the
+identical split again as a donut named Renting Type. A manager who trusts the donut's name learns
+something false from a card that is restating its neighbour. D27 ruled the card hides until the
+field is captured.
+
+### F103. No healthy state exists, six empty states are written and never sent, and the not-set-up screen is missing
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F74 and F50 shape, third tab running; the F64 sweep
+
+§21 separates seven empty-looking situations. The build has one kind of state, per-block empty copy,
+and even that is half wired:
+
+- **None of the five healthy messages exists**: Upcoming Eviction's "Nobody is leaving soon.",
+  Agreement Expiry's "No agreements ending in the next 90 days.", Renewal & Retention's "Nothing due
+  for renewal.", Past their date's "Every move-out is closed off.", Journey's "All quiet." A fully
+  quiet property gets the empty copy instead, which reads good news as missing data: "Once an
+  eviction is approved, you will see the tenant count by days remaining." on the healthiest card the
+  screen has.
+- **Six blocks define empty copy that is never sent** (the F64 sweep): `EMPTY.move`,
+  `EMPTY.renewal`, `EMPTY.stay_type`, `EMPTY.renting_type`, `EMPTY.tenure` and `EMPTY.by_property`
+  (`tenantService.ts:86` to `:91`) have no `empty_state` branch in their blocks, so those cards show
+  bare zeros.
+- **The whole-screen not-set-up state does not exist**: "No tenants yet. Add your first tenant and
+  this page fills in.", the most common state on the platform by the sheet's own measurement. A
+  never-used property renders fourteen cards of zeros instead. The Overview row itself sends its
+  zero nowhere, the same shape as F51 on Expense and F34 on Collection.
+- **One copy-paste error**: the Journey Bookings tab's empty message describes the Tenants tab,
+  "Once bookings come in, you will see their status ... active, under notice, approved for eviction
+  & renewals due in 30 days." (`tenantService.ts:64`).
+- §21's exact wording ships nowhere; the shipped copy is the build's own. §21 already holds every
+  word, so this is copy that exists and is not wired, exactly as F74 found on Inventory.
+- Small, in the same area: §23.14 hides layer rows at zero. Only awaiting-confirmation hides
+  (`:445`); the approved, awaiting and past-their-date rows render at zero.
+
+### F104. Recorded answers that fit no bucket are dropped or mislabelled, against the card's own coverage line
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+Three cases, one class, measured on production, live properties, living tenants, 25 August 2026:
+
+| Where | What happens | Scale |
+|---|---|---|
+| Food Pref | A recorded value matching none of the four patterns is counted as recorded and drawn on no bar | 1,824 of 11,040 recorded |
+| Gender | Anything that is not a male or female spelling is shown as "Prefer not to say" | 10,184 tenants |
+| Police verification | A tenant with no joining date fits neither "in time" nor "overdue" | 4,310 active tenants, 1.2% |
+
+On Food Pref the bars then sum to 83.5% of the card's own "based on N recorded" line. On Gender the
+label claims a choice the tenant never made, and the swept-up values include "girls", a female
+spelling the pattern list missed, alongside junk like "any" and "not sure". On police verification
+the tenant stays in the card's base while fitting no bar, so the bars sum short of the base; Tenure
+drops the same people silently.
+
+Deliberate, commented, checked and left alone: a date of birth implying an age under 14 is treated
+as invalid and excluded from the age coverage (1,154 tenants), which keeps the bars a true split of
+their coverage.
+
+**Fix:** an "Other" bar for recorded but unmatched food values; "girls" joins the female list and
+junk gender values leave the coverage rather than being relabelled; tenants with no joining date
+become a stated line or leave the base, following §21's not-recorded pattern, where a card draws what
+exists and states its coverage rather than folding the gap into a bucket.
+
+
 ---
 
 ## Decisions ruled
@@ -1936,6 +2450,13 @@ The fix is F52's one guard in the caller, not nine here.
 | D23 | 24 Aug | F75 | Upcoming Vacancy follows the view toggle, and the sheet was wrong |
 | D24 | 24 Aug | F77 | The eleven-month assumption stays, named in the info sheet with its count, and the count opens the list of tenants missing it |
 | D25 | 25 Aug | All citations | Line numbers are pinned to the commit each tab was reviewed against, not re-mapped as the code moves |
+| D26 | 25 Aug | F100 | On Tenant's Agreement Expiry, fallback tenants leave the dated bands and become one stated "No term recorded" group with the D24 count and drill |
+| D27 | 25 Aug | F102 | Renting Type hides until the field is captured; the interim stay-split donut is removed, not renamed |
+| D28 | 25 Aug | S3, F96 | The parent group is named "Under eviction" suite-wide; Tenants adopts it, and no number changes |
+| D29 | 25 Aug | F96, Journey (block 3) | Journey's Tenants tab carries six rows in two named groups: the eviction split under Active tenants, and the paperwork pair that overlaps it |
+| D30 | 25 Aug | Upcoming Eviction and Agreement Expiry (blocks 6, 7) | A bucket outside the run of days hides at zero; a bucket inside the run always shows. Applies on Tenant and on Inventory |
+| D31 | 25 Aug | Agreement Expiry (block 7) | Agreement Expiry's labels each carry their own days, and Valid becomes "Valid (90+ days)" |
+| D32 | 25 Aug | F102, D27 | Stay type always shows, zero side included; renting type shows only when either side is above zero |
 
 ### D1. Projected Due counts confirmed bookings only (2026-08-23)
 
@@ -2460,6 +2981,227 @@ with a multi-file `awk` using `NR` (F47) and once carrying a guide's line number
 **What this asks of Vivek.** Nothing extra. He works from the open-items tables, which name the file
 and the function; the line number is a convenience for finding it faster, not the finding itself.
 
+### D26. Fallback tenants leave the dated bands and become their own stated group (2026-08-25)
+
+Owner: "B." Of the two put to him: A, keep every tenant on the dated bands with the eleven-month
+fallback named and counted; B, take the fallback off this card and give those tenants their own
+stated group.
+
+**What it settles.** On the Tenant tab's Agreement Expiry card, a tenant whose agreement length is
+recorded nowhere is never placed on a dated band. The five bands, Already expired through Valid, are
+computed from recorded and derived terms only, so each is a fact about paperwork. The fallback
+tenants become one stated group, **No term recorded**, carrying D24's treatment: the count on its
+face, and the count opens the tenants list filtered to exactly those people so the lengths can be
+filled in. Renewal overdue and Renewal Due count real terms only, so they stay equal to their bands
+as §15, Renewal & Retention, requires. Journey's Renewals in 30 days moves with them: one number, computed once, shown
+three times.
+
+**Why.** The bar claims paperwork ran out. For 123,287 of the 167,001 tenants it draws, 74% of the
+bar measured on 25 August 2026, the product holds no paperwork to claim it from, and a red bar that
+is three quarters false alarms teaches a manager to ignore the bar. The group keeps every tenant
+visible, keeps D24's repair path of a count that opens the list, and makes every dated bar
+trustworthy. It also shrinks as lengths are filled, so the caveat is temporary by design, which was
+D24's own argument.
+
+**Two shares get quoted for this gap, and they measure different things.** 74% is the share of the
+Already expired bar resting on an invented date. 54% is the share of all long-term living tenants
+with no recorded length, 187,385 of 346,930, which is the figure §12 of the sheet carries and the
+one S7 in the register uses. Neither is wrong; they have different bases.
+
+**The boundary.** D24 stands unchanged on Inventory: its card looks forward 90 days, an invented
+date mostly keeps a tenant off it, and its info sheet carries the count and drill as ruled. Only
+this tab's card gains the group, because only here does the fallback paint the biggest, red bar.
+The eleven-month step therefore stops being used anywhere on the Tenant tab, and stays on Inventory.
+
+**For Vivek:** exclude the no-term tenants from the five bands and return them as one group with its
+count; the count drills to the tenants list filtered to long-term, living, no recorded agreement
+length, the same target D24 already asks for. The left-early figure stops reading `ENDS_ON` under
+F97, which moves the left-early figure onto the lock-in date, so after both fixes the Tenant tab
+computes no eleven-month date at all.
+
+### D27. Renting Type hides until the field is captured (2026-08-25)
+
+Owner: "A." Of the three put to him: A, hide the block until the field is recorded; B, keep the
+interim stay-split donut under the Renting Type name; C, show the card with a not-recorded state.
+
+**What it settles.** The Renting Type block does not render while renting type is unrecorded, which
+today is everywhere. The interim short against long term donut is removed rather than renamed: it
+duplicated the Stay Type card directly above it, and its name told a manager a lettings fact the
+data does not hold. The block returns `hidden`, the same mechanism Property Wise uses on one
+property, and starts rendering the real B2B against Residential split when the field starts being
+captured.
+
+**Why.** §16 wrote the rule for exactly this: "a missing value is not an answer." A card that
+restates its neighbour under a different name is worse than an absent card, because the name is the
+only thing it adds and the name is wrong. Hiding costs nothing a manager can use today and removes
+the one way this screen could actively mislead about who a property lets to.
+
+**For Vivek:** `getRentingType` returns `{ hidden: true }` until the renting-type field carries
+data; the real split, and where that field gets captured, stay as the implementation doc's open
+item. Whether a capture flow for renting type is worth building is a product question for another
+day, the same shape as S7 in the register, where the product never asks for the fact at move-in.
+
+### D28. The parent group is named "Under eviction" suite-wide (2026-08-25)
+
+Owner: "A." Of the two put to him: A, rename the parent group to Under eviction everywhere; B, leave
+Tenants saying Under notice. It was his own suggestion from 23 August, parked as S3 until all five
+tabs were verified.
+
+**What it settles.** The group of living tenants who have said they are leaving is called **Under
+eviction** on every screen, always shown with its two parts named, **Eviction pending** and
+**Eviction approved**. Tenants was the last screen saying "Under notice" for it; it adopts the suite
+word. Eviction is the product's own neutral word, which D6 established when it gave the money screens
+their two eviction bars, and the parts already carried it on this very screen's tiles, so the whole
+and its parts finally share a first word.
+
+**What does not change.** Nobody moves between groups; the rename changes words, not numbers. Each
+screen keeps its own rules as already ruled:
+Dues and Collection count a passed approved date inside Eviction approved, as D6 ruled for the money
+screens; Inventory's tile includes both parts and the passed dates, as D21 ruled for the space
+screen; and Tenants keeps **Past their date** as a separate sibling layer, never folded in. The rename is words, not numbers.
+
+**Where the word changes, shipped copy.** Five visible strings on the Tenant screen: the View all
+sheet's Under notice row, the rent at risk note "N under notice", the two Journey empty messages, and
+the Journey hint text. The Journey bar label is a sixth string carrying the old word, and it is
+deliberately excluded: D29 rebuilt that card and renames the bar Eviction pending, not Under
+eviction, so the suite word lands on the other five only. The tenant
+list's own filter names are the list's business and follow separately. Counted on 25 August 2026:
+52 lines of analytics code carry the old phrase in some form, 76 occurrences counting every spelling,
+most of them in comments or already owed under D6, the money screens' two eviction bars, and D21,
+Inventory's tile; the five strings above are the
+manager-visible remainder.
+
+**Where the word changes, sheets.** Swept in this pass: DA-09's sixteen mentions, sixteen by sweep
+day where S3 counted fifteen the day before, DA-08's two forward-looking ones, and DA-01's one. Historical narrative that records what things used to be called
+stays as written, or the log stops being readable.
+
+### D29. Journey's Tenants tab carries six rows in two named groups (2026-08-25)
+
+Owner, naming the rows he wanted: "Active tenants, No notices, Eviction pending, Approved eviction,
+Renewals in 30 days, Agreements expired. That would make the journey whole and more correct."
+
+**What it settles.** The card goes from three bars to six rows, and the six sit in two named groups
+because they answer two different questions:
+
+| Group | Rows | How they relate |
+|---|---|---|
+| Who is staying, who is leaving | Active tenants · No notices · Eviction pending · Approved eviction | The last three account for everybody except tenants past their date, so they add up to Active on any property where nobody is past their date, and fall short by that count where somebody is |
+| Whose paperwork needs a decision | Renewals in 30 days · Agreements expired | Overlap the first group, and exclude each other: an agreement has either ended or not. Parallel bars only, never stacked |
+
+Agreements expired is the same number as Renewal overdue on Renewal & Retention and the Already
+expired bar on Agreement Expiry: one computation, shown three times, which build guidance 5, compute
+each number once, already requires.
+
+**Why groups rather than six siblings.** A tenant under eviction can also have an expired agreement,
+so those rows overlap. Six equal bars would tell a manager they are comparable slices of one thing.
+Naming the groups costs a line and stops the misreading. The old rule that the three bars "overlap
+each other, never slices of a whole" was written when every bar overlapped. The first group's rows no
+longer overlap, so that rule now belongs to the second group alone.
+
+**The repetition was raised by the owner and is deliberate.** Three of the six rows are also Overview
+tiles. A tile answers "how many"; a row here answers "what share of my house", and this is the only
+card that splits Active tenants by the eviction states the tile strip already shows, and its rows add
+up where the tiles never do, because §5 forbids the tile strip from suggesting its tiles add up to
+anything. Other cards split Active tenants too, Stay Type and Verification among them; none of them
+splits it this way.
+The precedent is the owner's own homescreen, where the tile row and the journey never restate each
+other because the journey there is a pipeline rather than a second scoreboard. The Bookings tab of
+this same card is already a funnel; this makes the Tenants tab its tenant-side equal.
+
+**A systems note the owner asked for.** The overlap is a signal about the tile strip, not about this
+card. Seven tiles is already an open design problem, §24 item 3, tile row overflow. If Journey owns
+the eviction split with its shares, the strip has a real case for getting shorter. Not decided here.
+
+**What is deliberately not in it.** Tenants whose leaving date has passed with the record still open.
+They belong to the split arithmetically, but §5 keeps Past their date on its own tile and nowhere
+else, and the owner ruled the addition is a proposal rather than a requirement. It is S9 in the
+register, which measures the gap: 318 tenants on 151 properties.
+
+**For Vivek:** every piece already exists in the service, and two of them move into the Journey
+query. The bar now called Under Notice becomes the pending count under its own name and approved
+eviction is unchanged, both already there. No notices is Active minus the three eviction states, so
+the past-their-date count comes across from `liveTiles`. Agreements expired is the `renewal_overdue`
+expression `getRenewalRetention` already runs. Nothing new needs measuring; it needs arranging.
+
+### D30. A bucket outside the run of days hides at zero (2026-08-25)
+
+Owner: "the upcoming eviction overdue bar should be hidden if zero in any period."
+
+**A suite rule, not one bar.** On any card whose bars are a run of
+time, a bucket sitting **outside** that run hides when it is zero; a bucket **inside** the run always
+shows, even at zero.
+
+| Card | Hides at zero | Always shows |
+|---|---|---|
+| Upcoming Eviction, Tenant | Overdue | 0–7 · 8–15 · 16–30 · 31+ |
+| Agreement Expiry, Tenant | Already expired · No term recorded | 0–30 · 31–60 · 61–90 · Valid (90+) |
+| Vacant Room Status, Inventory | Never rented · Unknown | 0–7 · 8–15 · 16–30 · 31+ |
+
+**Why the two behave differently.** A run of days is read as a shape, so a missing band in the middle
+of it reads as a broken chart and the reader stops trusting the axis. A bucket outside the run has no
+neighbours holding a place for it; at zero it is a row saying nothing, and on a healthy property it
+is the only row saying nothing. The rule generalises without needing a list: **if removing the bar
+leaves a gap in a sequence, keep it; if it leaves nothing, drop it.**
+
+**Where it reaches beyond the owner's example.** He named one bar. The same test finds four more: two
+on Agreement Expiry, one of which is the group D26 created hours earlier, and two on Inventory's
+Vacant Room Status. The Inventory pair is not all new ground: DA-08 already says the Unknown bar
+hides at zero, and the build renders it always, so that half is a build gap the Occupancy pass
+missed rather than a rule made here. Never rented is genuinely new. All are in the open items.
+
+**Not affected:** a card where every bar is zero still shows its healthy or empty state as §21, the
+empty and healthy states, words it, rather than a card with no bars at all.
+
+### D31. Every Agreement Expiry label carries its own days (2026-08-25)
+
+Owner: "All agreement expiry status labels should have 'valid' in brackets, beyond 90 days or
+something. I am not sure about the copy... Whatever you decide on this."
+
+**What it settles.** The bars read **Already expired · 0–30 days · 31–60 days · 61–90 days ·
+Valid (90+ days)**, plus No term recorded from D26.
+
+**Why, and the owner's instinct was pointing at something bigger than the one word.** "Valid" alone
+invites the reading that every other bar is invalid. That is false: an agreement ending in twenty
+days is perfectly valid today. Putting the days in brackets turns the word from a verdict on the
+other bars into a statement about this one, how long it still runs. Once that is fixed the same
+problem shows on the three bars beside it: "60 days" never said whether it meant within sixty days or
+between thirty-one and sixty, and the only way to know was to read the bar next to it. Each label now
+carries its own range, so no bar has to be explained by its neighbour.
+
+**The range style is not invented here.** Upcoming Eviction, directly above on the same screen,
+already labels its bands 0–7, 8–15, 16–30, 31+. This makes the two cards read the same way, which is
+what §11's "bucket edges match Inventory exactly" was already reaching for. Agreement Expiry's own
+edges are not Inventory's and were never meant to be; only the style of the label is shared.
+
+### D32. Stay type always shows; renting type shows only when it has somebody in it (2026-08-25)
+
+Owner: "the first split should be short term and long term. It should always be shown, even if short
+term is zero or long term is zero. In the second split, which is basically the type of B2B or
+residential, it should only come when both or any one is greater than zero."
+
+**What it settles.** Two splits, two opposite showing rules:
+
+| Split | Shows |
+|---|---|
+| Short term · Long term | Always, including when one side is zero |
+| B2B · Residential | Only when either side is above zero |
+
+**Why they differ, and this is the general rule.** Every tenant is either short term or long term.
+Measured on production on 25 August 2026, live properties, test and deleted excluded: the flag is set
+on all 352,886 living tenants, none unset, and the code counts an unset flag as long term anyway, so
+the two sides cover everybody either way. That makes a zero on one side a real answer worth reading:
+"none of my tenants are short term" tells a manager something, and it is the common case, since short
+term is 1,645 tenants platform wide, under half a percent. Renting type is a field often not filled
+in at all, so a zero there is not an answer, it is an absence, and §16's own line already said a
+missing value is not an answer. **The test is whether a zero means "none" or "not recorded".** A zero
+meaning none is shown; a zero meaning not recorded is hidden.
+
+**This sharpens D27 rather than replacing it.** D27 said Renting Type hides "until the field is
+captured", which is a state of the world nobody can test in code. This gives it a testable form: show
+when either side is above zero. Today that hides the block across production, the same outcome D27
+described, but now it turns itself back on property by property as data arrives rather than waiting
+for somebody to declare the field captured.
+
 All in DA-01 Dues, 2026-08-23 and 2026-08-24:
 
 | Section | Change | From |
@@ -2583,6 +3325,33 @@ All in DA-08 Inventory, 2026-08-24:
 | §20 design fixes 2, 4, 20, 22, 26, 33 | Under eviction wording, the filter chip list, the forward window, and the four-chip note | D9, D21, F69 |
 | Appendix | Two Under notice rows renamed | D21 |
 
+All in DA-09 Tenants, 2026-08-25:
+
+| Section | Change | From |
+|---|---|---|
+| Frontmatter, note block | Date to 25 Aug, status to v2.2, correction note naming every changed section, including §3 and §12 (D26) and §16 (D27), ruled and edited the same day | This review |
+| §1 build status | "The screen is not built" replaced: built and verified, the sheet is the rule, the log holds what differs, redirection still suite-wide unbuilt | This review |
+| §4 options | Coming up removed from the filter list | D9 |
+| §4 forward rule | New: the forward window is a Custom range ending after today, with the per-kind table, the no-chip rule, the dash-with-reason rule, and the projection named as an open design decision with its query already written | D9, F91 |
+| §4 matrix | Last column rewritten as Custom ending after today, row by row from D9's kinds | D9 |
+| §4 chips, action bar | "Never on Coming up" rewritten to a window ending after today, both places | D9 |
+| §11 | The one-number line scoped to the Overdue bar's approved part, with the pending gap named and the old sentence withdrawn | F99 |
+| §19 window table | The Coming up row renamed to a window ending after today | D9 |
+| §25 design fix 11 | The Coming up chip and picker replaced by the forward Custom window's chipless state and dashes | D9 |
+| §3 agreement end date | Three steps, not four; no term recorded is a stated state, never an assumed date | D26 |
+| §12 | Bars cover everyone with a term; the No term recorded group beside them with its count and drill, measured at 54% | D26 |
+| §19 tap matrix | New row: the No term recorded count opens the tenants list filtered to those missing a length | D26 |
+| Measured figures | The end-date sources row now points at the group instead of the assumption line | D26 |
+| §16 | Renting Type hides until the field is captured, stated as settled | D27 |
+| §8 Journey | Rewritten: six rows in two named groups, the eviction split under Active tenants and the paperwork pair that overlaps it, with why the tile repetition is deliberate and the gap S9 measures, tenants past their date, named | D29 |
+| §11 Upcoming Eviction | Overdue hides at zero, the four day bands do not, with the reason | D30 |
+| §12 Agreement Expiry | Labels carry their own days, Valid becomes Valid (90+ days), with why "valid" alone misleads; Already expired and No term recorded hide at zero | D31, D30 |
+| §16 Stay Type | The two splits get opposite showing rules, with the zero-means-none against zero-means-not-recorded test | D32 |
+| §3, §5, §6, §8, §19, §21, §23, measured figures | Every "under notice" label and copy line renamed Under eviction, parts always named; historical mentions kept | D28 |
+
+Also from D28, outside DA-09: DA-08's two forward-looking lines now say Tenants carries the word
+too, and DA-01 §3's "this screen never says under notice" line is rewritten around the new name.
+
 ---
 
 ## Doc fixes owed to Vivek
@@ -2603,6 +3372,9 @@ These do not affect the product. They matter because the guide is written for su
 | G10 | The Occupancy losing-money section says revenue loss is priced at "the room's per-bed rent (its own tenants' average, falling back to the group average)". There is no group-average fallback in the query; an empty room prices at zero (F78). The guide should describe what ships, whichever way F78 is fixed |
 | G11 | The guide's Occupancy filter list names Coming up, an option the app cannot send (F83), and its Overview section describes the Coming-up projection as though a reader could reach it. Same fault as G6 on Collection |
 | G12 | The guide says the Occupancy period rate uses "today's rentable count for past periods" as an assumption, and separately says the trend uses capacity "as it stood that month". Both are true of the code and the guide never says the two blocks therefore disagree about the same month (F68). A support reader asked why the tile and the bar differ has nothing to read |
+| G13 | The guide's Tenant filter line ends "(+ Coming up for forward blocks)", an option the app cannot send, and the Move Metrics and Overview sections describe the Coming-up behaviour as though a reader could reach it. Same fault as G6 and G11 |
+| G14 | The guide's Tenant Overview prose lists "Active / Approved Bookings" among the live tiles. Approved Bookings is a window number, and the guide's own appendix says so |
+| G15 | The guide says stayed-after-notice comes "from `tenant_agreement_renewals`". It is computed from the tenant records, living tenants whose confirmed leaving date fell in the window; only Completed and renewed read the renewals table |
 
 ---
 
@@ -2846,3 +3618,80 @@ written up as silent about its window; it is not, it carries a plain line, and t
 from our own writers. Every label is written in the analytics layer, and the only free text near this
 screen, the room type field the sheet's appendix found with 60-plus spellings, is deliberately not
 used as an axis.
+
+### Tenant, verified 2026-08-25
+
+**The filter and §4.** Five options matching the app's list, This Month default, no view toggle, so
+the F31 and F36 toggle sweeps do not apply. **F9 does not reach this tab**: Current FY ends at today
+(the `current_fy` case, `tenantService.ts:127` to `:129`), re-checked in the code rather than taken
+from the earlier pass. No block
+carries a one-option dropdown (F16 sweep). Chips hide on All Time. **The chip helper is real and
+called**, unlike Occupancy's (F65 sweep): `chip(cur, prev, goodDir, note)` at `:44` runs on Approved
+Bookings up-good, Notices Raised down-good, Move-ins up-good and Move-outs down-good, exactly §4's
+polarity table, and returns null when there is nothing to compare against. Chip comparisons are
+event counts recomputed from dated records, so the F5 as-it-stood trap does not bite here.
+**F47 re-checked in this file alone**: the same two overflow lines sit at `:160` to `:161` at head
+`6797eec6d`, so the open item's five-service fix list stays right.
+
+**Overview Snapshot.** Seven tiles in §5's order with §5's labels, Past their date in the Move-outs
+slot as §5 moves it, live tiles carrying "as of today" and no chip, the two window tiles carrying
+chips (§25's design fix 1 done right in the build). The two money lines ride under the tiles with
+the sheet's own note format, and leaving-with-dues only appears when somebody owes. Rent at risk
+reads the monthly rent of everyone under notice on the parent test, past-their-date correctly
+outside it. The unpaid balance behind leaving-with-dues reads the invoice pool through the
+homescreen's own property key and payer join.
+
+**View all sheet.** Three sections as §6 lays them out, indented rows as layers, every row keyed for
+its drill. Under notice equals approved plus awaiting by construction, one `UNDER_NOTICE` test.
+Awaiting-confirmation hides at zero as §6 asks. Arriving this month reads the calendar month
+whatever the filter says, which is what "expected within the current month" means. Bookings
+confirmed reads real approval rows only, the one correct count of the four the F93 entry examined.
+
+**Move metrics.** Move-ins count status 0 and 1 by joining date, so someone who joined and left in
+the window still counts, and a room change moves neither number (320 multi-room tenants platform
+wide, the sheet's own measure). Move-outs read the confirmed leaving date, else the checkout date;
+only 198 of 636,873 moved-out tenants on live properties carry neither, 0.03%, so the "never shows
+zero" test holds everywhere it matters. Net change is stated with the cards as §7 asks, chips run in
+opposite directions correctly.
+
+**Verification.** The card states its base, both tabs split over all active tenants, and the action
+bar names only the workable queue, overdue among the last 90 days of joiners, exactly §9's rule,
+with the full overdue count still on the card. The e-KYC test reads the latest verified KYC row per
+tenant, manual as the remainder, unverified as no row at all.
+
+**Tenancy Details.** The four agreement buckets cover the base with no overlap: measured on
+production, zero active tenants fall between them. Profile completion checks exactly the ten fields §3 lists,
+and the tenant list's own completed-profile test reads the same ten
+(`getAllTenants.ts:1324` to `:1333`), so the number and the list agree by construction, the F86
+sweep's question answered yes here.
+
+**Upcoming Eviction.** Five bands with Inventory's edges, 0-7, 8-15, 16-30, 31+, each split pending
+against approved, pending bucketed by the requested date and approved by the confirmed one, §3's
+rule exactly. A withdrawn notice leaves the card because only active notice rows count.
+
+**Agreement Expiry.** Verified against §3 and §12 **as they stood before D26**: the four-step end
+date rule matched that §3 step for step, start date as last renewal else joining, and the footer
+carried the assumption line that §12 then asked for. D26 and F100 supersede both halves, so the
+build now owes the No term recorded group and the footer's assumption line goes. The 30-day band and
+Journey's Renewals in 30 days and Renewal Due are one expression three times, so they cannot
+disagree (§23.5 honoured in effect). Bands do not overlap; day 30 falls in exactly one.
+
+**Profile and Details.** Every tab carries the coverage line in §3's own words, built from recorded
+over base. City groups on the trimmed lower-cased district and displays it title-cased, top 5 plus
+Others, the F19 sweep passing here. Tenant Type reads `working_type`, the field with real coverage,
+26.6% of active tenants measured today against the sheet's 23%, not the lookalike field the sheet
+warned is 99% empty. Age bands cover everyone once, and an invalid under-14 date of
+birth is excluded from coverage on purpose, with the comment saying why.
+
+**Tenure.** Bands on the joining date with no gap and no overlap, and the code comment names the
+off-by-one this fixed. Future joining dates land in Under 1 month rather than vanishing.
+
+**Property Wise Active Tenants.** Hidden on one property with a real `hidden` return (`:1100`), the
+F23 sweep passing. Every property in scope appears including zeros, sorted highest first, each row
+carrying its share of the account total and a bar relative to the top property, §18 exactly.
+
+**The F79 sweep.** Every share and bar percent on the tab is computed from raw counts before
+formatting; nothing reads a display string back.
+
+**The F52 count re-confirmed.** Fifteen null returns, one per block, all falling back through the
+caller to the shared empty-card shell the registry holds, as F52 already records. Nothing new here.
