@@ -16,6 +16,7 @@ happens today, why it looks wrong, and what is proposed.
 | S4 | A list, ageing and a prompt for deposits owed to tenants who have left | Proposed | Owner |
 | S5 | Rename the rollup row so "Others" means one thing | Parked | Owner, alongside Dues and Collection |
 | S6 | A way to record paying staff back, before the tile reads fifty crore | Proposed | Owner |
+| S7 | Ask for the agreement length at move-in, so the gap stops growing | Proposed | Owner |
 
 | Status | Meaning |
 |---|---|
@@ -187,3 +188,43 @@ workflow behind it, so it ages quietly and arrives as a complaint about the numb
 
 Item 1 alone decides whether the tile is a live figure or a growing monument. It is worth settling
 before the tile launches, not after.
+
+## S7. Nothing asks how long an agreement runs, so the gap keeps growing
+
+**Status:** Proposed, 2026-08-24. Falls out of F77, narrowed by D24
+**Where:** the move-in flow, not the analytics screen
+
+Two screens now show agreements by when they end: Agreements ending soon on Inventory, and Agreement
+Expiry on Tenants. Both work out the end date the same way, in four steps: a recorded renewal date,
+then the length written on the tenant, then the property's default length, then **11 months** where
+none of those exist.
+
+**Measured on production**, living long-term tenants on live properties, test and deleted excluded, on
+24 August 2026: **190,609 of 351,108, or 54.3%, have no agreement length recorded anywhere**, so the
+product falls back to a flat eleven months and puts them on a bar anyway.
+
+**Why it looks wrong.** An eleven-month default is a reasonable guess about the Indian rental market
+and a poor claim about a named tenant. §17 of the Inventory sheet forbids guesswork in any forward
+number in as many words, and §10 describes these dates as "facts about paperwork". For the majority of
+tenants they are not.
+
+**The back catalogue is already handled**, by D24 in the log: the Agreements card's info sheet names
+the eleven-month fallback, carries the count of tenants on it, and that count opens the list so a
+manager can fill the lengths in one at a time. That fixes the tenants who already exist.
+
+**What is left is the tap that stops it happening again.**
+
+**Proposed:**
+
+1. Ask for the agreement length where the agreement is created, with the property's default filled in
+   so the common case is one tap and nothing new to type.
+2. A prompt on a tenant record being edited for another reason, where no length is recorded.
+
+**Why it still matters after D24.** D24 gives managers a way to fill the gap; it does not stop the gap
+growing. Every move-in recorded without a length adds another tenant to the list D24 built to empty.
+Item 1 is where the number stops rising, and it is the cheapest of the three suggestions in this
+register to build.
+
+**This is a milder version of S4 and S6.** Same shape, a fact the product never captured and a
+workflow missing where it should have been captured, but unlike those two the repair path now exists,
+so this is about the inflow rather than the backlog.

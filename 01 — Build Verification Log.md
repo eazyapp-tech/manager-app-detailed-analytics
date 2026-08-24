@@ -15,7 +15,7 @@ Product ideas that are not defects live in [[02 — Suggestions Register]].
 
 Last audited end to end on 2026-08-24, before the first commit: every cited line re-checked, every
 quote re-read, two independent reviewers run. Where the audit found an earlier claim wrong, the entry
-says so rather than quietly replacing it.
+says so rather than quietly replacing it. Occupancy was added the same day and audited the same way.
 
 ---
 
@@ -27,8 +27,8 @@ says so rather than quietly replacing it.
 | [What is in scope](#what-is-in-scope) | Which blocks are checked, and what is deliberately left out |
 | [Status board](#status-board) | How far the review has got, and the sweeps every remaining tab gets |
 | [Open items](#open-items) | Everything still waiting, by who it waits on |
-| [Findings](#findings) | Every difference found, F1 to F64: what is wrong and the fix |
-| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D19, dated |
+| [Findings](#findings) | Every difference found, F1 to F84: what is wrong and the fix |
+| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D24, dated |
 | [Sheet edits made](#sheet-edits-made) | Exactly what changed in the handoff sheets because of this review |
 | [Doc fixes owed to Vivek](#doc-fixes-owed-to-vivek) | Errors in the calculation guide, harmless to the product |
 | [What shipped better than we specified](#what-shipped-better-than-we-specified) | Things to write back into the sheets as rules |
@@ -99,6 +99,11 @@ edit or ticket is done.
 | Fund | Whose money paid for something, recorded on the passbook row, not on the expense: `NPNAF` collected money · `PF` the staff member's own pocket · `AF` petty cash · `EF` exchange between staff. These are not the screen's four fund rows: FlexiPe is found by its wallet link and writes no passbook row at all, and `EF` never reaches the screen |
 | Balance type | Which way a passbook row moves the balance: 1 money in, 2 money out. The passbook screen and the Expense tile read the same rows with opposite signs, on purpose |
 | FlexiPe | A wallet spending leaves through. An expense paid this way carries a wallet link and no passbook row, so it is identified by that link and never by its payment mode |
+| The two structures | How a property records its space. On the **new structure** every bed is its own record and a tenant is linked to one; on the **old** one a room carries a sharing number and a tenant carries the room's name as text. Almost every Occupancy query is written twice, once per structure |
+| The rooms widget | The one live count of space, `RoomListHelper.fetchAllWidgetCounts`, shared by the homescreen, the rooms list and every Now number on Inventory. Filter codes name each count: 1402 under notice, 1406 booked rooms, 1408 vacant rooms, 1409 occupied rooms, 1415 total beds, and so on |
+| Stay history | One row per stretch of time a tenant occupied a room or bed, with a start and an end. Every period average and the whole trend are rebuilt from it. A row flagged pending is a move scheduled for the future |
+| Day-averaged | What a period means on Inventory and nowhere else in the suite. "78% last month" is 78% of an average day of it, not the last day of it |
+| Rentable | Space that can be let: total, minus space switched off for rent, minus rooms that declare no capacity |
 
 ---
 
@@ -135,15 +140,17 @@ A block being wired does not prove every field inside it is. That is checked per
 | Dues | 9, plus the View all screen | All | 26 | Complete |
 | Collection | 7, plus the View all sheet | All | 20 | Complete; fixes with Vivek |
 | Expense | 5, plus the View all sheet and the Others sheet | All | 18 | Complete; fixes with Vivek |
-| Occupancy | 8 | 0 | 0 | Not started |
+| Occupancy | 8, plus the View all sheet | All | 20 | Complete; fixes with Vivek |
 | Tenant | 14 | 0 | 0 | Not started |
 
-**Next:** Occupancy. All four Expense rulings are done, D16 to D19; the build fixes sit with Vivek
-in the open items. Expense was the cleanest tab so far on windows and filters and the only one with
-no forecast, and it still returned 18 findings, most of them in the zeros and in how free text is
-grouped.
+**Next:** Tenant. All five Occupancy rulings are done, D20 to D24; the build fixes sit with Vivek in
+the open items. Occupancy was the hardest tab to check, five tables across two property structures,
+and it returned 20 findings, second only to Dues. Three of them are visible on almost every property:
+a bar chart drawn entirely at zero width, a bar that is permanently red, and half the agreement dates
+invented. It also shipped two things better than the sheet asked for.
 
-**Sweeps to run on every remaining tab**, each born from a Dues finding:
+**Sweeps to run on every remaining tab.** Each was born from a finding on a tab already checked, and
+the entry it came from is named beside it.
 
 | Sweep | Born from |
 |---|---|
@@ -165,6 +172,10 @@ grouped.
 | Does every card on a screen end its window on the same day | F63 |
 | Is an empty state defined in the code and never sent | F64 |
 | Does any of our own code save an internal string that ends up on a bar the manager reads | F62 |
+| Is a helper written, correct, and never called | F65 |
+| Does a bar's width or share come from a number already formatted for display | F79 |
+| Where a rule bounds which bars may be coloured, does the code honour the bound | F73 |
+| Does a fallback the sheet and the guide both describe actually exist in the query | F78 |
 
 ---
 
@@ -216,10 +227,9 @@ Everything still waiting, by who it waits on. An item leaves this table when its
 | Item | One-line action | Entry |
 |---|---|---|
 | Every chip, all five tabs | End the "same point last month" window at the end of the previous month. The same two lines sit in duesService, collectionService, expenseService, tenantService and occupancyService | F47 |
-| Four empty states | Send the in-window zero copy where the property has spent before; keep the setup line for a property that never has | F50 |
+| Four empty states | Send the in-window zero copy where the property has spent before; keep the setup line for a property that never has, in `expenseService.ts` | F50 |
 | Overview row | Give it an empty state, the screen's own in-window zero | F51 |
 | Expense healthy state | Emit "Nothing owed to staff right now." on the tile and on the View all row that repeats it | F51 |
-| Every block, all five tabs | An unresolved property must not fall back to sample data; fix once in the caller | F52 |
 | View all, quarantine row | Take the absolute value before the two helpers that floor it at zero | F55 |
 | View all, no-bill row | Print the amount once, not as value and sub-label both | F56 |
 | View all sheet | Carry the window's own name, not today's date | F57 |
@@ -229,15 +239,45 @@ Everything still waiting, by who it waits on. An item leaves this table when its
 | Expense Trend | End the range at today, like the other six blocks | F63 |
 | Expenses by Property | Send the empty state that is already written, when the window's total is zero | F64 |
 
+**Waits on Vivek, everywhere**
+
+| Item | One-line action | Entry |
+|---|---|---|
+| Every block, all five tabs | An unresolved property must not fall back to the block's scaffold; fix once in `toBlock`, not 51 times in the services | F52, F84 |
+
+**Waits on Vivek, Occupancy.** Every row is in `occupancyService.ts` unless another file is named.
+
+| Item | One-line action | Entry |
+|---|---|---|
+| Every tile | Build the chips at all: `chip()` at `:54` is written and never called, and `:204` to `:208` hardcode null. Fix `:72`'s comparison window in the same change | F65 |
+| Under eviction tile | Take in pending notices too, with the two parts always named on the second line | F66, D21 |
+| Under eviction tile | Unit view counts units holding someone under eviction, not people, at `:208` | F66, D22 |
+| Booked, three surfaces | Confirmed bookings only, in `helpers.ts` `fetchAllWidgetCounts` (`:1929`, `:1945`, `:2023` to `:2025`), in the rooms list filters, and here | F67, D20 |
+| Overview, a period | Divide by the capacity as it stood at `:196`, reusing `trendMonths` at `:440`; exclude future-scheduled stay rows at `:158` | F68 |
+| Occupancy Status | Two chips, not four, at `:256` to `:261`; hide them at zero; add the Under eviction second line | F69 |
+| Occupancy Status | Make the legend add up to the header, both directions: over-occupancy in Bed view, zero-capacity rooms holding somebody in Unit view | F70 |
+| Occupancy Status | Count booked at bed grain at `:243`, or say the count is by room | F71 |
+| Rentable units | Exclude rooms that declare no capacity at `:139`, and give them somewhere to go | F72 |
+| Vacant Room Status | Red marks the largest of the four aging bars only, at `:348` | F73 |
+| Four cards | Send the healthy copy §16 already holds; stop shipping the sentence §16 forbade, at `:22`; add the not-set-up and no-beds states | F74 |
+| Upcoming Vacancy | Drop the red bar at `:390` | F76 |
+| Agreements ending soon | Name the eleven-month fallback in `occupancyHints.ts` with its count, and give that count a drill to the tenants missing a length. Same treatment on the Tenant tab's Agreement Expiry | F77, D24 |
+| Losing money | Fall back to the group average at `:547` and `:554`, so an empty room is not priced at zero | F78 |
+| Losing money | Compute the bar and the share from rupees at `:571`, not from the formatted string; sort by revenue loss at `:566`; build the coverage threshold | F79 |
+| Three silent blocks | "As of today" on Status, Property Wise and the View all sheet | F80 |
+| View all sheet | The seven missing rows at `:621` to `:639`, the missing third section, the never-rented number `getVacantRooms` already computes | F81 |
+| Occupancy Trend | Start the chart where the property's data starts, at `:497` | F82 |
+| Custom path | D9's rules in `occupancyService.ts` `computeWindow`; delete the dead `coming_up` branches | F83 |
+
 **Waits on the owner**
 
 | Item | The question | Entry |
 |---|---|---|
 | Breakup by Stay Duration | Hide when there are no short-term tenants, or no short-term dues | F23 |
 | Forward window | What an event count shows on a window that straddles today | D9 |
-| Occupancy | What an unapproved booking's bed reads as | F4 |
-| Under notice rename | Whether the Tenants label becomes Under eviction with two named parts | S3 in the register |
+| Under notice rename | Whether the Tenants label becomes Under eviction with two named parts. D21 has made this near certain | S3 in the register |
 | Added By | Name creator codes 5 and 6, once Vivek says what they are | F26 |
+| Agreement length | Whether the product starts asking for it at move-in, so the gap stops reopening | S7 in the register |
 | Paying staff back | Whether a way to record it ships before the Still owed to staff tile does | S6 in the register |
 | The word "Others" | Whether the rollup row is renamed across Dues, Collection and Expense together | S5 in the register |
 
@@ -245,9 +285,9 @@ Everything still waiting, by who it waits on. An item leaves this table when its
 
 | Sheet | Change | When |
 |---|---|---|
-| DA-08 Inventory, DA-09 Tenants | §4: drop Coming up, rewrite the forward column per D9, from each tab's code | At each tab's review |
+| DA-09 Tenants | §4: drop Coming up, rewrite the forward column per D9, from that tab's code | At its review |
 | DA-04 Expense | §4 explains its own no-forward rule by pointing at Coming up, an option D9 deleted. The rule is right; the reason needs rewriting without the dead name | Done, 2026-08-24 |
-| DA-08 Inventory | What its under-notice count is called after D6, and the Occupancy booking question | At the Occupancy review |
+| DA-08 Inventory | §4's forward column, the under-eviction naming after D6, and the Occupancy booking question | Done, 2026-08-24 |
 
 ---
 
@@ -1349,6 +1389,510 @@ zero; §13 lists empty copy for the card. Both hold under one rule: list every p
 zeros while anything at all was spent, and show the empty state only when the window's total is zero.
 Sheet §10 now says so.
 
+Findings from F65 are the Occupancy (Inventory) tab, reviewed 2026-08-24 in sheet order: §3 and §4
+first, then the eight blocks and the View all sheet.
+
+### F65. Not one change chip is built on this tab, and the code for them is written and never called
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** corrects F6's table; absorbs F47's Occupancy half
+
+`chip()` sits at `occupancyService.ts:54` with the correct per-tile polarity written into it, good for
+a rising Occupied, bad for a rising Vacant, neutral for Rentable. **It is never called once in the
+file.** Every tile hardcodes `trend_object: null` (`occupancyService.ts:204` to `:208`), and the
+Occupied tile carries `showChip ? null : null` (`:205`), which returns null on both branches. The
+comparison window built to feed it, `prevFrom` and `prevTo` (`:71`, `:72`, `:78`), is computed and
+never read.
+
+So §4's polarity table and §5's "each tile carries a change chip" are unbuilt, and the "▲ 4% vs this
+day last month" line §4 specifies for Now does not exist.
+
+**This corrects F6.** That entry's table recorded `occupancyService.ts:54` as deciding direction "per
+tile", which implied a working chip. The signature is per tile; the function is dead.
+
+**F47 lands here and is currently harmless.** The overflowing "same point last month" window is at
+`occupancyService.ts:72`, exactly as F47 said, re-checked in this file alone. Because `prevTo` is
+never read, it cannot mislead anybody today. It has to be fixed while the chips are built, not
+before, or the first chip this tab ever shows carries the defect on day one.
+
+**Fix:** build the chips §4 asks for, and fix line 72 in the same change.
+
+### F66. Pending evictions are invisible on this entire screen
+
+**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D21 names it, D22 sets the unit-view number; this is F14's sixth meaning, now traced
+
+F14 row 6 left the Occupancy Under notice tile untraced. Traced here: it reads widget 1402,
+`UNDER_EVICTION`, and **the two property structures build it differently**, which the code says out
+loud at `helpers.ts:1990`: "old=status IN(1,2), new=status=1".
+
+| Structure | Built at | Counts |
+|---|---|---|
+| Old | `helpers.ts:1927` | Living tenants **and bookings** carrying a leaving date |
+| New | `helpers.ts:1943` | Living tenants carrying a leaving date |
+
+A leaving date is written only when a manager approves, so **the tile is approved evictions only** on
+both, and on both it includes people whose date has passed. The booking half of the old-structure
+branch is real and empty: **measured on production on 24 August 2026, exactly 1 booking on a
+live old-structure property carries a leaving date**, so it moves no number today. It is written down
+because it is a difference between two branches of one count, and the next person to touch either
+branch should know the two are not the same test.
+
+That makes it the same people, to the person, as the "Eviction approved" bar D6 gave Dues and
+Collection. D6 had assumed Inventory's count was date-bound; only Upcoming Vacancy is.
+
+**Measured on production**, living tenants on live properties, test and deleted excluded, on
+24 August 2026:
+
+| State | Tenants | On the Inventory tile today |
+|---|---|---|
+| Approved, date still ahead | 4,772 | Yes |
+| Approved, date already passed | 318 | Yes |
+| Raised, nobody approved | 1,193 | No, and nowhere else on the screen either |
+| Both at once | 3 | Yes, through the approved side |
+
+The 1,193 appear in no tile, no donut slice, no card. The screen that most needs early warning about
+space carries the least.
+
+**Two smaller defects on the same tile.** It shows a headcount in both views while labelling itself
+"Under Notice Units" in Unit view (`occupancyService.ts:208`), so two tenants leaving one 3-sharing
+room read as 2 units. And that label is built with `unit === 'Beds' ? 'Beds' : 'Units'`, a test whose
+two branches say the same thing as the variable already holds.
+
+**Fix:** D21 and D22.
+
+### F67. The booked layer and the Unit view's Occupied count take in bookings nobody approved
+
+**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D20 settles it; this is the F4 question DA-08 was left to answer
+
+§3 is explicit twice over: a booked bed is still vacant, and Booked means confirmed only. The build
+reads the homescreen widget, which answers differently in each view:
+
+| Where | What the build does | What §3 asks for |
+|---|---|---|
+| Bed view, is a booked bed vacant | Yes. `vacant_beds` counts capacity minus status-1 tenants (`helpers.ts:2017`) | Yes |
+| Unit view, is a booked room vacant | No. `vacant` and `occupied` count `active_count`, which is status 1 **or 2** (`helpers.ts:2023` to `:2025`), so a room holding only bookings reads Occupied | Yes, it should read vacant |
+| The booked layer | Every booking, approved or not: `has_new_booking` is `BOOL_OR(t.status = 2)` (`helpers.ts:1929`, `:1945`) | Confirmed only |
+| The forward projection | Every status-2 tenant with a future joining date (`occupancyService.ts:219`) | Confirmed only, and D1 already ruled forecasts this way |
+
+**Measured on production**, bookings on live properties, test and deleted excluded, on 24 August
+2026: 4,776 bookings, of which 2,880 are confirmed, being 112 with an explicit approval row and 2,838
+on properties that accept automatically, which D1 ruled are the same thing. **1,896, 40%, are waiting
+for approval.** D1's own note carries the reconciliation, because counting explicit approvals alone
+gives a very different picture.
+
+**Fix:** D20. It reaches past this tab, by the owner's instruction.
+
+### F68. The period rate divides by today's capacity, and the trend beside it does not
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F40 one-clock sweep, inside one tab
+
+§18 item 1 sets the rule: "capacity counts as it stood each day". §18 item 5 adds: compute each
+number once.
+
+Two blocks on this screen answer "how full was I last month" and they do not agree.
+
+| Block | Numerator | Denominator |
+|---|---|---|
+| Overview, a period | Day-averaged occupied beds from stay history (`occupancyService.ts:151`) | **Today's** rentable count, from the live widget (`:196`) |
+| Occupancy Trend | Day-averaged occupied beds, clipped to the rentable set | Capacity **as it stood that month**, rooms born at `createdAt`, removed at deletion, disabled windows honoured (`:461` to `:465`) |
+
+The code says so itself at `occupancyService.ts:150`: "Rentable denominator = current rentable
+(approx; day-averaging it via room_state_log is a refinement)". So the fix was known and deferred,
+and the trend went on to write it. The trend is the one that matches the sheet.
+
+**Measured on production**, live properties, test and deleted excluded, on 24 August 2026: **38,999
+rentable rooms were created since the start of last month, 7.5% of the 520,052 that exist today,
+across 3,902 properties**, and 5,304 rooms were deleted in the same stretch. On every one of those
+properties, Last Month's rate on the Overview divides by rooms that did not exist in Last Month, so
+the tile reads lower than the trend bar directly beneath it for the same month.
+
+**Fix:** the Overview's period path uses the trend's historised capacity. The query is already
+written; §18 item 5 asks for exactly this, one computation reused.
+
+**One small thing worth fixing while there.** The Overview's day-average counts stay rows flagged as
+future-scheduled moves, where the trend excludes them (`occupancyService.ts:158` against `:471`). It
+is 32 rows platform-wide over last month, so it moves nothing; it is listed here so the fix is made
+once and not rediscovered.
+
+### F69. Occupancy Status ships four chips where the sheet asks for two, and two of them were cut by name
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§7's chip table has two rows, Under Notice and Over-occupied. §20's design-fix item 33 names the
+other two and says to remove them: "Overbooked occupancy" (cut) and "Booked Beds" (lives in the
+Vacant legend split). §17 states the same twice: no double-booked chip, and Booked is never a
+headline of its own.
+
+The build ships all four in Bed view, the default (`occupancyService.ts:256` to `:261`), including one
+labelled literally "Overbooked occupancy", the cut chip's own name, and "Under Notice with Booking",
+which §7 asks for as a second line rather than a chip of its own. Unit view gets three: Booked Beds is
+correctly gated behind the view at `:258`, so that half of design fix 33 is already honoured on one
+side of the toggle.
+
+**And they never hide.** The code comment at `:253` says "always shown incl. zero (matches the
+homescreen widget)". §18 item 18: "State chips and layer rows hide at zero", with the sheet's own
+appendix noting most properties have none of them. So most properties get a row of four zeros in the
+default view.
+
+**Also missing from the same block:** the second line §7 specifies under the tile, which as the sheet
+now reads is "24 under eviction · 19 approved · 5 pending · 1 past their date · 2 already replaced".
+Past their date is not computed anywhere in `occupancyService.ts`, although the same test is written
+on the Tenant tab at `tenantService.ts` in `liveTiles`.
+
+**Fix:** two chips, hidden at zero, with the layers as the second line under Under Notice.
+
+### F70. In Bed view the donut legend does not add up to Total wherever a room is over-occupied
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§7 states it as a trust rule in as many words: the legend adds up to Total, and "a legend summing to
+one number beside a percentage computed from another is checked once, cannot be reconciled, and is
+never trusted again."
+
+In Bed view the legend is occupied beds plus vacant beds plus disabled beds. The widget builds
+vacant beds as capacity minus occupied, floored at zero per room (`helpers.ts:2017`), while occupied
+beds is the raw headcount (`:2019`). On an over-occupied room the floor holds vacant at zero while
+occupied runs past capacity, so the legend comes out **above** the header's Total.
+
+**Measured on production**, live rooms on live properties, test and deleted excluded, on 24 August
+2026: **2,166 beds of excess occupancy across the platform**, and the sheet's own appendix puts an
+over-occupied room on 1,061 properties, 4.16% of active ones. On each of those the legend overshoots
+the header sitting directly above it.
+
+**Unit view has its own version of the same hole, from the opposite direction.** A room is Occupied
+when its tenants reach its capacity, Semi-vacant when they are below it, and Vacant when it has none.
+A room whose capacity is zero and which holds somebody satisfies none of the three, so it falls out of
+the legend and the legend reads **below** the header. Measured the same day: **780 of the 5,958
+zero-capacity rooms hold a living tenant or a booking**. F72's fix removes them from Rentable, which
+settles the rate; this legend still needs them to land somewhere or be visibly absent.
+
+**Fix:** the legend carries over-occupancy as its own entry, and zero-capacity rooms holding somebody
+are shown rather than dropped. Total is what the header promises, and moving Total to absorb the
+excess would break §7's own trust rule from the other side. §7's over-100% sentence already exists to
+explain the situation in words, so the number has somewhere to sit beside it. The owner confirms the
+labels; everything else here is arithmetic.
+
+### F71. The booked layer is a room count printed inside a bed number
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§7 asks the Vacant legend to carry its split: "Vacant 38: 17 booked, 21 available". The build
+computes booked as `min(max(bookedRooms − underNoticeWithBooking, 0), vacant)`
+(`occupancyService.ts:243`). In Bed view `vacant` holds beds while `bookedRooms` holds rooms, widget
+1406, one per room with any booking. So a room with three booked beds contributes 1, and the split
+reads "Vacant 38: 1 booked, 37 available" where the truth is 3 and 35.
+
+Available is derived by subtraction from the same wrong number, and §7 says available is the number a
+manager acts on, which is why it is stated rather than left to subtraction. The subtraction is still
+there; only the arithmetic moved.
+
+The code names the limitation itself at `occupancyService.ts:242`, "Room-level approx (no booked-beds
+widget)", and Vivek's guide says the same in its Status section: "the booked split is room-level
+(there's no booked-beds signal)". Both are honest, and neither makes the number right.
+
+**Audit note.** This entry first cited that guide sentence as though it sat in the service file, at
+line 264 of both. It is line 264 of the guide. The same class of mistake as F47's wrong addresses:
+a line number carried across from one file to another.
+
+**Fix:** count booked at bed grain where the property can answer it, and say "by rooms" on the split
+where it cannot. On a migrated property `tenant_room` carries the bed, so the exact answer exists; on
+the rest the count degrades to rooms, which is exactly what §3 already permits: "Counts work
+everywhere; per-bed detail exists only on migrated properties, and cards show the count and omit the
+detail rather than guess." What is not allowed is today's silent mixture of the two.
+
+### F72. Rooms that declare no capacity count as rentable units
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§3 defines rentable as total "minus disabled ones and minus rooms that declare no capacity", and §18
+item 4 makes it a test: "one zero-capacity room on a full property leaves the rate at 100%".
+
+Rentable units is built as total rooms minus disabled rooms (`occupancyService.ts:139`). Nothing
+excludes a room whose capacity is zero. In Bed view the rule holds by accident, since a zero-capacity
+room contributes no beds; in Unit view the room joins Rentable and, having nobody in it, joins Vacant
+as well.
+
+**Measured on production**, live rooms on live properties, test and deleted excluded, on 24 August
+2026: **5,958 rooms declare no capacity, across 384 properties**. The sheet's appendix measured 2,550
+on 7 August; the count has grown, and the two runs are the same query seventeen days apart.
+
+**Fix:** exclude them from rentable units, as §3 already says. **And decide where they go instead**,
+because the sheet answers that twice and differently: §3 keeps them out of both Rentable and Disabled,
+while §6's View all row folds them into "Disabled for rent". Folding them in tells a manager a room
+was switched off on purpose when nobody ever gave it a capacity. The recommendation, now written into
+the sheet, is a row of their own named "No capacity set", so the number is visible and can be fixed.
+
+### F73. Vacant Room Status paints Never rented red on almost every property, the one thing §8 forbade
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§8 grants this card the suite's one exception to red-for-obligations, and bounds it in the same
+paragraph: red marks the largest of the **four aging bars only**, "never rented and Unknown sit
+outside the contest: never rented is the biggest bar on almost every property, and a constant red
+stops pointing at anything."
+
+The build takes the maximum across all six bars and paints it red (`occupancyService.ts:348`,
+`:351`). The sheet's own appendix measured never-rented at 87 to 90% of vacant inventory, so on
+almost every property that bar is the maximum and the card ships a permanent red.
+
+§4's red rule states it a second time, as the screen's one granted exception. Two statements, one line
+of code.
+
+**Fix:** take the maximum over the first four bars only.
+
+### F74. The one empty-state sentence §16 forbade by name ships verbatim, and no card has a healthy state
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the same shape as F50 on Expense
+
+§16 separates a card's empty state from its healthy state, and says an empty card here "is usually
+good news, a distinction no sibling needs". It then names the design's current copy and rules it out:
+it "reads a full house as a data gap ('Vacancy duration by days will appear here once rooms are
+empty') and must not ship."
+
+`EMPTY.vacant_rooms` (`occupancyService.ts:22`) ships: "No vacant rooms found. Vacancy duration by
+days will appear here once rooms are empty." The forbidden sentence, word for word, inside it.
+
+All four cards §16 gives healthy copy send an empty state instead:
+
+| Card | Ships | §16's healthy copy |
+|---|---|---|
+| Vacant Room Status | "No vacant rooms found. Vacancy duration by days will appear here once rooms are empty." | "No vacant rooms. Your property is fully occupied." |
+| Upcoming Vacancy | "No rooms are being vacated soon. Tenants with upcoming exit dates will show up here." | "Nobody is leaving soon. No confirmed move-outs on the books." |
+| Agreements ending soon | "No agreements ending soon." | "No agreements ending in the next 90 days." |
+| Where is my property losing money? | "No data yet. Once beds are vacant, you will see where your revenue is being lost." | "No revenue leaking. Every rentable bed is earning." |
+
+Every one of them tells a full house that data is missing. §16's two other states are absent as well:
+the whole-screen not-set-up state, which the sheet's appendix calls the most common state this screen
+will ever show at 46.6% of real properties, and the rooms-but-no-beds state with its **Add beds**
+button.
+
+**Fix:** §16 already holds every word. This is copy that exists and is not wired.
+
+### F75. Upcoming Vacancy follows the view toggle, and the sheet says it must not
+
+**Verdict:** Accepted change · **Status:** Ruled · **Owed by:** Sheet · **Note:** D23; §9 and §4 corrected
+
+§4 and §9 both say this card ignores the toggle and counts per room. The build switches with it:
+Bed view counts departing tenants, Unit view counts distinct room-and-day vacancy events, and the
+axis label switches with them (`occupancyService.ts:378`, `:389`).
+
+The build is right. Reasoning in D23.
+
+### F76. Upcoming Vacancy paints its largest bar red, an exception the sheet granted only to its neighbour
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§4's red rule: red for unmet obligations and passed dates only, with **one** deliberate exception,
+the vacancy-age chart in §8. The build gives the same treatment to Upcoming Vacancy
+(`occupancyService.ts:390`).
+
+It reads as an alarm about the wrong thing. The tallest bar here is simply the week most people
+happen to be leaving in, which on most properties is 31+ days out, the furthest away and the least
+urgent. A card about confirmed departures that shades the calmest bucket red teaches an operator to
+ignore red on this screen, which is what §4's rule exists to protect.
+
+**Fix:** drop the red on this card, so it keeps §4's rule and the exception stays the single one §8
+was granted. The related design question, whether 0 to 7 days should be marked instead as the bucket
+with no time left to refill, is logged as design fix 43 in DA-08 §20 rather than left inside this
+paragraph.
+
+### F77. More than half of the agreement dates are invented, on the one card the sheet says carries facts
+
+**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D24 settles it; S7 proposes the fix at the source
+
+§10 is careful about what this card claims: "Agreed end dates are facts about paperwork, not
+confirmed departures, and the card says so." §17 makes it a prohibition: "No guesswork in any forward
+number... Agreements ending soon uses agreed end dates, facts about paperwork, and says so."
+
+The end date is built in four steps (`occupancyService.ts:404` to `:409`): a recorded renewal date,
+then the tenant's own agreement length, then the property's default, then **11 months** where nothing
+is recorded. The first three are facts. The fourth is a guess, and it is not marked as one anywhere:
+not on the bar, not in the footer, not in the hint copy.
+
+**Measured on production**, living long-term tenants on live properties, test and deleted excluded,
+on 24 August 2026:
+
+| | Tenants | Share |
+|---|---|---|
+| Long-term living tenants, the ones this card can place on a bar | 351,108 | |
+| Of those, no renewal record, no agreement length, no property default | **190,609** | **54.3%** |
+
+So for the majority of tenants the card places a bar using a date the product never recorded, and a
+manager cannot tell which bars are paperwork and which are arithmetic. It is the same shape as F43 on
+Collection: the card's structure is right, its yes test is what needs proving.
+
+**Fix:** D24. The eleven-month fallback stays and is named in the info sheet with its count, and that
+count opens the list of the tenants it applies to, so the number that reports the gap is also the way
+to close it. This review had recommended dropping those tenants from the card; the owner ruled the
+other way and the reasoning is in D24.
+
+### F78. An empty room is priced at zero, so 85% of vacant beds cost nothing
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the largest finding on this tab; also a doc fix, G10
+
+§12 sets the pricing ladder in three steps: "its own configured rent first, then what the space was
+last let for, then the group's average."
+
+The code builds a room's per-bed rent as the average rent of the **living tenants in that room**, and
+falls back with `COALESCE(avg_rent, 0)` (`occupancyService.ts:547`, `:554`). There is no second step
+and no third. A room with nobody in it has no living tenants, so it has no average, so it prices at
+zero. **The rooms that cost the most are the ones priced at nothing.**
+
+**Measured on production**, live rooms on live properties, test and deleted excluded, on 24 August
+2026:
+
+| | Vacant beds | Share |
+|---|---|---|
+| Vacant beds on the card's own definition | 846,655 | |
+| Sitting in a room with no living tenant, so priced at ₹0 | **712,694** | **84.2%** |
+| Sitting in a room where no tenant has a rent recorded, so priced at ₹0 | **724,028** | **85.5%** |
+
+So "Losing per month" will read a fraction of the truth on most properties, and on a fully empty
+property it reads exactly ₹0, which is the property losing the most. The coverage line beside it,
+"based on N of M rooms with rent set", is the only thing that hints at it, and it counts rooms where
+§12 asks for beds.
+
+**This is also a doc fix.** Vivek's guide describes the built behaviour as "the room's per-bed rent
+(its own tenants' average, **falling back to the group average**)". The code's own comment at `:533`
+says the same. The fallback is written in two documents and in neither case in the SQL. Logged as
+G10.
+
+**Fix:** the group average as the last step, as §12 and the guide both already say. The middle step,
+what the space was last let for, stays unavailable for now for the reason §12 gave, and the rent
+snapshot on the stay-history row is where it will come from when it lands.
+
+### F79. Every bar on the losing-money card is drawn at zero width, and every share reads 0%
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+The revenue-loss figure is formatted for display first, into a string like "₹1.24Cr", and the bar and
+the share are then computed by stripping the currency out of that string and comparing what is left
+against a raw rupee number (`occupancyService.ts:571`). "₹1.24Cr" becomes 1.24, which is then
+measured against a maximum in the tens of lakhs, so **the bar percentage and the share both round to
+0 on every group on every property.**
+
+The only rows that escape are groups losing under ₹1,000, where the short form prints the rupees in
+full; those compare a rupee figure against a rupee figure and read low rather than zero.
+
+§12: "The bar carries the share; the number carries the rupees." Today the number carries the rupees
+and the bar carries nothing.
+
+**Fix:** compute the bar and the share from the rupee figures before formatting. The formatted string
+is for display only.
+
+**Two smaller defects on the same card.** It sorts by vacant beds where §12 says "Sorted by revenue
+loss, highest first", so the ranking answers a different question from the card's title. And the
+coverage threshold with its nudge, §12's rule for when the figure is too thin to show and §19's open
+item 3, is not built, so a figure resting on two rooms out of ninety shows as confidently as one
+resting on all ninety.
+
+### F80. Three blocks ignore the top filter and say nothing at all about it
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** against D9; the F18 sweep
+
+D9's rule: a block that does not follow the top filter says so on its face, in one of three ways.
+Every Occupancy block, checked for both halves:
+
+| Block | Reads the top filter | Says so on its face |
+|---|---|---|
+| Overview Snapshot | Yes | Not needed; carries the window name |
+| Occupancy Status | No | Nothing |
+| Vacant Room Status | No | "by rooms · As of today" |
+| Upcoming Vacancy | No | "From today onwards" |
+| Agreements ending soon | No | "From today onwards" |
+| Occupancy Trend | No | Its own range control |
+| Where is my property losing money? | No | A plain line: "this is the current monthly loss" |
+| Property Wise Occupancy | No | Nothing |
+| View all sheet | No | Nothing |
+
+**The three silent ones are Occupancy Status, Property Wise Occupancy and the View all sheet.** Each
+offers the filter, ignores it, and says nothing, which is the exact case D9 was written for.
+
+**The losing-money card is not one of them**, and this entry first said it was. It ships a plain line
+naming the period it follows (`occupancyService.ts:573`), which is the third of D9's three permitted
+ways. §4's table asks it to average across the window, which it does not do; that is defensible on
+its own terms, because §12 says the past-period cost waits on the room-emptied date and §19 open item
+1 has not delivered it. Declaring itself is what makes the gap honest, and it does declare itself.
+
+**Fix:** the three silent blocks carry "As of today", the way Vacant Room Status already does. Then
+Property Wise and the View all sheet follow the window once the Overview's period path is fixed under
+F68, since they read the same counts.
+
+### F81. The View all sheet is missing seven of its eighteen rows and one of its three sections
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§6 lays the sheet out as three plain questions. As §6 now reads after this review's edits it carries
+eighteen rows; the build ships eleven of them and two of the three sections
+(`occupancyService.ts:621` to `:639`).
+
+| §6 asks for | Built |
+|---|---|
+| What have I got: Total, Disabled, No capacity set, Rentable, Occupied, Semi-vacant, Vacant, of which booked, of which available, of which never rented, Over-occupied | All but **never rented** and the **No capacity set** row this review added under F72 |
+| Who's moving: Under eviction with its approved, pending, past-their-date and already-replaced rows, and Bookings with no space allocated | The headline and already replaced only. **Approved, pending and past their date** are D21's new rows; **Bookings with no space allocated** was always asked for and is missing |
+| How fast: Days to Fill | **The whole section is missing** |
+
+Never rented is already computed one block away, in the Vacant Room Status query, so that row costs a
+number that exists. Bookings with no space allocated is the row §6 says belongs to Inventory until the
+Bookings screen exists, and the sheet's appendix measured it at 603 of 3,676 confirmed bookings,
+16.4%, so it is not a rare case. Days to Fill is blocked by open item 1 and should show "—" with its
+reason, the way the losing-money card already does for the same measure on the same screen.
+
+The sheet also carries no empty state and no window on its face, which are F74 and F80 landing here.
+
+**Fix:** the seven missing rows, the third section showing "—" with its reason, and the never-rented
+number wired from the query that already produces it. Four of the seven are D20 and D21 landing here
+rather than pre-existing gaps, so this row grows with those rulings and is one build with them.
+
+### F82. The trend draws empty months from before the property existed
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+
+§11: "History before the property joined does not exist and is not invented; the chart starts where
+the data starts."
+
+`getTrend` always emits one group per month of the chosen range (`occupancyService.ts:497`), filling
+any month the query returned nothing for with zeros. A property two months old on a six-month range
+gets four bars reading zero occupancy, which is not "no data", it is a claim that the property stood
+empty.
+
+**Fix:** start the chart at the first month with a capacity, which the query already reports as
+`rent_room` per month.
+
+### F83. A window ending in the future shows today's numbers under tomorrow's label
+
+**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** F17 logged the cause, D9 the rules; DA-08 §4 rewritten here
+
+The app lets a Custom window end after today, `allow_future_date: true` at the tab level
+(`masterConfig.ts:153`). The service then caps the end date back to today (`occupancyService.ts:88`)
+and says nothing. So a manager who asks what September looks like is shown August's answer with
+September's dates written above it. Neither rule alone would do this: an app that refused the future
+date would be honest, and a service that answered it would be useful.
+
+**Underneath sits the dead code F17 logged**, and deleting it is part of the same change.
+`OCCUPANCY_DURATION` (`masterConfig.ts:84`) carries Now, This Month, Last Month, Current FY and
+Custom, and no Coming up, so `filter_key` can never arrive as `coming_up`. That strands the
+`coming_up` case in the window builder (`occupancyService.ts:90`), the whole forward branch of the
+Overview (`:184` to `:190`), the `projectedOccupiedBeds` query (`:214`), and the "By 15 Sep" window
+label §5 shows as an example (`:92`).
+
+**Fix:** D9's rules on the Custom path, and delete the `coming_up` branches while there. Whether the
+forward projection returns at all is a design decision for the Custom path, and the query is written
+if it does. Note the projection has its own defect if it is revived: it counts unconfirmed bookings
+as arrivals, which D20 now rules against.
+
+### F84. Occupancy holds 9 of the 51 places where a missing property falls back to the scaffold
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** F52 is the finding; this records where they are
+
+Every one of the nine blocks returns `null` when no live property matches
+(`occupancyService.ts:167`, `:228`, `:284`, `:363`, `:399`, `:488`, `:531`, `:581`, `:609`), and the
+caller ships the registry's scaffold instead. **Eight of the nine then show made-up numbers**: 360
+rentable units, a 25% occupancy rate, "Sharma PG" and "Jai Dada PG" (`registry.ts:290` to `:369`).
+The ninth, the View all sheet, was scaffolded empty (`registry.ts:661`), so it shows an empty sheet
+rather than an invented one.
+
+The fix is F52's one guard in the caller, not nine here.
+
 
 ---
 
@@ -1375,6 +1919,11 @@ Sheet §10 now says so.
 | D17 | 24 Aug | F54 | Still owed to staff counts everything staff fronted, refunds included |
 | D18 | 24 Aug | F60 | The two meanings of "Others" stay for now; renaming the rollup is parked |
 | D19 | 24 Aug | F62 | FlexiPe spending is its own payer row, named "FlexiPe (Owner)" |
+| D20 | 24 Aug | F67, F4 | Only a confirmed booking counts as booked; the homescreen and rooms list are fixed alongside |
+| D21 | 24 Aug | F66, F14 | Inventory's tile becomes "Under eviction" and takes in both approved and pending, with the parts always named |
+| D22 | 24 Aug | F66 | In Unit view the tile counts units holding someone under eviction, not people |
+| D23 | 24 Aug | F75 | Upcoming Vacancy follows the view toggle, and the sheet was wrong |
+| D24 | 24 Aug | F77 | The eleven-month assumption stays, named in the info sheet with its count, and the count opens the list of tenants missing it |
 
 ### D1. Projected Due counts confirmed bookings only (2026-08-23)
 
@@ -1391,9 +1940,16 @@ Applies to both halves of `projectedDueTotal` and to `getUpcomingDues`, and to n
 (see D5).
 
 This review had argued for counting unconfirmed bookings too, because the biller charges them and on
-production 1,895 bookings sit unapproved against 28 approved. The owner's standing rule is that
-current data grounds a decision and never makes it, and he held the ruling. The biller's behaviour
-became S1 in the register.
+production 1,895 bookings sat unapproved against 28 carrying an explicit approval row. The owner's
+standing rule is that current data grounds a decision and never makes it, and he held the ruling. The
+biller's behaviour became S1 in the register.
+
+**Re-measured 24 August 2026, and the two counts read differently for a reason.** F67 reports 2,880
+confirmed against 1,896 unapproved on the same bookings, which looks like it contradicts the 28
+above. It does not: 28, now 112, is the count with an **explicit** approval row, and 2,838 more sit on
+properties that accept automatically, which this ruling defines as confirmed. Counting only explicit
+approvals makes confirmed bookings look vanishingly rare; counting auto-accept as the ruling requires
+makes them the majority. D20 leans on the second reading.
 
 ### D2. Current FY means 1 April to today, and the chip stays (2026-08-23)
 
@@ -1746,6 +2302,131 @@ than inventing a fourth treatment.
 **For Vivek:** the fix belongs in the analytics label, not in the FlexiPe writer. Changing what the
 writer stores would rewrite history on 20,301 records and every other screen reading that field.
 
+### D20. Only a confirmed booking counts as booked, and the other two screens are fixed with it (2026-08-24)
+
+Owner: "As you recommend, however, I want the home screen and the room list widgets to be fixed and in
+sync as well."
+
+**What it settles.** This is the question F4 was left open for and DA-08 was chosen to answer. A bed
+with an unapproved booking on it is **vacant and not booked**. The booked layer counts confirmed
+bookings only, in both views. The forward projection, if the Custom path revives it, counts confirmed
+arrivals only, which is D1's rule already.
+
+**Why.** A booking is a promise; approval is the step that makes the promise worth planning against.
+§3 said so from the start, and D1 settled the same question for money on the same reasoning. Counting
+an unapproved booking as filled space lets a property report itself full on arrivals that may never
+happen, and 40% of live bookings are unapproved right now, so this is not a rounding case.
+
+**The instruction that goes wider than this tab.** This review had proposed that analytics compute its
+own counts and leave the homescreen widget alone for now. The owner ruled against the fork: the
+homescreen widget and the rooms list are corrected too, so all three surfaces answer the same. That is
+the standing cross-surface rule, §17.2 on Collection and D17 on Expense, applied to space instead of
+money.
+
+**For Vivek, three separate places:**
+
+| Where | What changes |
+|---|---|
+| `helpers.ts:1929`, `:1945` | `has_new_booking` counts a confirmed booking only, not any status-2 tenant |
+| `helpers.ts:2023` to `:2025` | `active_count` drives vacant, occupied and semi-vacant off living tenants; an unapproved booking must not make a room read Occupied |
+| Rooms list filters | The same word means the same thing, which §14 records as a live disagreement in both directions |
+
+The test for confirmed is already written at `tenantService.ts:352`, including the auto-accept case
+D1 ruled equal to confirmed. Reuse it rather than write a fourth one.
+
+**One consequence to expect.** Occupied and Vacant will both move on the homescreen the day this
+ships, on the 3.4% of properties the sheet's appendix found carrying any confirmed booking and on
+however many carry unconfirmed ones. It is a correction, and it will read as a change.
+
+### D21. Inventory's tile is "Under eviction", covering both states, with the parts always named (2026-08-24)
+
+Owner: "Let's call it under eviction, which includes both the approved eviction and pending eviction."
+
+**What it settles.** The tile F14 left as the sixth untraced meaning of under notice. It is renamed
+**Under eviction** and its number takes in both states: 6,283 today, being 5,090 approved and 1,193
+pending.
+
+**Why.** The 1,193 pending were invisible on this whole screen. A manager reading Inventory is asking
+how much space is at risk, and a raised notice is the earliest signal of that; D6 already gave those
+people a bar on the money screens, so the space screen was the one place they did not appear.
+
+**The condition this ruling carries.** An approved eviction has a date and a pending one does not, so
+a single merged number can say space is at risk but cannot say when it frees. **The second line always
+names the two parts, never only above zero:** "6,283 under eviction · 5,090 approved · 1,193 pending".
+With that the headline is a risk number and the parts are the planning number.
+
+**Two consequences accepted deliberately:**
+
+1. **Upcoming Vacancy stays approved-only and date-bound**, because it buckets by day and a pending
+   notice has no day. So the tile reads 6,283 while that card totals 4,772. The gap is 1,193 with no
+   date yet plus 318 whose date has passed, and both cards say so rather than look broken.
+2. **This effectively decides S3.** With Inventory saying Under eviction, Tenants becomes the only
+   screen still calling the same idea Under notice. The suite-wide sweep should follow at the Tenants
+   review rather than be left half done.
+
+### D22. In Unit view the tile counts units, not people (2026-08-24)
+
+Owner: "A."
+
+Bed view counts people, which is one bed each. Unit view counts units holding at least one person
+under eviction, which is what §5 asked for and smaller than the headcount wherever two people share a
+room.
+
+**Why.** Every other tile in that row changes grain with the toggle. A tile that keeps one grain under
+two labels is the one that gets checked by hand, found wrong, and takes the other four down with it.
+
+### D23. Upcoming Vacancy follows the view toggle (2026-08-24)
+
+Ruled as built.
+
+§4 and §9 both say this card ignores the toggle because "their subject has no bed-level version". That
+reason does not hold: a departing tenant is a bed freeing up, which is as bed-level as anything on the
+screen. The build counts departing tenants in Bed view and distinct room-and-day vacancy events in
+Unit view, and switches its own axis label with them.
+
+**Why the build wins.** The sheet's own §9 pairs this card with Vacant Room Status as two lenses on the
+same day-buckets, and Vacant Room Status genuinely has no bed version, because an empty room's waiting
+time belongs to the room. This one does. The build defended §4's "the toggle changes what gets counted"
+against §4's own exemption list, which is the pattern this review keeps finding.
+
+Sheet §4 and §9 corrected. Vacant Room Status and Agreements ending soon stay exempt as written.
+
+### D24. The eleven-month assumption stays, and the number it rests on becomes the way to fix it (2026-08-24)
+
+Owner: "Keep the assumption, but mark it... we'll mark the info sheet with a drill-down ability so
+that users can filter the list, get to a filtered list, and then also fill the data one by one if they
+want to. That way, coverage also gets 100% in reality."
+
+**What it settles.** Every long-term tenant stays on the card. Where no agreement length is recorded
+anywhere, eleven months is used, and that is stated rather than hidden. Three parts:
+
+1. **The card keeps its bars.** No tenant is dropped for missing paperwork.
+2. **The info sheet names the assumption and carries the count**: how many of these tenants are on the
+   eleven-month fallback rather than a recorded length.
+3. **That count opens the list.** Tapping it lands on the tenants list filtered to exactly those
+   people, where the length can be filled in one at a time.
+
+**Why this beats the alternative, which this review had recommended.** Taking those tenants off the
+card makes every remaining bar a fact and leaves the manager with a thinner card and nothing to do
+about it. This ruling keeps the card whole, tells the truth about which half is assumed, and puts the
+repair one tap from the number that reports the problem. The count then falls as people use it, so the
+caveat is temporary by design rather than permanent by disclosure.
+
+**It is the homescreen's own pattern**, which is why it needs no new invention: an info sheet that
+explains a number and drills into the records behind it already exists there.
+
+**Eleven months is a reasonable fallback**, and the owner confirmed it. The defect was never the
+number, it was that nothing said it was a fallback.
+
+**For Vivek:** the assumption and its count go into `occupancyHints.ts`, where this tab's other 23
+definitions already live, and the count needs a drill target: the tenants list filtered to long-term,
+living, with no recorded agreement length. The same four-step end date runs on the Tenant tab's
+Agreement Expiry card, so the same treatment belongs there.
+
+**What this does to S7.** It does not replace it. Filling the back catalogue one tenant at a time is
+the repair; asking for the length where the agreement is created is what stops the gap reopening. S7
+keeps items 1 and 2 and loses its urgency.
+
 ---
 
 ## Sheet edits made
@@ -1834,6 +2515,45 @@ All in DA-04 Expense, 2026-08-24:
 | §15 test 16 | New: a named group never swallows a category belonging elsewhere, with RentOk Software as the worked case | B3 |
 | §15 test 17 | Everything a staff member fronted counts, whatever they fronted it for; was test 16 before test 16 was inserted | D17 |
 
+All in DA-08 Inventory, 2026-08-24:
+
+| Section | Change | From |
+|---|---|---|
+| Frontmatter, note block | Date to 24 Aug, status to v2.1, correction note listing every changed section and ending "Nothing else moved", with the one unruled item named | This review |
+| §1 build status | "The screen is not built ... it is unwritten" replaced: the screen is built and verified, the sheet is the rule, the log holds what differs, and the two things built better than asked are named | This review, B6, B7 |
+| §3 Booked | A room holding only unapproved bookings is vacant, in both views; the same rule lands on the homescreen widget and the rooms list | D20 |
+| §3 Under notice | Replaced by "Under eviction": two states, both always named beside the total, the two layers kept, eviction defined as the product's neutral word | D21 |
+| §3 words to be careful with | The Under eviction, Vacant and Booked rows rewritten; the false claim that "no second variant survives" removed | D20, D21 |
+| §4 options | Coming up removed from the filter list | D9 |
+| §4 forward rule | New: the forward window is a Custom range ending after today, with what each kind of number does and the no-chip rule | D9 |
+| §4 matrix | Last column rewritten as Custom ending after today | D9 |
+| §4 capacity | New line: capacity is day-averaged like occupancy, not taken from today | F68, §18.1 |
+| §4 face rule | Every card that does not follow the filter says so on its face, three ways | D9, F80 |
+| §4 chips | Under Notice row renamed Under eviction | D21 |
+| §4 toggle | Upcoming Vacancy moved out of the exempt list, with the reason; two cards stay exempt | D23 |
+| §5 tile table | Fifth tile is Under eviction; Unit View counts units, not people, with the worked example | D21, D22 |
+| §6 View all rows | Rooms with no capacity get their own row instead of being folded into "Disabled for rent", which said they were switched off on purpose | F72 |
+| §8 aging bars | Rewritten: the bars are built from the last move-out on the room's stay history, and what still waits is the drills | B6 |
+| §18 item 12 | Rewritten: two things still wait on the emptying date, not three | B6 |
+| §19 item 1 | Rewritten from "the largest prerequisite" to what is actually left: Days to Fill, the past-period cost, and the drills | B6 |
+| §19 item 2 | The info-icon copy is written on this screen and on Expense; the item stays open only for the rest | B8 |
+| §20 design fix 43 | New: whether 0 to 7 days should be marked once the build's red bar is removed | F76 |
+| §7 chips | Two chips, not four, with Booked Beds and Under notice with booking named as the two that are not chips | F69 |
+| §7 Under eviction chip | Carries its two states always, and its two layers as a second line | D21 |
+| §9 Upcoming Vacancy | Follows the view toggle, with the reason and the switching axis label | D23 |
+| §9 Upcoming Vacancy | New ⚠: this card and the tile will not match, and why | D21 |
+| §10 Agreements | Every tenant stays on the card; the eleven-month fallback is named in the info sheet with its count, and the count opens the list of tenants missing a length | D24 |
+| §14 tap matrix | New row: the assumed-length count opens the tenants list filtered to those people | D24 |
+| §12 pricing | New ⚠: the group average is the step that matters most, because an empty room has no tenant to read a rent from | F78 |
+| §12 basis line | Counted in beds, not rooms, matching the number above it | F79 |
+| §12 sorting | Sorted by revenue loss with the reason; the bar and share come from rupees, never from the shortened text | F79 |
+| §14 tap matrix | Under eviction rows rewritten, approved and pending each with their own destination | D21 |
+| §17 no guesswork | Rewritten: Agreements leaves out tenants whose length was never recorded rather than assuming one | F77 |
+| §18 items 6, 7, 16 | Under eviction wording; the forward-layer rule reworded off Coming up | D21, D9 |
+| §19 open items | New item 10, agreement length not recorded; two items closed by D20 and D21; the v1 under-notice closure marked as reopened and settled | F77, D20, D21, F14 |
+| §20 design fixes 2, 4, 20, 22, 26, 33 | Under eviction wording, the filter chip list, the forward window, and the four-chip note | D9, D21, F69 |
+| Appendix | Two Under notice rows renamed | D21 |
+
 ---
 
 ## Doc fixes owed to Vivek
@@ -1851,6 +2571,9 @@ These do not affect the product. They matter because the guide is written for su
 | G7 | The guide calls Expense Overview "Period, with one live tile". Two of the four tiles ignore the filter, and Current FY keeps a fixed window, which is not the same as live. Same fault as G5 |
 | G8 | The guide's Expense section describes the five cards. It mentions the View all sheet once, inside a whole-tab assumption, and never describes its rows. Its four fund rows are the least obvious numbers on the tab, and §6 attaches three rules to them that are each a wrong number if missed. A support reader asked where "Paid from staff's own money" comes from has nothing to read |
 | G9 | The guide states as a whole-tab assumption that "the window's upper end never goes past today". True of five blocks and not of the trend, which runs to the end of the month (F63). Once F63 is fixed the sentence becomes true |
+| G10 | The Occupancy losing-money section says revenue loss is priced at "the room's per-bed rent (its own tenants' average, falling back to the group average)". There is no group-average fallback in the query; an empty room prices at zero (F78). The guide should describe what ships, whichever way F78 is fixed |
+| G11 | The guide's Occupancy filter list names Coming up, an option the app cannot send (F83), and its Overview section describes the Coming-up projection as though a reader could reach it. Same fault as G6 on Collection |
+| G12 | The guide says the Occupancy period rate uses "today's rentable count for past periods" as an assumption, and separately says the trend uses capacity "as it stood that month". Both are true of the code and the guide never says the two blocks therefore disagree about the same month (F68). A support reader asked why the tile and the bar differ has nothing to read |
 
 ---
 
@@ -1861,8 +2584,11 @@ These do not affect the product. They matter because the guide is written for su
 | B1 | The Dues base pool is not a fresh query. It calls the homescreen's own `DuesListHelper.buildBaseQuery` | Dues on the homescreen and Dues in analytics cannot drift apart. The sheet never asked for this. Worth writing into DA-01 §3 as a rule the next screen inherits |
 | B2 | The View all screen's code refuses to build a chip the design draws on Past Dues, with the comment "Design's chip on Past Dues is a flagged bug (§21.9)" | The sheet caught a design defect, the developer read the sheet and honoured it over the drawn file. The handoff process working as intended, and worth saying to the team |
 | B3 | The six named expense categories match on the start of the saved name, ignoring capitals, rather than on exact text | The sheet asked only that the groups "collect the common spellings" and left the how open. This answer collects thirty spellings of a returned deposit into one bar, including the misspelling "Deposite Refund". It is the rule Dues and Collection should have had, and it is the reason F59 is only about the catch-all and not about the six groups. Its one measured cost: matching the start of a name also catches a name that merely begins the same way, so "RentOk Software", our own subscription fee, lands in the Rent bar, ₹25.5 lakh across 178 expenses in twelve months, 0.014% of the tab. Named in §15 as a test rather than fixed |
-| B5 | Every tile and every card ships its own definition text, ten of them, in `expenseHints.ts` | §17 item 32 flagged eleven info icons with nobody having written a word of what they say, and named Still owed to staff, the fund rows and the bill-or-receipt figure as the three that most needed one. All three have copy. The sheet listed this as outstanding and it was quietly done |
 | B4 | Every FlexiPe expense is found by its wallet link, never by its payment mode | §7 warned that reading the mode would bury FlexiPe in Others and leave its own row permanently empty. The build took the warning. Verified on production: all 20,301 FlexiPe expenses in twelve months are identified this way, and none is double counted in Others |
+| B5 | Every tile and every card ships its own definition text, ten of them, in `expenseHints.ts` | §17 item 32 flagged eleven info icons with nobody having written a word of what they say, and named Still owed to staff, the fund rows and the bill-or-receipt figure as the three that most needed one. All three have copy. The sheet listed this as outstanding and it was quietly done |
+| B6 | The vacancy aging bars were built, and the sheet said they could not be | §8 and §19 open item 1 both said nothing records when a room became empty, so the four aging buckets were blocked. The build found an answer the sheet had not: the last move-out on the room's stay history, floored at the date a disabled room was switched back on, with rooms that have history but no recorded move-out kept honestly in the Unknown bar rather than folded into never rented. It is the transitional answer §18 item 11 asked for, and it improves on its own as the migration lands. Days to Fill and the past-period revenue loss stay blocked, correctly, because both need the emptying date per turnover rather than the last one |
+| B7 | The trend rebuilds capacity as it stood on each day of history | §18 item 1 asked for it and every other block was allowed the approximation. The trend honours it in full: a room counts from the day it was created, stops on the day it was deleted, and drops out for the days it was switched off, all read from the room state log. Occupied is then clipped to that same set, so Occupied plus Vacant equal the month's total by construction and the rate cannot exceed 100% on a chart that has no room to explain why it did. It is also the query that fixes F68 on the Overview, so the hard half of that fix is already written |
+| B8 | Every block on this tab ships its own definition text, 23 of them, in `occupancyHints.ts` | §19 open item 2 says "No screen in the suite has written what any info icon says", and calls it suite-wide and unowned. It is written here: all eight blocks carry a hint block, and the Overview and Status blocks define every tile and every slice inside them. §19 is written to be reusable as that content and now largely is. This is the second time the same thing has been quietly done and left unrecorded, after B5 on Expense, so the suite-wide open item is now false on two screens. Sheet §19 item 2 corrected |
 
 ---
 
@@ -2016,3 +2742,78 @@ property, each row carries its share of the account total, and View more appears
 **Windows, settled earlier and re-checked here.** F9 and F17 both exempt this tab and both exemptions
 hold in the code: Current FY ends at today, Custom caps at today, and there has never been a forward
 branch to leave behind because the sheet never asked for one.
+
+### Occupancy (Inventory), verified 2026-08-24
+
+**The filter and the toggle.** Five options matching §4 exactly, Now default, and no All Time, which
+is this tab's own deliberate difference (`masterConfig.ts:84`). **F9 does not reach this tab**: the
+Current FY case ends at today (`occupancyService.ts:83`), re-checked rather than taken from the
+earlier pass. The toggle is Bed and Unit with Bed default (`masterConfig.ts:150`), matching §4 and
+design fix 5. No block carries a one-option dropdown, so the F16 sweep passes. The toggle does not
+hide on an all-singles property, which §4 asks for and the sheet's appendix put at 29.5% of active
+properties; small enough to sit inside F80's group of face-level gaps rather than earn its own entry.
+
+**The two toggle sweeps, which do apply here.** F31, does a tile keep its chip across the toggle:
+moot, no tile has a chip either side (F65). F36, do a card's tabs still sum to the card's total in
+every view: the donut is the only card with parts, and it sums correctly in Unit view. In Bed view it
+does not, which is F70, and that is a rounding of over-occupancy rather than a toggle fault.
+
+**Overview Snapshot.** Five tiles in §5's order with §5's labels, switching with the toggle. The rate
+is computed from beds in both views and says "by beds" on its face, which is §18 item 2 and design fix
+14's sibling. Occupied, Vacant and Rentable are read from the widget on Now, so the screen and the
+rooms list cannot drift. The window's name rides beside the title as §5 asks.
+
+**Occupancy Status.** The donut carries §7's slices in each view, Semi-Vacant appearing in Unit view
+only and only above zero, Disabled only when present. The header carries both totals, total and
+rentable, which is design fix 32 done. The over-100% sentence exists (`occupancyService.ts:276`),
+though it states the over-occupied half without the vacant half §7 asked for. The money tiles are the
+two §7 specifies, with §7's own labels, and the second one reads "per Rentable", which is design fix
+14 done. **Measured on production**, living tenants on live properties: 93.7% carry a rent amount,
+330,532 of 352,750, so the averages read about 6% low rather than half, and the sheet's appendix
+figure of 43 to 54% was about beds carrying a rent, a different measurement.
+
+**Vacant Room Status.** Six bars in §8's order including never rented and unknown, which the design
+never drew. Counted per room in both views, with "by rooms · As of today" on its face, matching §8 and
+§4. Bucket edges are 0-7, 8-15, 16-30 and 31+, so day 30 falls in exactly one bucket and both bar
+charts agree, which is §18 item 19 and design fix 8. Never rented comes from the absence of any stay
+history rather than from a zero age, which is §18 item 13 exactly. The subtitle carries the card's
+direction, design fix 9.
+
+**Upcoming Vacancy.** Built from approved leaving dates only, dates from today onwards, so a tenant
+whose date has passed is correctly absent, which is F14's row 3 holding. Bookings cannot leak in:
+status 1 only, which is §18 item 7's test. Buckets and subtitle agree with its neighbour.
+
+**Agreements ending soon.** Counts agreements and says so on the axis, ignores both the toggle and the
+filter with "From today onwards" on its face, all three matching §10 and design fixes 10 and 29. The
+footer restates the 90-day total. The end date itself is this tab's largest question and is F77; the
+same four-step rule runs on the Tenant tab, so both screens carry it and both are fixed together.
+
+**Occupancy Trend.** Its own range, 6, 12 and 24 months with 6 default, and the top filter has no hold
+on it, matching §11 and §4. Months run oldest to newest, the running month is marked in progress, and
+the chart plots the level rather than movement, which is §11's deliberate exception. Its capacity work
+is B7. The empty state fires on an all-zero range.
+
+**Property Wise Occupancy.** Hidden below two properties with a real `hidden` return
+(`occupancyService.ts:582`), so the F23 sweep passes on this tab. Sorted highest to lowest by vacant
+space rather than by rate, which is §13's whole point and design fix 11. Properties with nothing
+rentable still appear at zero, and every property the manager selected produces a row, so §13's
+account-grouping warning does not bite: the scope comes from the request, not from a grouping field
+that is missing on 29% of properties.
+
+**Empty states, the F64 sweep.** All eight are defined and all eight are wired. Not one is written and
+left unsent, which is the only tab so far where that sweep passes cleanly. What is wrong with them is
+their words, not their plumbing, and that is F74.
+
+**The F55 clamping sweep.** Vacant is floored at zero on a period (`occupancyService.ts:195`), which
+is right here: a bed cannot be negatively empty, and over-occupancy is its own number on the same
+screen. The rate is deliberately not clamped, so it can read above 100% as §3 requires.
+
+**Two things checked here that turned out not to be passes**, recorded so the correction is visible
+rather than quiet. The Unit view donut was first written up as summing correctly; it does not, for
+zero-capacity rooms holding somebody, and that is now inside F70. And the losing-money card was first
+written up as silent about its window; it is not, it carries a plain line, and that is now inside F80.
+
+**The F62 sweep, an internal string reaching the manager.** Nothing on this tab prints a stored string
+from our own writers. Every label is written in the analytics layer, and the only free text near this
+screen, the room type field the sheet's appendix found with 60-plus spellings, is deliberately not
+used as an axis.
