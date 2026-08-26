@@ -38,7 +38,7 @@ Four tiles, three different clocks.
 | Tab | What is this? | How is this calculated? |
 |---|---|---|
 | Category | Spend for these dates split by expense type: salary, maintenance, and the rest. | The top few are shown, the rest are grouped as Others. |
-| Payment Mode | Spend split by how it was paid: cash, UPI, bank, FlexiPe. | - |
+| Payment Mode | Spend split by how it was paid: cash, UPI, bank, FlexiPe. | An entry with no recorded mode shows as Online. |
 
 ## 3. Top Payers & Vendors
 
