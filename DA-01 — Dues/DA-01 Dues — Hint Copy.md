@@ -56,12 +56,12 @@ One total split four ways by due date. Does not follow the date filter.
 
 ## 4. Dues Breakdown
 
-> **Good to know:** Category and Added By add up to the same total. Tenant Status runs higher, because it is the only view that counts tenants who moved out.
+> **Good to know:** Category and Added By add up to the same total. Tenant Status can run higher, because it is the only view that counts tenants who moved out.
 
 | Tab | What is this? | How is this calculated? |
 |---|---|---|
 | Category | Unpaid dues for the dates you pick, from tenants living here or booked, split by bill type. | The top 5 types are shown, the rest are grouped as Others. |
-| Tenant Status | Unpaid dues split by tenant status: living here, under notice, booked, or moved out. | The only view that counts tenants who moved out. |
+| Tenant Status | Unpaid dues split by tenant status: living here, under notice, booked, or moved out. | The only view that counts tenants who moved out, so it can show more than the other two tabs. |
 | Added By | Unpaid dues split by who raised the bill. | By role, not by person: Owner, RentOk, Partner, Customer or Tenant. |
 
 ## 5. Overdue Breakup

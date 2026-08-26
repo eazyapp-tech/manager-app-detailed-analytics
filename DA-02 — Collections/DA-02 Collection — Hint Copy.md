@@ -53,7 +53,7 @@ Different cards per view. Advance, Current FY and Settlement Pending appear in b
 
 Four tabs. Follows the toggle, and the total above the bars follows it too: Total Collection in Paid Date, Collected & Adjusted in Due Date.
 
-> **Good to know:** the bars add up to the total shown above them, in both views.
+> **Good to know:** Category adds up to the total shown above it, in both views. Status, Mode and Received by can fall short of it, and each says why on its own card.
 
 | Tab | What is this? | How is this calculated? |
 |---|---|---|
