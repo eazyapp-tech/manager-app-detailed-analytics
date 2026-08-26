@@ -354,7 +354,7 @@ tab.
 
 ### F1. Current FY Dues: the tile and its own chip measure different windows
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D2 settles it; chip also needs F5
+**Verdict:** Build gap · **Note:** D2 settles it; chip also needs F5
 
 The tile shows 1 April through 31 March, so it counts bills dated in the future. The chip beside it is
 worked out on 1 April through today, against the same point last financial year. The percentage does
@@ -371,7 +371,7 @@ figure the chip compares against is also worked out the wrong way, see F5. Both 
 
 ### F2. Projected Due: the rent half leaves out confirmed bookings, the package half filters nobody
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D1 settles who counts
+**Verdict:** Build gap · **Note:** D1 settles who counts
 
 `projectedDueTotal` adds two halves, and each is wrong in its own way:
 
@@ -390,7 +390,7 @@ So the tile undercounts rent and overcounts packages, and neither half matches t
 
 ### F3. Projected Due can pick the wrong rent day
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 When a tenant has no `rent_addition_date`, the projection falls back to their joining day. The job
 that actually raises the rent, `chargeRentTenants`, falls back differently by property setup:
@@ -410,7 +410,7 @@ should be checked against the job that does the work. Applies to `getUpcomingDue
 
 ### F4. Status 2 does not mean confirmed
 
-**Verdict:** Withdrawn for Dues · **Status:** Ruled · **Owed by:** Owner for Occupancy, Vivek for one check · **Note:** D5 withdrew the Dues half
+**Verdict:** Withdrawn for Dues · **Note:** D5 withdrew the Dues half
 
 This review first treated tenant status 2 as "confirmed booking". The owner corrected that:
 confirmation is a separate step, recorded in `tenant_booking_confirmation`:
@@ -441,7 +441,7 @@ production only 2 tenants sit at status 2 with a cancelled confirmation, owing �
 
 ### F5. Both chips compare against the wrong figure, and always read worse than reality
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** also the View all screen, F25
+**Verdict:** Build gap · **Note:** also the View all screen, F25
 
 Sheet §4 sets the rule: what was owed on a past date is every bill that had not been paid yet on that
 date, so a bill counts if it is still unpaid today or was paid after that date. It names the trap in
@@ -459,7 +459,7 @@ part paid bill splits into a paid bill and an unpaid one with the same due date.
 
 ### F6. The chips are coloured the wrong way round, and Dues is the only tab that gets it wrong
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** also the View all screen
+**Verdict:** Build gap · **Note:** also the View all screen
 
 Sheet §4: "Up is bad here: a rising chip shows red, a falling one green." The Dues chip code at
 `duesService.ts:136` colours every chip green for up and red for down. On a screen about money owed to
@@ -485,7 +485,7 @@ asks for a property in its first month.
 
 ### F7. Dues (Live) date captions: the sheet's worked example contradicted its own table
 
-**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D3; sheet §7 corrected
+**Verdict:** Accepted change · **Closed:** D3; sheet §7 corrected
 
 The numbers are correct. Only the two date captions differed, and the code was right both times.
 
@@ -499,7 +499,7 @@ Due Today is its own slice directly above, so a week that includes today would d
 
 ### F8. Bills Summary: Received is not limited to money that arrived inside the window
 
-**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D4; sheet §8 and §3 corrected
+**Verdict:** Accepted change · **Closed:** D4; sheet §8 and §3 corrected
 
 Sheet §8 said "money collected against those same dues, inside the window". The code windows only the
 bill's due date; the paid amount carries no date condition, so Received is every rupee ever collected
@@ -507,7 +507,7 @@ against bills that came due in the window. The code is right, reasoning in D4.
 
 ### F9. The Current FY filter option runs to 31 March, on Dues and Collection only
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D2 settles the window; this is a second place to apply it
+**Verdict:** Build gap · **Note:** D2 settles the window; this is a second place to apply it
 
 The `current_fy` case inside `resolveWindow()` (`duesService.ts:66`) resolves the filter option to
 1 April through 31 March, and `collectionService.ts:149` does the same. Expense, Occupancy and Tenant
@@ -525,14 +525,14 @@ next 31 March. The F32 ruling inherits it.
 
 ### F10. Refunded and written off dues vanish with nothing said about them
 
-**Verdict:** Specification gap · **Status:** Closed · **Owed by:** Nobody · **Note:** sheet §3 now names both states
+**Verdict:** Specification gap · **Closed:** sheet §3 now names both states
 
 Both states are absent from every Dues number, which is right. The sheet never said so, so a reader
 adding up a total by hand had no way to know those states exist.
 
 ### F11. Dues Breakdown's three tabs do not add to the same total, and the sheet said they did
 
-**Verdict:** Specification gap · **Status:** Closed · **Owed by:** Nobody · **Note:** sheet §9 corrected
+**Verdict:** Specification gap · **Closed:** sheet §9 corrected
 
 §9 opened with "three views over the same dues". Category and Added By run on the base pool, which
 excludes moved-out tenants. Tenant Status deliberately widens to include them, their one home on the
@@ -540,20 +540,20 @@ screen. The three tabs differ by exactly the old-tenant money, by design.
 
 ### F12. "Under notice" meant something different on Dues and on Tenants
 
-**Verdict:** Withdrawn · **Status:** Closed · **Owed by:** Nobody · **Note:** widened into the census in F14, ruled in D6
+**Verdict:** Withdrawn · **Closed:** widened into the census in F14, ruled in D6
 
 First raised as a two-screen collision. The owner asked for every definition in the suite instead.
 
 ### F13. "Notice Raised" was proposed as a rename, and the phrase is already taken
 
-**Verdict:** Withdrawn · **Status:** Closed · **Owed by:** Nobody · **Note:** D6 adopted neither proposed name
+**Verdict:** Withdrawn · **Closed:** D6 adopted neither proposed name
 
 The Tenant Overview already carries a tile called Notices Raised, a period count. A live headcount one
 letter away would mean something different. D6 used the product's existing words instead.
 
 ### F14. "Under notice" has five live meanings in the code and two in our own sheets
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D6; Inventory's count still open
+**Verdict:** Build gap · **Note:** D6; Inventory's count still open
 
 **In the code:**
 
@@ -590,7 +590,7 @@ counts only; a dues column was tried and dropped because duplicate tenant rows i
 
 ### F15. The first Overdue tab is called "By Amount", but both tabs are amounts
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 One tab splits by how late the bill is, the other by bill type. "By Amount" names the measure rather
 than the split. Sheet §10 calls it By ageing, and the block's own axis label already reads "Overdue
@@ -601,7 +601,7 @@ Minor, in both documents: day 90 falls in the 22-90 bucket, so the bar labelled 
 
 ### F16. A dropdown with one option, on a block the sheet says has no dropdown
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D7
+**Verdict:** Build gap · **Note:** D7
 
 The build gives this block a dropdown with a single option, All Time (`registry.ts:115`). Sheet §10:
 "no dropdown of its own". A control with one option invites a tap and does nothing, the option it
@@ -610,7 +610,7 @@ same options as the top filter.
 
 ### F17. "Coming up" was dropped from the filter list and its behaviours were left behind
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D9. The largest finding in this review
+**Verdict:** Build gap · **Note:** D9. The largest finding in this review
 
 Every sheet's §4 carries a Coming up column, the forward setting. The option is missing from the two
 lists the app builds its filter from (`FIN_DURATION`, `OCCUPANCY_DURATION`), so the app can never send
@@ -632,7 +632,7 @@ sheet.
 
 ### F18. Two Dues blocks ignore the top filter and say nothing about it
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** against D9
+**Verdict:** Build gap · **Note:** against D9
 
 Every Dues block, checked for whether it reads the top filter and whether it says so on its face:
 
@@ -653,7 +653,7 @@ Every Dues block, checked for whether it reads the top filter and whether it say
 
 ### F19. Deposit Dues matches its categories by exact text, so 161 properties get a short figure
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 Both queries filter `due_type IN ('Security Deposit', 'Caution Money')`, exact, case sensitive,
 untrimmed. Sheet §3: "names that differ only by capitals group as one". The Category view on the same
@@ -677,13 +677,13 @@ zero, since each also has correctly spelled deposits, but every one shows a figu
 
 ### F20. The card shows a total the sheet never defined
 
-**Verdict:** Specification gap · **Status:** Closed · **Owed by:** Nobody · **Note:** sheet §12 now defines Total Deposits as Received plus Due
+**Verdict:** Specification gap · **Closed:** sheet §12 now defines Total Deposits as Received plus Due
 
 Adding the two is only safe once F21 is answered.
 
 ### F21. Received and Due are added up from two different money columns on the bill
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** blocks D10's new line
+**Verdict:** Build gap · **Note:** blocks D10's new line
 
 Received sums `net_amount`. Due sums `amount`. The total adds them.
 
@@ -695,7 +695,7 @@ screen sums `amount`; only this one reaches for `net_amount`.
 
 ### F22. Deposits held for tenants who have moved out were missing from the card
 
-**Verdict:** Specification gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D10; sheet §12 and §3 corrected; blocked on F21
+**Verdict:** Specification gap · **Note:** D10; sheet §12 and §3 corrected; blocked on F21
 
 The Received row keeps only invoices whose payer is at status 1 or 2. Sheet §12 said Received is
 "deposit collected and still held", which describes the money; §3 said old tenants are excluded from
@@ -723,7 +723,7 @@ not knowable from data. Ruling and caution in D10.
 
 ### F23. Dues is the only tab that never hides a card, and it has two cards that must
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek, and the owner for one rule
+**Verdict:** Build gap
 
 Sheet §19: "Breakup by Stay Duration hides when the property has no short-term tenants. Dues by
 Property renders only for multi-property accounts. Hidden is hidden: no ghost card, no explainer."
@@ -740,7 +740,7 @@ owe nothing hides under one test and shows a single restating bar under the othe
 
 ### F24. Breakup by Stay Duration has no empty state at all
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 When both figures are zero the block returns an empty list of segments with no empty state, no
 healthy state and no hidden flag. Every other block on the screen sends its zero somewhere; Dues by
@@ -748,7 +748,7 @@ Property, directly beneath, does it correctly.
 
 ### F25. The View all screen repeats two Overview defects, and one fix has to be applied twice
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** implementation note on F1 and F5
+**Verdict:** Build gap · **Note:** implementation note on F1 and F5
 
 `getViewAll` restates the six tiles from the same aggregate as the card, so it inherits F5; one fix
 there corrects both. But the choice of `current_fy` over `fy_ytd` is written separately in
@@ -759,7 +759,7 @@ for the F23 rule, and the only one where it was read and deferred rather than mi
 
 ### F26. Two creator codes have no name and are silently shown as RentOk
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek, and the owner for the naming
+**Verdict:** Build gap
 
 DA-01 §20, open item 2, asked engineering to settle this before the view shipped: "Dues worth about
 ₹2.8 crore carry a creator category that has no display name. Added By needs a name for it before
@@ -803,7 +803,7 @@ first, then the seven blocks and the View all sheet.
 
 ### F27. The forward window rules never landed on Collection's Custom path
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** D9 rules it; F17 logged the suite-wide cause
+**Verdict:** Build gap · **Note:** D9 rules it; F17 logged the suite-wide cause
 
 Due Date view lets a Custom window end after today (`masterConfig.ts:126`), which D9 makes the
 forward view. None of D9's safeguards exist here:
@@ -825,7 +825,7 @@ there (F17). The check that decides whether a tile sits out reads `filter_key ==
 
 ### F28. Total Collection leaves advance money out, and the sheet says the middle four tiles add up to it
 
-**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D12; sheet §5 corrected
+**Verdict:** Accepted change · **Closed:** D12; sheet §5 corrected
 
 Sheet §5: Total Collection is "all money received in the window", and the four tiles beside it,
 Advance included, "add up to Total Collection exactly". The code counts only money applied to bills:
@@ -842,7 +842,7 @@ Ruled as built: D12 has the reasoning. Sheet §5 corrected.
 
 ### F29. Collection is counted at the bill amount, not at money net of processing charges
 
-**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D13; sheet §3 and §17.7 corrected
+**Verdict:** Accepted change · **Closed:** D13; sheet §3 and §17.7 corrected
 
 Sheet §3, the base rule: "a ₹10,000 online payment carrying a ₹200 charge counts as ₹9,800", and
 §17.7 repeats it as a test. The code values every payment against a bill at the bill's own amount
@@ -854,7 +854,7 @@ counting net. Sheet §3 and §17.7 corrected.
 
 ### F30. Settlement Pending carries no chip, and the sheet asks for one
 
-**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D14; sheet §4 chip table corrected
+**Verdict:** Accepted change · **Closed:** D14; sheet §4 chip table corrected
 
 Sheet §4's chip table: Settlement Pending rising is bad, red up, green down. The build sends no chip
 on the tile in either view (`collectionService.ts:319`).
@@ -863,7 +863,7 @@ Ruled right as built: D14 has the reasoning, and §4's chip table now carries it
 
 ### F31. Advance and Current FY lose their chips when the view flips
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 In Paid Date view both tiles carry a good-kind chip (`collectionService.ts:317-318`). In Due Date
 view the same two tiles, same numbers, same windows, send no chip (`collectionService.ts:352-353`). §4 says
@@ -873,7 +873,7 @@ the never-switching tiles do not change between views; their chips should not ei
 
 ### F32. In Due Date view the window runs to the period's end, and the chip compares elapsed days
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D11 settles it; F33 is separate and stands
+**Verdict:** Build gap · **Note:** D11 settles it; F33 is separate and stands
 
 The build read This Month in Due Date view as the full month, 1st to 31st: the due window kept the
 whole period (`collectionService.ts:183`) while the paid window caps at today, and Current FY in
@@ -889,7 +889,7 @@ future bills go, live in D11.
 
 ### F33. The Collected & Adjusted comparison is measured as it stands today
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the same mistake as F5; D11 sets the windows it compares
+**Verdict:** Build gap · **Note:** the same mistake as F5; D11 sets the windows it compares
 
 D4 defines collected-against-bills as payments whenever they arrived, which is right for the tile.
 The chip's comparison figure is computed the same way (`collectionService.ts:340`), so last month's
@@ -902,7 +902,7 @@ payments and only needs D11's cap.
 
 ### F34. The Overview's special states are half built
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 The negative-total note is built and worded exactly as §5 asks. Not built: the adjustments-only
 state, ₹0 with "No money received. ₹X of bills were cleared from deposits and advances.", and any
@@ -911,7 +911,7 @@ Every other Collection block sends its zeros somewhere; the screen's headline bl
 
 ### F35. Category rows split by spelling, and Dues already solved it
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** found by the F19 sweep
+**Verdict:** Build gap · **Note:** found by the F19 sweep
 
 `breakupCategory` groups by raw `inv.due_type` (`collectionService.ts:469`, `:481`); Dues groups the
 same field with `LOWER(TRIM(...))` (`duesService.ts:220`). Measured on production, July 2026, live
@@ -928,7 +928,7 @@ fix lands everywhere; note the billed lookup joins on the label and must normali
 
 ### F36. In Due Date view the Mode and Received by tabs leave the adjustment money out
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 Sheet §6, Due Date view: all four tabs split Collected & Adjusted "and all four still add up to it".
 `foldModes` and `foldReceivers` skip the three adjustment modes unconditionally
@@ -945,7 +945,7 @@ labels them.
 
 ### F37. The Status tab's promised one-line note is missing
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §6: payments with no tenant attached stay in the total, and "the Status tab says in one line that
 they are not counted there". `breakupStatus` drops them silently. Ten payments in July platform-wide
@@ -954,7 +954,7 @@ the tab's rows visibly sum short of the card's total.
 
 ### F38. The Status tab has no billed side in Due Date view
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §6, Due Date view: "Category and Status also show what was billed, row by row". The Category tab
 does; the Status tab returns collected values only (`collectionService.ts:494`). "Rent ₹8L of ₹10L"
@@ -962,7 +962,7 @@ works; its Status twin does not exist.
 
 ### F39. Four blocks ship the empty-state copy the sheet replaced
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §15 lists the current copy and its replacement for each. The build ships the current, wrong copy
 verbatim (`EMPTY`, `collectionService.ts:61`):
@@ -978,7 +978,7 @@ verbatim (`EMPTY`, `collectionService.ts:61`):
 
 ### F40. The Discount figure reads a column that is empty on production
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the largest finding on this tab
+**Verdict:** Build gap · **Note:** the largest finding on this tab
 
 The Adjusted Collection card's Discount figure sums `invoices.discount`
 (`collectionService.ts:631`), and Vivek's guide describes the same, so the two documents agree with
@@ -1011,7 +1011,7 @@ sixth every month and could never agree with the homescreen, which reads `owner_
 
 ### F41. Collection by Property follows the toggle, and the sheet says it does not change
 
-**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D15; sheet §4 and §10 corrected
+**Verdict:** Accepted change · **Closed:** D15; sheet §4 and §10 corrected
 
 Sheet §4's card table says the card does not change in Due Date view, and §10 says "the same in both
 views". The build switches with the view: money arrived per property in Paid Date, collected and
@@ -1021,7 +1021,7 @@ Ruled as built: D15 has the reasoning. Sheet §4, §10 and test §17.1 corrected
 
 ### F42. The destination rows cover under 3% of settled money
 
-**Verdict:** Build gap · **Status:** Closed · **Owed by:** Nobody · **Note:** coverage fixed in `4bce93d21`; the rewrite brought its own defect, F87
+**Verdict:** Build gap · **Closed:** coverage fixed in `4bce93d21`; the rewrite brought its own defect, F87
 
 §11: "the destination comes from the settlement record, whichever settlement system wrote it", and
 the rows break down Total Settled and add up to it. The build reads destinations from
@@ -1037,7 +1037,7 @@ line only when no system names an account.
 
 ### F43. The settled test says yes before money reaches the bank
 
-**Verdict:** Build gap · **Status:** Closed · **Owed by:** Nobody · **Note:** answered by `4bce93d21` and superseded by F88; rewrote §18's open item 1
+**Verdict:** Build gap · **Closed:** answered by `4bce93d21` and superseded by F88; rewrote §18's open item 1
 
 The build marks a payment settled when its payout row has status 1, its wallet entry has a UTR, or a
 scheduler row succeeded (`collectionService.ts:776`). Measured on production, live non-test
@@ -1060,7 +1060,7 @@ test is what needs proving.
 
 ### F44. The View all sheet half follows the toggle
 
-**Verdict:** Build gap · **Status:** Closed · **Owed by:** Nobody · **Note:** fixed in `a2d839ea1`, verified at F89
+**Verdict:** Build gap · **Closed:** fixed in `a2d839ea1`, verified at F89
 
 §12: the sheet "reads by the screen's window and toggle". In Due Date view the category rows switch
 correctly and carry their billed side. The rest does not: the "This window's collection" rows and
@@ -1072,7 +1072,7 @@ split Collected & Adjusted.
 
 ### F45. The View all Adjusted rows leave Discount out
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 `adjustedTotal` sums the three adjustment modes only (`collectionService.ts:879`). §3 defines
 adjustment as four kinds, discount included, and the Adjusted Collection card shows four. The View
@@ -1081,7 +1081,7 @@ the discount source is the credits records.
 
 ### F46. The healthy states are not emitted
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §15's healthy table: Still Unpaid at zero reads "Everything billed for this period is collected",
 Unsettled at zero reads "All online money has reached your bank", Settlement Pending at zero says
@@ -1094,7 +1094,7 @@ first, then the five blocks and the View all sheet.
 
 ### F47. The "same point last month" chip reaches into the current month seven days a year
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** all five services carry the same two lines
+**Verdict:** Build gap · **Note:** all five services carry the same two lines
 
 The comparison window is built as "first of last month, plus today's date minus one"
 (`expenseService.ts:158`). When the previous month is shorter than today's date, that overflows past
@@ -1123,7 +1123,7 @@ F5's fix must not be written as if this one were already handled.
 
 ### F48. The sheet says three totals must always match, and its own filter rule lets them differ
 
-**Verdict:** Specification gap · **Status:** Closed · **Owed by:** Nobody · **Note:** sheet §3 corrected
+**Verdict:** Specification gap · **Closed:** sheet §3 corrected
 
 §3 read, before this edit: Total Expense on the Overview, on Expense Breakdown and on Top Payers
 "must always be the same number". §4: a card can be deliberately set aside on its own dropdown until the top filter next
@@ -1135,7 +1135,7 @@ they share a window. §3 now carries the exception.
 
 ### F49. No chip where the sheet asked for a rupee change
 
-**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D16; sheet §4 corrected
+**Verdict:** Accepted change · **Closed:** D16; sheet §4 corrected
 
 §4 asked for the rupee change with the percentage dropped where the previous period had no spend.
 `chipMoney` and `chipCount` both return null when the previous figure is zero or less
@@ -1143,7 +1143,7 @@ they share a window. §3 now carries the exception.
 
 ### F50. Four properties in five are told to add their first expense
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the largest finding on this tab
+**Verdict:** Build gap · **Note:** the largest finding on this tab
 
 §13 separates two zeros and states the rule outright: a property with real history and a quiet month
 gets the plain line, and the setup message "appears only where no expense has ever existed". The
@@ -1170,7 +1170,7 @@ expense at all, which is one existence check per card and not per row.
 
 ### F51. The Overview row sends its zero nowhere
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F24 sweep; same shape as F34
+**Verdict:** Build gap · **Note:** the F24 sweep; same shape as F34
 
 §4 puts the screen-level in-window zero on the Overview row in as many words: "the entry point is
 the Overview row... the in-window zero and the narrowed-access note both show there". §17 item 29
@@ -1184,7 +1184,7 @@ exactly zero owed today.
 
 ### F52. A property the app cannot find shows made-up numbers as though they were real
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** suite-wide, 51 places across five services
+**Verdict:** Build gap · **Note:** suite-wide, 51 places across five services
 
 Ask for a property that has been deleted, or send a stale property number, and the screen fills with
 ₹26.3K, 128 expenses, "Jatin" and "Sharma PG". §13 asks for "Select a property to view expenses."
@@ -1204,7 +1204,7 @@ state, and only an unbuilt block falls back to mock.
 
 ### F53. Still owed to staff will read fifty crore and can only grow
 
-**Verdict:** Specification gap · **Status:** Closed · **Owed by:** Nobody · **Note:** the same shape as D10; sheet §5 carries the caution; S6 proposes the fix at the source
+**Verdict:** Specification gap · **Closed:** the same shape as D10; sheet §5 carries the caution; S6 proposes the fix at the source
 
 The tile is built correctly. It is the exact negative of the Personal funds balance the Passbook
 screen shows for the same people, same rows, same formula (`teamPassbook.ts:1444` against
@@ -1232,7 +1232,7 @@ back in cash" conversation is coming. Sheet §5 now carries the caution and the 
 
 ### F54. The staff tile counts refunds staff fronted, and the sheet said two things
 
-**Verdict:** Accepted change · **Status:** Ruled · **Owed by:** Owner for one question · **Note:** D17 settles the refunds; the passbook rows with no property are still open
+**Verdict:** Accepted change · **Note:** D17 settles the refunds; the passbook rows with no property are still open
 
 ₹2.32 crore of the ₹50.77 crore is tenant refunds a staff member paid from their own pocket. §5
 defines the tile as money staff fronted that has not been paid back, which takes them in; §15.15
@@ -1250,7 +1250,7 @@ fixed.
 
 ### F55. The quarantine row always reads ₹0, which is the one thing it exists to avoid
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 "Rows with a negative or zero amount" is §6's proof that the totals were worked out on clean rows.
 The row is built as `inr(Math.abs(n(...)))` (`expenseService.ts:300`). `n()`
@@ -1267,7 +1267,7 @@ strictly negative amount worth negative ₹10.33 lakh. Those 94 are the ones ren
 
 ### F56. The no-bill row prints its amount twice
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §6 asks for one presentation, an amount and a share together: "₹8.2L of ₹9.8L, 84%". The build sends
 the amount as the row's value and the whole phrase again underneath (`expenseService.ts:294`), so the
@@ -1283,7 +1283,7 @@ The wrong quote hid the second defect.
 
 ### F57. The View all sheet says today whatever window it is on
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** against D9
+**Verdict:** Build gap · **Note:** against D9
 
 The sheet carries `window_label: w.today` (`expenseService.ts:303`), so a Last Month sheet announces
 today's date. D9 requires a block that does not simply follow the filter to declare its own time
@@ -1299,7 +1299,7 @@ renamed later.
 
 ### F58. Which clock a paid date is stored on has not been settled
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** a question to answer, not a defect to fix yet
+**Verdict:** Build gap · **Note:** a question to answer, not a defect to fix yet
 
 §4 says a day runs midnight to midnight, India time, and §15.14 tests it: an expense recorded at
 23:30 on the window's last day counts inside that window. Every Expense query compares
@@ -1332,7 +1332,7 @@ yes test needs proving.
 
 ### F59. Outside the six named groups, capitals split the bar, and a tenth of the money is in there
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** found by the F19 sweep; third tab with this fault
+**Verdict:** Build gap · **Note:** found by the F19 sweep; third tab with this fault
 
 The six named groups match on a case-insensitive prefix and are fine. Everything else falls to the
 catch-all, which trims but does not lower-case (`CAT_GROUP`, `expenseService.ts:41`), so a typed
@@ -1359,7 +1359,7 @@ The named groups need no change.
 
 ### F60. The rollup row and a category people actually type share the word "Others"
 
-**Verdict:** Accepted change · **Status:** Closed · **Owed by:** Nobody · **Note:** D18; sheet §7 corrected; the repair is parked as S5
+**Verdict:** Accepted change · **Closed:** D18; sheet §7 corrected; the repair is parked as S5
 
 §7 read, before this edit: "Nothing in the sheet is ever labelled 'Other', so the word keeps one meaning on this
 screen", and §14 said the screen never renames what somebody typed. Both cannot hold, because people
@@ -1382,7 +1382,7 @@ Ruled as built, reasoning in D18.
 
 ### F61. FlexiPe is a third of the money and the sheet calls it one in seven
 
-**Verdict:** Specification gap · **Status:** Closed · **Owed by:** Nobody · **Note:** sheet §7 corrected
+**Verdict:** Specification gap · **Closed:** sheet §7 corrected
 
 §7 read, before this edit: "This is not a small row. Roughly one expense in seven leaves through FlexiPe." True by count and
 it undersells the row. Measured on live properties over twelve months: 13.4% of expenses, and
@@ -1392,7 +1392,7 @@ from "one in seven".
 
 ### F62. A third of all spending shows on the Paid by tab as a bracketed string nobody typed
 
-**Verdict:** Specification gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D19; sheet §8 corrected
+**Verdict:** Specification gap · **Note:** D19; sheet §8 corrected
 
 `payerItems` reads `e.payer` and trims it (`expenseService.ts:489`), which is exactly what §8 asks.
 The problem is upstream: the FlexiPe path writes the payer as the literal `(Owner)`, brackets
@@ -1421,7 +1421,7 @@ do not, because a category is a label people reuse from a short list and a name 
 
 ### F63. The trend's running bar counts days that have not happened
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** found by the F40 one-clock sweep
+**Verdict:** Build gap · **Note:** found by the F40 one-clock sweep
 
 Every block on this tab caps its window at today. The trend does not: its query runs to
 `endOf('month')` (`expenseService.ts:521`). So an expense dated later this month sits in the running
@@ -1445,7 +1445,7 @@ So the money in flight at any moment is small, and the situation recurs a few hu
 
 ### F64. Expenses by Property has its empty copy written and never sends it
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F24 sweep; sheet §10 and §13 reconciled
+**Verdict:** Build gap · **Note:** the F24 sweep; sheet §10 and §13 reconciled
 
 `EMPTY.by_property` is defined in full at `expenseService.ts:68` and is the only one of the four
 empty states never used. `getByProperty` returns rows and a hint and nothing else
@@ -1462,7 +1462,7 @@ first, then the eight blocks and the View all sheet.
 
 ### F65. Not one change chip is built on this tab, and the code for them is written and never called
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** corrects F6's table; absorbs F47's Occupancy half
+**Verdict:** Build gap · **Note:** corrects F6's table; absorbs F47's Occupancy half
 
 `chip()` sits at `occupancyService.ts:54` with the correct per-tile polarity written into it, good for
 a rising Occupied, bad for a rising Vacant, neutral for Rentable. **It is never called once in the
@@ -1486,7 +1486,7 @@ before, or the first chip this tab ever shows carries the defect on day one.
 
 ### F66. Pending evictions are invisible on this entire screen
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D21 names it, D22 sets the unit-view number; this is F14's sixth meaning, now traced
+**Verdict:** Build gap · **Note:** D21 names it, D22 sets the unit-view number; this is F14's sixth meaning, now traced
 
 F14 row 6 left the Occupancy Under notice tile untraced. Traced here: it reads widget 1402,
 `UNDER_EVICTION`, and **the two property structures build it differently**, which the code says out
@@ -1529,7 +1529,7 @@ two branches say the same thing as the variable already holds.
 
 ### F67. The booked layer and the Unit view's Occupied count take in bookings nobody approved
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D20 settles it; this is the F4 question DA-08 was left to answer
+**Verdict:** Build gap · **Note:** D20 settles it; this is the F4 question DA-08 was left to answer
 
 §3 is explicit twice over: a booked bed is still vacant, and Booked means confirmed only. The build
 reads the homescreen widget, which answers differently in each view:
@@ -1551,7 +1551,7 @@ gives a very different picture.
 
 ### F68. The period rate divides by today's capacity, and the trend beside it does not
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F40 one-clock sweep, inside one tab
+**Verdict:** Build gap · **Note:** the F40 one-clock sweep, inside one tab
 
 §18 item 1 sets the rule: "capacity counts as it stood each day". §18 item 5 adds: compute each
 number once.
@@ -1583,7 +1583,7 @@ once and not rediscovered.
 
 ### F69. Occupancy Status ships four chips where the sheet asks for two, and two of them were cut by name
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §7's chip table has two rows, Under Notice and Over-occupied. §20's design-fix item 33 names the
 other two and says to remove them: "Overbooked occupancy" (cut) and "Booked Beds" (lives in the
@@ -1610,7 +1610,7 @@ on the Tenant tab at `tenantService.ts` in `liveTiles`.
 
 ### F70. In Bed view the donut legend does not add up to Total wherever a room is over-occupied
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §7 states it as a trust rule in as many words: the legend adds up to Total, and "a legend summing to
 one number beside a percentage computed from another is checked once, cannot be reconciled, and is
@@ -1641,7 +1641,7 @@ labels; everything else here is arithmetic.
 
 ### F71. The booked layer is a room count printed inside a bed number
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §7 asks the Vacant legend to carry its split: "Vacant 38: 17 booked, 21 available". The build
 computes booked as `min(max(bookedRooms − underNoticeWithBooking, 0), vacant)`
@@ -1669,7 +1669,7 @@ detail rather than guess." What is not allowed is today's silent mixture of the 
 
 ### F72. Rooms that declare no capacity count as rentable units
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §3 defines rentable as total "minus disabled ones and minus rooms that declare no capacity", and §18
 item 4 makes it a test: "one zero-capacity room on a full property leaves the rate at 100%".
@@ -1691,7 +1691,7 @@ the sheet, is a row of their own named "No capacity set", so the number is visib
 
 ### F73. Vacant Room Status paints Never rented red on almost every property, the one thing §8 forbade
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §8 grants this card the suite's one exception to red-for-obligations, and bounds it in the same
 paragraph: red marks the largest of the **four aging bars only**, "never rented and Unknown sit
@@ -1709,7 +1709,7 @@ of code.
 
 ### F74. The one empty-state sentence §16 forbade by name ships verbatim, and no card has a healthy state
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the same shape as F50 on Expense
+**Verdict:** Build gap · **Note:** the same shape as F50 on Expense
 
 §16 separates a card's empty state from its healthy state, and says an empty card here "is usually
 good news, a distinction no sibling needs". It then names the design's current copy and rules it out:
@@ -1737,7 +1737,7 @@ button.
 
 ### F75. Upcoming Vacancy follows the view toggle, and the sheet says it must not
 
-**Verdict:** Accepted change · **Status:** Ruled · **Owed by:** Sheet · **Note:** D23; §9 and §4 corrected
+**Verdict:** Accepted change · **Note:** D23; §9 and §4 corrected
 
 §4 and §9 both say this card ignores the toggle and counts per room. The build switches with it:
 Bed view counts departing tenants, Unit view counts distinct room-and-day vacancy events, and the
@@ -1747,7 +1747,7 @@ The build is right. Reasoning in D23.
 
 ### F76. Upcoming Vacancy paints its largest bar red, an exception the sheet granted only to its neighbour
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §4's red rule: red for unmet obligations and passed dates only, with **one** deliberate exception,
 the vacancy-age chart in §8. The build gives the same treatment to Upcoming Vacancy
@@ -1765,7 +1765,7 @@ paragraph.
 
 ### F77. More than half of the agreement dates are invented, on the one card the sheet says carries facts
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D24 settles it; S7 proposes the fix at the source
+**Verdict:** Build gap · **Note:** D24 settles it; S7 proposes the fix at the source
 
 §10 is careful about what this card claims: "Agreed end dates are facts about paperwork, not
 confirmed departures, and the card says so." §17 makes it a prohibition: "No guesswork in any forward
@@ -1795,7 +1795,7 @@ other way and the reasoning is in D24.
 
 ### F78. An empty room is priced at zero, so 85% of vacant beds cost nothing
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the largest finding on this tab; also a doc fix, G10
+**Verdict:** Build gap · **Note:** the largest finding on this tab; also a doc fix, G10
 
 §12 sets the pricing ladder in three steps: "its own configured rent first, then what the space was
 last let for, then the group's average."
@@ -1830,7 +1830,7 @@ snapshot on the stay-history row is where it will come from when it lands.
 
 ### F79. Every bar on the losing-money card is drawn at zero width, and every share reads 0%
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 The revenue-loss figure is formatted for display first, into a string like "₹1.24Cr", and the bar and
 the share are then computed by stripping the currency out of that string and comparing what is left
@@ -1855,7 +1855,7 @@ resting on all ninety.
 
 ### F80. Three blocks ignore the top filter and say nothing at all about it
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** against D9; the F18 sweep
+**Verdict:** Build gap · **Note:** against D9; the F18 sweep
 
 D9's rule: a block that does not follow the top filter says so on its face, in one of three ways.
 Every Occupancy block, checked for both halves:
@@ -1887,7 +1887,7 @@ F68, since they read the same counts.
 
 ### F81. The View all sheet is missing seven of its eighteen rows and one of its three sections
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §6 lays the sheet out as three plain questions. As §6 now reads after this review's edits it carries
 eighteen rows; the build ships eleven of them and two of the three sections
@@ -1913,7 +1913,7 @@ rather than pre-existing gaps, so this row grows with those rulings and is one b
 
 ### F82. The trend draws empty months from before the property existed
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §11: "History before the property joined does not exist and is not invented; the chart starts where
 the data starts."
@@ -1928,7 +1928,7 @@ empty.
 
 ### F83. A window ending in the future shows today's numbers under tomorrow's label
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** F17 logged the cause, D9 the rules; DA-08 §4 rewritten here
+**Verdict:** Build gap · **Note:** F17 logged the cause, D9 the rules; DA-08 §4 rewritten here
 
 The app lets a Custom window end after today, `allow_future_date: true` at the tab level
 (`masterConfig.ts:153`). The service then caps the end date back to today (`occupancyService.ts:88`)
@@ -1950,7 +1950,7 @@ as arrivals, which D20 now rules against.
 
 ### F84. Occupancy holds 9 of the 51 places where a missing property falls back to the scaffold
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** F52 is the finding; this records where they are
+**Verdict:** Build gap · **Note:** F52 is the finding; this records where they are
 
 Every one of the nine blocks returns `null` when no live property matches
 (`occupancyService.ts:167`, `:228`, `:284`, `:363`, `:399`, `:488`, `:531`, `:581`, `:609`), and the
@@ -1967,7 +1967,7 @@ logic changed" and `a2d839ea1` "collection due view all sheet data", 2026-08-25.
 
 ### F85. Refunds never came off collected money, and this review missed it. They do now
 
-**Verdict:** Build gap · **Status:** Closed · **Owed by:** Nobody · **Note:** fixed in `4bce93d21`; the miss is this review's, see the audit note
+**Verdict:** Build gap · **Closed:** fixed in `4bce93d21`; the miss is this review's, see the audit note
 
 Sheet §3 says refunds come off everywhere, "every tab, every bar, every property row and every View
 all row", and §17.4 makes it a test. The build did not do it. `COLL_AMT` valued every payment at the
@@ -1997,7 +1997,7 @@ caught it did not exist; it does now, see the status board.
 
 ### F86. Collection now matches neither the list it drills into nor the homescreen
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Owner first · **Note:** the §1 goal, now measurable
+**Verdict:** Build gap · **Note:** the §1 goal, now measurable
 
 DA-02 §1 states the goal: "the homescreen's collection figure, the collections list and the old
 collection widgets do not produce one answer. Making them one answer is part of this build." Three
@@ -2033,7 +2033,7 @@ and F40 has to be fixed anyway.
 
 ### F87. The destination rows now overstate settled money by 14%
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** F42's coverage is fixed; this is new
+**Verdict:** Build gap · **Note:** F42's coverage is fixed; this is new
 
 F42 found "Where settled money went" reading one settlement table and covering under 3% of settled
 money. `4bce93d21` rewrites it to three sources: direct bank payouts, wallet money moved to a bank
@@ -2058,7 +2058,7 @@ for.
 
 ### F88. "Settled" now counts money sitting in Flexi Pay, and the sheet reserves that word for the bank
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Owner first · **Note:** supersedes F43
+**Verdict:** Build gap · **Note:** supersedes F43
 
 Sheet §3 reserves the word: "**Settled**, reserved for one meaning: money that has physically reached
 the owner's bank." §11 repeats it for the tile.
@@ -2088,7 +2088,7 @@ the bank. The answer is no, and the product has now decided that it does not hav
 
 ### F89. The View all sheet now follows the toggle
 
-**Verdict:** Pass · **Status:** Closed · **Owed by:** Nobody · **Note:** F44 fixed in `a2d839ea1`
+**Verdict:** Pass · **Closed:** F44 fixed in `a2d839ea1`
 
 F44 found the View all sheet following the toggle only halfway: the category rows switched with the
 view, the headline rows and the stay rows stayed on money received. `a2d839ea1` fixes both. In Due
@@ -2107,7 +2107,7 @@ finding's function name still holds.
 
 ### F90. One junk property setting kills the whole Tenant page, and an Occupancy card with it
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** S8 proposes the fix at the source
+**Verdict:** Build gap · **Note:** S8 proposes the fix at the source
 
 The agreement end date rule reads the property's default agreement length with a plain cast to a
 number, inside `ENDS_ON` (`tenantService.ts:176`). The column is text and the settings screen
@@ -2135,7 +2135,7 @@ field where it is typed, which is where this class of defect dies.
 
 ### F91. The forward window rules never landed on Tenant's Custom path, and F17's dead code is still here
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D9 rules it; F17 logged the cause; the Tenant twin of F27 and F83
+**Verdict:** Build gap · **Note:** D9 rules it; F17 logged the cause; the Tenant twin of F27 and F83
 
 The app lets a Custom window end after today (`allow_future_date: true`, `masterConfig.ts:165`).
 The service caps the end back to today and says nothing (`tenantService.ts:137`), so a manager who
@@ -2158,7 +2158,7 @@ it. Sheet §4 is rewritten onto the Custom path in this pass, the edit the open 
 *Ten blocks, plus Journey's live bars, whose card as a whole does follow the filter through its
 window strip.*
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** against D9; the F18 and F80 sweep
+**Verdict:** Build gap · **Note:** against D9; the F18 and F80 sweep
 
 Most of this screen is live by design, and §4 requires a live number to say "as of today" on its
 face. Only the Overview tiles and the Renewal overdue card do; the block registry, the code that
@@ -2172,7 +2172,7 @@ the live blocks, "From today onwards" on the two forward cards.
 
 ### F93. Approved Bookings counts every tenant added on an auto-accept property, and the Journey funnel is built on the same mistake
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek, then the owner · **Note:** the largest finding on this tab
+**Verdict:** Build gap · **Note:** the largest finding on this tab
 
 How the tile decides "a booking confirmed in the window" (`approvedBookings`,
 `tenantService.ts:330`): take every tenant at status 0, 1 or 2; on properties that need approval,
@@ -2212,7 +2212,7 @@ face, and whether that is acceptable is the owner's call. The clean interim alre
 
 ### F94. The Overview info sheet defines seven of its nine numbers, and one definition is wrong
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 `tenHints.overview` (`tenantHints.ts:62`) has no entry for Eviction Approved or Past their date, the
 two tiles whose meanings most need stating: §3's whole point about Past their date is that the
@@ -2222,7 +2222,7 @@ yet moved in" (`tenantHints.ts:10`), which is wrong. The tile counts confirmed a
 
 ### F95. A cancelled booking counts as a move-out, failing a test the sheet spells out
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** found by the F85 rule-by-rule sweep; S2 is the same flow
+**Verdict:** Build gap · **Note:** found by the F85 rule-by-rule sweep; S2 is the same flow
 
 §3: "A cancelled booking is not a move-out either", with its own test: cancel a booking, Move-outs
 is unchanged and Cancelled rises by one. The cancellation flow fails it: rejecting a booking calls
@@ -2241,7 +2241,7 @@ count already reads the confirmation rows correctly.
 
 ### F96. Journey's Under Notice bar counts only the pending half, so one label carries two meanings on one screen
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D29 rebuilt this card and settles it: the bar becomes Eviction pending under its own name
+**Verdict:** Build gap · **Note:** D29 rebuilt this card and settles it: the bar becomes Eviction pending under its own name
 
 Sheet §8: the bar is "Living here, has said they are leaving", the parent group, and the three bars
 "overlap each other, parallel bars only". The build's bar tests only a pending notice with no
@@ -2260,7 +2260,7 @@ sheet's Under notice row keeps the parent test and gains the D28 name, Under evi
 
 ### F97. The Journey strip: Churn is a bare count, and "left early" measures against the wrong date
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 **Churn** ships as the raw move-out count (`tenantService.ts:586`). §8 defines it as "left, against
 who was here", and the tap matrix calls the strip figures rates. Fix: the share, with the count
@@ -2276,7 +2276,7 @@ line although the sheet's own measurement puts lock-in on 37% of departures.
 
 ### F98. Four colour-rule breaches, including a red that every new tenant triggers on arrival
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F73 sweep, does the code honour the colour bound
+**Verdict:** Build gap · **Note:** the F73 sweep, does the code honour the colour bound
 
 §4 bounds red to unmet obligations and passed dates, and adds "A property onboarded this morning
 must not open red." Checked on every bar and legend:
@@ -2294,7 +2294,7 @@ read even though Pending is rightly not red.
 
 ### F99. The eviction tiles and the Upcoming Eviction card read two different records, and §11's one-number rule was impossible as written
 
-**Verdict:** Build gap and Specification gap · **Status:** Open · **Owed by:** Vivek for the source; sheet §11 corrected
+**Verdict:** Build gap and Specification gap
 
 **The build gap.** The tiles read the tenant record: an approved eviction is the tenant's own
 confirmed date (`liveTiles`, `tenantService.ts:297`). The card reads only the notice records
@@ -2316,7 +2316,7 @@ of the bar, and names the pending gap.
 
 ### F100. Three quarters of the Already expired bar rests on a date the product invented
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D26 settles it; F77 and D24 are the same defect one screen over
+**Verdict:** Build gap · **Note:** D26 settles it; F77 and D24 are the same defect one screen over
 
 The sheet knew about the fallback and asked for a line, and the line ships: "Dates are assumed at 11
 months where no duration is recorded" (`tenantService.ts:835`, and the hint says the same). What D24
@@ -2348,7 +2348,7 @@ D26 ruled for the measured-figures reading: the fallback tenants become their ow
 
 ### F101. Stayed after notice ships as a count where the sheet defines a share, and counts a day early
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 §15: "Of those whose leaving date fell in the window, the share still here." The build counts living
 tenants whose confirmed leaving date falls in the window (`tenantService.ts:996` to `:998`) and
@@ -2361,7 +2361,7 @@ it.
 
 ### F102. Renting Type renders the stay split under another name, which the sheet forbade in as many words
 
-**Verdict:** Build gap · **Status:** Ruled · **Owed by:** Vivek · **Note:** D27 settles it; the build says out loud that it is interim
+**Verdict:** Build gap · **Note:** D27 settles it; the build says out loud that it is interim
 
 §16: the B2B and Residential split renders only where renting type is recorded, "a missing value is
 not an answer." The field is unpopulated on production, and the build substitutes the short against
@@ -2373,7 +2373,7 @@ field is captured.
 
 ### F103. No healthy state exists, six empty states are written and never sent, and the not-set-up screen is missing
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** the F74 and F50 shape, third tab running; the F64 sweep
+**Verdict:** Build gap · **Note:** the F74 and F50 shape, third tab running; the F64 sweep
 
 §21 separates seven empty-looking situations. The build has one kind of state, per-block empty copy,
 and even that is half wired:
@@ -2402,7 +2402,7 @@ and even that is half wired:
 
 ### F104. Recorded answers that fit no bucket are dropped or mislabelled, against the card's own coverage line
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek
+**Verdict:** Build gap
 
 Three cases, one class, measured on production, live properties, living tenants, 25 August 2026:
 
@@ -2430,7 +2430,7 @@ exists and states its coverage rather than folding the gap into a bucket.
 
 ### F105. Discount is stored twice, and the two stores disagree by a sixth
 
-**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** corrects F40's fix line; grounds the F86 ruling
+**Verdict:** Build gap · **Note:** corrects F40's fix line; grounds the F86 ruling
 
 Found while preparing the F86 ruling, which turns on whether discount comes off collection. The
 product records a payment-time discount in two places:
