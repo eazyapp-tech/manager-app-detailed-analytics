@@ -6,7 +6,11 @@ verifying the build, kept apart from [[01 — Build Verification Log]] so the de
 list.
 
 **Nothing here is actioned without an owner ruling.** The owner is Sanchay. Each entry says what
-happens today, why it looks wrong, and what is proposed.
+happens today, why it looks wrong, and what is proposed. **The next number is S13.**
+
+S10, S11 and S12 arrived on 27 August 2026 from the project tracker, which used to hold them as
+unowned open questions and no longer holds live state of any kind. None of them is new; each is dated
+from when it was first found.
 
 | # | Suggestion | Status | Waits on |
 |---|---|---|---|
@@ -19,6 +23,9 @@ happens today, why it looks wrong, and what is proposed.
 | S7 | Ask for the agreement length at move-in, so the gap stops growing | Proposed | Owner |
 | S8 | Validate the property's agreement-length setting where it is typed | Proposed | Owner |
 | S9 | Add Past their date to Journey's eviction split, so the rows add up to Active | Ruled out of the build; one question open | Owner, on the note against the row |
+| S10 | Give every row that opens something a chevron, not just the Others rows | Proposed | Owner, on whether this is worth a shared-component change |
+| S11 | Make the list a drill lands on say which slice it is showing | Proposed | Owner, on whether this ships with the analytics screens or after |
+| S12 | Check permissions on the pages below the first list, the way the list itself does | Proposed | Owner, on whether the drills ship before this is fixed |
 
 | Status | Meaning |
 |---|---|
@@ -292,3 +299,79 @@ people whose leaving date has passed, or add a fifth row, Past their date, insid
 the rows add up on every property. **My pick is the note**: it closes the arithmetic gap without
 breaking §5's rule that Past their date lives on one tile and nowhere else, and it costs a line
 instead of a row on a card that is already carrying six.
+
+## S10. Only some rows that open something look like they open something
+
+**Status:** Proposed. First found on Expense 2026-08-07, moved here from the tracker 2026-08-27
+**Where:** the analytics screens as a family, most likely one shared row component
+
+On Expense, only the **Others** rows carry a chevron, while every row on every card opens something.
+A manager reading the screen has no way to tell which numbers are doors and which are just numbers,
+so the ones without a chevron read as dead ends and go untapped.
+
+**Why it looks wrong.** The whole point of these screens is that a number opens the records behind
+it, which is what the tap matrix on every sheet exists to specify. An affordance shown on one row
+type and not the others teaches the manager the opposite of the rule.
+
+**Why it is probably one fix, not five.** The rows are almost certainly a shared component, which
+means it is likely wrong on every screen in the same way and right in one place.
+
+**Not verified beyond Expense.** This was seen on one screen and never checked on the other four.
+That check is the first thing to do, because it decides whether this is a component change or five
+screen changes.
+
+**Proposed:** every row that opens something carries the affordance, and the tap matrix on each sheet
+becomes the list of which rows those are.
+
+## S11. The list a drill lands on does not say what it is showing
+
+**Status:** Proposed. First found on Collection 2026-08-06, moved here from the tracker 2026-08-27
+**Where:** the manager web app's list screens, not the analytics screens
+
+Checked against the live collections list: a manager arriving from a widget tap sees a page titled
+**"Collections Overview"**, fixed, whatever filter brought them there. Chips naming the active filters
+exist but render only **after the person scrolls**, and filters that arrive from tapping a widget
+produce **no chip at all**. An empty filtered slice shows one sentence, **"There are no collections
+present."**
+
+**Why it looks wrong.** The manager tapped a specific number and landed somewhere that will not say
+which number they tapped. Worse, the empty state reads as "you have no collections at all", which is
+false for a property that collected lakhs that month. That undoes on the next screen exactly what the
+analytics screens are built to do.
+
+**Not verified beyond the collections list.** The other list destinations have never been checked, and
+the same component very likely serves several of them.
+
+**Proposed**, and it is the same three things the tracker's R67 already requires of any drill
+destination: name the slice in place of the fixed title, name the filter in the empty state with a way
+on, and show the active filter on arrival without scrolling.
+
+**Why it is a suggestion and not a defect against a sheet.** No handoff sheet specifies the
+destination screen; each one specifies only what its own numbers open. The gap sits in the space
+between two documents, which is why it went unowned for three weeks.
+
+## S12. Pages below the first list do not all check permissions the way the list does
+
+**Status:** Proposed. First found on Collection 2026-08-06, moved here from the tracker 2026-08-27
+**Where:** the drill destinations, below the first list
+
+The first list a drill opens checks the viewer's permission. Pages deeper than that do not all do the
+same. Nobody has enumerated which ones do and which do not.
+
+**Why this one is different from S10 and S11.** Those two are about a manager not being told enough.
+This one is about a manager possibly being shown records they are not entitled to, which is a
+different order of problem and should not sit in the same queue as a missing chevron.
+
+**Unverified, and that is the finding.** This has been carried as an open question since 6 August and
+nobody has checked it. **The first action is the enumeration, not the fix:** list every page reachable
+below a first list, and record for each whether it checks and against what.
+
+**Open for the owner, one choice:** do the deeper drills ship on day one with this unresolved, or does
+the enumeration run first? **My pick is the enumeration first**, because it is a few hours of reading
+and the alternative is shipping a permission question nobody has an answer to.
+
+**What is already settled, and is not this.** The analytics screens themselves are gated correctly:
+each tab follows the permission of the records it describes, and a team member's scope is narrowed to
+the properties they can open and hold the matching view permission for. That was verified in the
+analytics permission code on 27 August 2026. This entry is only about what sits below the lists those
+screens drill into.

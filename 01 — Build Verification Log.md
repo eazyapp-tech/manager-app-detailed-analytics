@@ -32,7 +32,7 @@ that produced today's state, item by item with the code that proves each one, is
 | [What is waiting on you](#what-is-waiting-on-you) | The seven questions only the owner can answer |
 | [How this review works](#how-this-review-works) | What gets compared, what the verdicts mean, the words used throughout |
 | [What is in scope](#what-is-in-scope) | Which blocks are checked, and what is deliberately left out |
-| [Findings](#findings) | Every difference found, F1 to F108: what is wrong and the fix |
+| [Findings](#findings) | Every difference found, F1 to F109: what is wrong and the fix |
 | [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D33, dated |
 | [The sweeps, and what each one found](#the-sweeps-and-what-each-one-found) | Twenty-four questions born from one tab and asked of every other |
 | [Doc fixes owed to Vivek](#doc-fixes-owed-to-vivek) | Errors in the calculation guide, G1 to G15, harmless to the product |
@@ -43,7 +43,7 @@ that produced today's state, item by item with the code that proves each one, is
 
 ## Where things stand
 
-**All five tabs are reviewed and the owner has ruled on everything this review raised.** 108 findings,
+**All five tabs are reviewed and the owner has ruled on everything this review raised.** 109 findings,
 33 rulings. What is left is building the fixes.
 
 **Every row below was re-checked against the live code on 27 August 2026**, at `origin/master` commit
@@ -52,7 +52,7 @@ names. Three commits sounded like they had fixed a named defect and had not.
 
 | | Dues | Collection | Expense | Occupancy | Tenant | Everywhere | All |
 |---|---|---|---|---|---|---|---|
-| **Rows still owed** | 16 | 13 | 9 | 18 | 20 | 2 | **78** |
+| **Rows still owed** | 16 | 13 | 9 | 18 | 20 | 3 | **79** |
 | of which **part done** | 1 | 2 | 2 | 4 | 6 | | **15** |
 | **Fixed** since the review | 1 | 2 | 2 | 3 | 2 | 1 | **11** |
 | **Withdrawn** by D33 | 2 | | | | | | **2** |
@@ -117,6 +117,7 @@ Rows tagged **Part done** already have some of the fix in the code; the row says
 |---|---|---|---|
 | The "same point last month" comparison starts at the 1st of last month and adds today's day number, with no clamp. On the 29th, 30th or 31st of a month longer than the one before it, that window runs past the end of last month and into this one, so the chip compares against a period that includes days it should not. Wrong three days a month, on every chip in the suite | Clamp the end of the previous window to the last day of the previous month. The same two lines sit in `duesService.ts:148`, `collectionService.ts:172`, `expenseService.ts:149`, `occupancyService.ts:74` and `tenantService.ts:157` | five services | F47 |
 | Every ranked list in the suite has had its per-row share of the account total commented out rather than deleted: `duesService.ts:711`, `collectionService.ts:812`, `expenseService.ts:576`, `occupancyService.ts:832`, `tenantService.ts:1227`. Five blocks, same shape. The log records the share as a shipped pass, and it is no longer true | Say whether this was deliberate before anything is written. If it goes back, it is one line per block; if it stays out, P8 and the sheets that promise it come out with it, starting with DA-01 §14 (Dues by Property), which says in as many words that every row carries its share because "the share is what turns a ranking into a staffing decision" | five services | F106 |
+| The two tabs the app draws are labelled **Occupancy** and **Tenant**. Every sheet, the README and this log call the same two screens **Inventory** and **Tenants**, so the word a manager sees is not the word any document uses. Checked live on the analytics web build, 27 August 2026 | Settle the pair and change whichever side is wrong. If the sheets win, it is two label edits; if the app wins, DA-08's title and every use of Inventory across the suite move instead, which is the bigger job and needs a ruling first | `masterConfig.ts:144` and `:159` | F109 |
 
 ### Dues
 
@@ -2589,6 +2590,33 @@ The right call: a tab of demo numbers on a live account is the same data bug F52
 up. It is recorded here only because [What is in scope](#what-is-in-scope) said the tab was declared
 with eleven blocks of sample data, which was half true from 26 August until this entry was written.
 The scope section now says both halves.
+
+### F109. The app names two screens differently from every document that specifies them
+
+**Verdict:** Build gap · **Note:** needs a ruling on which side is wrong before it is a code change
+
+The navigation config gives the two leaf tabs the labels **Occupancy** (`masterConfig.ts:144`) and
+**Tenant** (`masterConfig.ts:159`). The handoff sheets that specify those two screens are titled
+**Inventory** and **Tenants**, the README's screens table names them the same way, and every finding
+in this log uses the sheet's word. The folder in this repo is a third variant again, `DA-08 —
+Occupancy` holding a sheet called Inventory.
+
+So a manager taps a tab called Occupancy and every document describing what they are looking at calls
+it Inventory. This is the suite's own one-word-one-meaning rule failing across the boundary between
+the product and its spec, which is the case R69 in the tracker was written for.
+
+**Verified live**, not from the config alone: the analytics web build serves exactly three major tabs,
+`Financials · Occupancy · Tenant`, on 27 August 2026.
+
+**Fix:** it is not obvious which side is wrong, which is why this needs the owner before it needs
+Vivek. Changing the app is two string edits. Changing the documents means DA-08's title, its cover
+notes, the README, the tracker's R43 and R54 examples and every finding here that says Inventory,
+which is the larger job by a wide margin and would also break the folder name every deep link uses.
+
+**Related, and deliberately not part of this entry:** R93 in the tracker locked a different tab row
+again, `Financial · People (Leads · Bookings · Tenants · Old Tenants) · Inventory · Complaints`. That is a
+decision about a structure not yet built, not a defect in what shipped. The tracker now records what
+actually ships beside it.
 
 
 ## Decisions ruled
