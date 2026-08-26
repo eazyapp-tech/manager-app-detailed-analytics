@@ -28,7 +28,7 @@ Six tiles, each with its own window. Does not follow the date filter.
 | All Past Dues | Unpaid bills due before this month started. | - | Up to last month's end |
 | {Month}'s Due | Unpaid bills due from the 1st of this month up to today. | Bills due later this month are in All Future, not here. | 1st to today |
 | All Future Dues | Unpaid bills due after today. | - | After today |
-| {Month}'s Projected Due | Rent and other recurring bills expected this month that have not been raised yet. | Rent of tenants on automatic monthly rent, plus scheduled packages like food and services. | Tomorrow to month end |
+| {Month}'s Projected Due | Rent and other recurring bills expected this month that have not been raised yet. | Rent of tenants on automatic monthly rent, plus scheduled packages like food and services. A tenant with no rent day set is counted on their joining day. | Tomorrow to month end |
 | Current FY Dues | Unpaid bills due this financial year. | The year runs to 31 March, so bills not due yet are counted too. | 1 Apr to 31 Mar |
 
 ## 2. Dues (Live)
@@ -79,7 +79,7 @@ One total split four ways by due date. Does not follow the date filter.
 
 | Card | What is this? | How is this calculated? |
 |---|---|---|
-| Rent | Rent expected between tomorrow and month end, not billed yet. | Worked out from each tenant's rent amount and rent day. Rent already billed is left out, so nothing is counted twice. |
+| Rent | Rent expected between tomorrow and month end, not billed yet. | From each tenant's rent amount and rent day; if no rent day is set, their joining day is used. Rent already billed is left out, so nothing is counted twice. |
 
 ## 7. Deposit Dues (As of today)
 

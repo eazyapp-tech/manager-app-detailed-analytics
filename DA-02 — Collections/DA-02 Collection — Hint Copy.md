@@ -104,7 +104,7 @@ Has its own months dropdown.
 
 Does not follow the toggle.
 
-> **Good to know:** same numbers in both views. Settlement is about money reaching your bank, not about billing.
+> **Good to know:** same numbers in both views. Settlement is about money reaching your bank, not about billing. Settled amounts are what actually reached the bank, after online payment charges.
 
 | Card | What is this? | How is this calculated? |
 |---|---|---|
