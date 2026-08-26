@@ -997,8 +997,17 @@ Two smaller defects die with the fix: the discount query windows by the bill's d
 card's other three rows window by paid date, one card on two clocks, and it reads any active
 invoice, paid or not.
 
-**Fix:** sum the credits rows joined to their payments, windowed by `p.paid_date` like the other
-three rows. The View all sheet's Adjusted rows need the same source once F45 adds discount there.
+**Fix:** sum the discount on the payment, windowed by `p.paid_date` like the other three rows. The
+View all sheet's Adjusted rows need the same source once F45 adds discount there.
+
+**Correction, 2026-08-25: read `payments.owner_credits`, not the `credits` table.** This entry
+originally named the credits rows as the source. They are a partial copy. Measured on production,
+July 2026, live properties, test and deleted excluded, on the collection base: 683 payments carry
+both a credits row and an `owner_credits` value and the two agree to the rupee; **299 payments worth
+₹16.0 lakh carry `owner_credits` with no credits row at all**, and none carry a credits row without
+`owner_credits`. So credits is a subset, and a fix reading it would undercount discount by roughly a
+sixth every month and could never agree with the homescreen, which reads `owner_credits`
+(`homepage/service.ts:586`). Full numbers and what it means for the three surfaces are in F105.
 
 ### F41. Collection by Property follows the toggle, and the sheet says it does not change
 
@@ -2418,6 +2427,42 @@ junk gender values leave the coverage rather than being relabelled; tenants with
 become a stated line or leave the base, following §21's not-recorded pattern, where a card draws what
 exists and states its coverage rather than folding the gap into a bucket.
 
+
+### F105. Discount is stored twice, and the two stores disagree by a sixth
+
+**Verdict:** Build gap · **Status:** Open · **Owed by:** Vivek · **Note:** corrects F40's fix line; grounds the F86 ruling
+
+Found while preparing the F86 ruling, which turns on whether discount comes off collection. The
+product records a payment-time discount in two places:
+
+| Where | What it is |
+|---|---|
+| `payments.owner_credits` | A column on the payment. What the homescreen's collection figure subtracts (`homepage/service.ts:586`) |
+| the `credits` table | One row per discounted payment. What F40 told Vivek to read |
+
+**Measured on production**, July 2026, live properties, test and deleted excluded, on the collection
+base of successful active payments against paid bills with adjustment modes excluded:
+
+| | Payments | Rupees |
+|---|---|---|
+| Carry both, and the two agree to the rupee | 683 | ₹89.0 lakh |
+| Carry `owner_credits` with **no** credits row | **299** | **₹16.0 lakh** |
+| Carry a credits row with no `owner_credits` | 0 | ₹0 |
+| `owner_credits` in total | 982 | **₹1.05 crore** |
+
+So the credits table is a partial copy, missing about a sixth of the money and never holding anything
+the column does not. That explains why F40 measured ₹89 lakh for July and F86 measured a larger
+figure for the same month: they read different stores, and both were right about the store they read.
+
+**Two consequences.** F40's fix as written would leave the Adjusted Collection card permanently short
+and unable to agree with the homescreen, so its source line is corrected in that entry. And the F86
+ruling, if it takes discount off collection, has to name `owner_credits` as the one store, or the
+three surfaces will still disagree after the work is done.
+
+**Not answered here:** why 299 payments never got a credits row. It could be an older flow, a failed
+write, or a second path that only sets the column. Vivek should say which, because if the credits
+table is meant to be complete it is dropping rows, and if it is not meant to be complete then it has
+no reader left once F40 is fixed.
 
 ---
 
