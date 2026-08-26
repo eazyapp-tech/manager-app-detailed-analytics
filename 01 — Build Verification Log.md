@@ -1,21 +1,25 @@
 # Build Verification Log
 
-Analytics was specified across six handoff sheets, then built. This log records what shipped
-against what we asked for, block by block, and what was ruled on each difference.
+Analytics was specified across six handoff sheets, then built. This log records what shipped against
+what we asked for, block by block, what the owner ruled on each difference, and what is still owed to
+whom.
 
-**People in this log.** The owner is Sanchay, who rules on every difference. Vivek built the code
-and wrote the calculation guide. "This review" is the author of this log, who also wrote the sheets.
+**If you are Vivek**, [the work queue](#the-work-queue) is your whole job. Every row says what is
+wrong, what to do, and which file it is in, without you opening anything else. The F number at the end
+of a row opens the reasoning behind it if you want it.
 
-**How to use it.** Vivek: start at [Open items](#open-items), then read the F entries it points to.
-Sanchay: start at the same table, then [Decisions ruled](#decisions-ruled). Nobody needs to read the
-whole log to find their work.
+**If you are Sanchay**, [where things stand](#where-things-stand) is the scoreboard, then
+[what is waiting on you](#what-is-waiting-on-you), then [decisions ruled](#decisions-ruled).
+
+**Nobody needs to read this log end to end.** It is written to be entered in the middle.
+
+**People in this log.** The owner is Sanchay, who rules on every difference. Vivek built the code and
+wrote the calculation guide. "This review" is the author of this log, who also wrote the sheets.
 
 Companion to [[00 — Manager App Analytics Tracker]], which records how the sheets were written.
-Product ideas that are not defects live in [[02 — Suggestions Register]].
-
-Last audited end to end on 2026-08-24, before the first commit: every cited line re-checked, every
-quote re-read, two independent reviewers run. Where the audit found an earlier claim wrong, the entry
-says so rather than quietly replacing it. Occupancy was added the same day and audited the same way.
+Product ideas that are not defects live in [[02 — Suggestions Register]]. The full re-verification
+that produced today's state, item by item with the code that proves each one, is
+[[re-verification-2026-08-27]].
 
 ---
 
@@ -23,16 +27,250 @@ says so rather than quietly replacing it. Occupancy was added the same day and a
 
 | Section | Answers |
 |---|---|
+| [Where things stand](#where-things-stand) | How much is done, what moved, and the four things that matter most right now |
+| [The work queue](#the-work-queue) | Everything owed to Vivek, each row readable on its own |
+| [What is waiting on you](#what-is-waiting-on-you) | The seven questions only the owner can answer |
 | [How this review works](#how-this-review-works) | What gets compared, what the verdicts mean, the words used throughout |
 | [What is in scope](#what-is-in-scope) | Which blocks are checked, and what is deliberately left out |
-| [Status board](#status-board) | How far the review has got, and the sweeps every remaining tab gets |
-| [Open items](#open-items) | Everything still waiting, by who it waits on |
-| [Findings](#findings) | Every difference found, F1 to F104: what is wrong and the fix |
-| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D32, dated |
-| [Sheet edits made](#sheet-edits-made) | Exactly what changed in the handoff sheets because of this review |
-| [Doc fixes owed to Vivek](#doc-fixes-owed-to-vivek) | Errors in the calculation guide, harmless to the product |
-| [What shipped better than we specified](#what-shipped-better-than-we-specified) | Things to write back into the sheets as rules |
-| [Passes worth recording](#passes-worth-recording) | What was checked and found right, so nobody re-checks it |
+| [Findings](#findings) | Every difference found, F1 to F108: what is wrong and the fix |
+| [Decisions ruled](#decisions-ruled) | What the owner decided and why, D1 to D33, dated |
+| [The sweeps, and what each one found](#the-sweeps-and-what-each-one-found) | Twenty-four questions born from one tab and asked of every other |
+| [Doc fixes owed to Vivek](#doc-fixes-owed-to-vivek) | Errors in the calculation guide, G1 to G15, harmless to the product |
+| [What shipped better than we specified](#what-shipped-better-than-we-specified) | B1 to B8, things to write back into the sheets as rules |
+| [Passes worth recording](#passes-worth-recording) | P1 to P51, what was checked and found right, so nobody re-checks it |
+
+---
+
+## Where things stand
+
+**All five tabs are reviewed and the owner has ruled on everything this review raised.** 108 findings,
+33 rulings. What is left is building the fixes.
+
+**Every row below was re-checked against the live code on 27 August 2026**, at `origin/master` commit
+`0e8cc713b`. Not against a commit message: by reading the current code for the function each row
+names. Three commits sounded like they had fixed a named defect and had not.
+
+| | Dues | Collection | Expense | Occupancy | Tenant | Everywhere | All |
+|---|---|---|---|---|---|---|---|
+| **Rows still owed** | 16 | 13 | 9 | 18 | 20 | 2 | **78** |
+| of which **part done** | 1 | 2 | 2 | 4 | 6 | | **15** |
+| **Fixed** since the review | 1 | 2 | 2 | 3 | 2 | 1 | **11** |
+| **Withdrawn** by D33 | 2 | | | | | | **2** |
+| Questions owed by Vivek | 2 | | | | 1 | 1 | **4** |
+
+Separately: **7 questions wait on the owner**, and **15 fixes are owed to the calculation guide**, of
+which one is done and one is half done.
+
+### Why eleven, when Vivek shipped 2,250 lines
+
+Since the commit this log's line numbers are pinned to, `3a13e08ac`, there have been **27 commits
+touching `src/v1/analytics/`**, about 2,250 lines, every one of the five services. Most of that work
+went somewhere other than this list: a new booking-grain query on Occupancy, a real database column
+behind Renting Type, colours, icons, staff photos, two rounds of design QA. **The fix list and the
+work queue have been running on separate tracks.** That is the thing to fix about how we work, not
+the number.
+
+### The four things that matter most right now
+
+**1. The biggest fix is already done, and it was done in the right place.** F52 and F84 asked for one
+change in the shared block builder rather than 51 changes in the services: a built block must never
+fall back to the registry's demo numbers when a property will not resolve. It landed exactly there,
+`service.ts:161` to `:175`, with the rule written in a comment above it. Fifty-one places closed by
+one change. Nothing else in this run comes close for leverage.
+
+**2. The next one closes five and is two lines.** F47's comparison window, "the same point last
+month", is the same two lines in all five services and unchanged in all five. Until it lands, every
+change chip in the suite is wrong on the 29th, 30th and 31st of a month longer than the one before it.
+
+**3. A ruling was reversed in the code, and the owner has restored it.** D23 ruled on 24 August that
+Upcoming Vacancy is right to follow the Bed and Unit toggle, and DA-08 §4 and §9 were rewritten to say
+so. Commit `21a506e36` then made the card room-wise only. Ruled again on 27 August: **D23 stands, the
+toggle goes back.** It is now a row in the work queue.
+
+**4. Two defects look like a fix and are not one.** The Expense quarantine row wraps `Math.abs` around
+a helper that has already floored the negative to zero, so the row still always reads ₹0, which is the
+one thing it exists to avoid (F55). Occupancy's Overview carries `showChip ? null : null`, a ternary
+with the same answer on both branches (F65). Both have been there since before this review, and both
+entries described them correctly at the time. They are worth naming together because they share a
+shape: **code that sits one layer outside the thing it needs to change, and therefore reads as
+handled.** Neither survives opening the function. Both survive skimming.
+
+---
+
+## The work queue
+
+Everything owed to Vivek. **Every row is written to be acted on where it sits**: what is wrong now,
+what to do, and the file it is in. The F or D number at the end opens the reasoning if you want it,
+and is never the only thing carrying the meaning.
+
+**State lives here and nowhere else.** A finding's own entry no longer carries an Open or Closed
+label, because two places always drift. If a row is in this table it is owed; if it is not, it is
+either done (listed under [what was fixed](#what-was-fixed-since-the-review)) or it was never a code
+job. Each row says where it stood on **27 August 2026**, checked against `origin/master` commit
+`0e8cc713b` by reading the code.
+
+Rows tagged **Part done** already have some of the fix in the code; the row says what is left.
+
+### Everywhere: one fix, five files
+
+| What is wrong now | What to do | Where | Entry |
+|---|---|---|---|
+| The "same point last month" comparison starts at the 1st of last month and adds today's day number, with no clamp. On the 29th, 30th or 31st of a month longer than the one before it, that window runs past the end of last month and into this one, so the chip compares against a period that includes days it should not. Wrong three days a month, on every chip in the suite | Clamp the end of the previous window to the last day of the previous month. The same two lines sit in `duesService.ts:148`, `collectionService.ts:172`, `expenseService.ts:149`, `occupancyService.ts:74` and `tenantService.ts:157` | five services | F47 |
+| Every ranked list in the suite has had its per-row share of the account total commented out rather than deleted: `duesService.ts:711`, `collectionService.ts:812`, `expenseService.ts:576`, `occupancyService.ts:832`, `tenantService.ts:1227`. Five blocks, same shape. The log records the share as a shipped pass, and it is no longer true | Say whether this was deliberate before anything is written. If it goes back, it is one line per block; if it stays out, P8 and the sheets that promise it come out with it, starting with DA-01 §14 (Dues by Property), which says in as many words that every row carries its share because "the share is what turns a ranking into a staffing decision" | five services | F106 |
+
+### Dues
+
+| What is wrong now | What to do | Where | Entry |
+|---|---|---|---|
+| Projected Due forecasts only what living tenants will be charged. A confirmed booking arriving this month will be billed and is not in the figure | Count living tenants and confirmed bookings, not `t.status = 1` alone | `duesService.ts:841` | F2, D1 |
+| The package half of Projected Due has no tenant filter at all, so it counts scheduled packages belonging to leads and deleted people | Add the same filter as the rent half: living tenants and confirmed bookings | `duesService.ts:856` to `:863` | F2, D1 |
+| Projected Due picks the rent day from its own chain, the tenant's rent date then their joining day then the 1st. The billing job picks it differently, so the forecast can put money in the wrong month | Fall back the way `chargeRentTenants` does, reading the property's own setup | `duesService.ts:837` | F3 |
+| Upcoming Dues repeats the same query and carries all three of the defects above, word for word | The same three fixes, second copy | `duesService.ts:758` to `:767` | F2, F3, D8 |
+| Upcoming Dues ships one tab, Rent, on a fixed window of tomorrow through month end. It ignores the top filter, so on a forward window it still stops at month end | Add the other configured due types, and extend the window to the chosen end date when the filter is forward | `duesService.ts:819` | D8, D9 |
+| Both Dues chips compare against the wrong figure. The previous window is measured on the pool of bills that are unpaid *today*, so anything from last month that has since been paid has dropped out. The comparison always reads better than reality | Work the comparison figure out as it stood on that date, not as it stands today | `duesService.ts` `overviewAggregate` | F5 |
+| Both Dues chips are coloured backwards: rising dues show green and falling dues show red. The comment two lines above the function says "Up is BAD on Dues" | Red for up, green for down. Any sibling tab's chip function already does it right | `duesService.ts:133` | F6 |
+| Dues Breakdown's Tenant Status tab splits two ways on whether a leaving date exists, and calls the second bar "Under notice", a phrase D28 renamed suite-wide | Three active bars: Active, no eviction · Eviction pending · Eviction approved. The same change is owed on Collection Breakup | `duesService.ts:439` to `:441`, `:456` to `:459` | D6, D28 |
+| The first Overdue Breakup tab is called "By Amount", but both tabs are amounts. The first is bucketed by how overdue, the second by due type | Rename it "By ageing" | `duesService.ts:546` | F15 |
+| Overdue Breakup carries a dropdown with exactly one option in it, "All Time", which cannot be changed and tells the reader nothing | Remove the dropdown | `registry.ts:115`, the `ALL_TIME_ONLY` list | F16 |
+| Overdue Breakup is a live block that ignores the top filter and says nothing about it on its face, so a manager on "Last Month" reads today's numbers under last month's heading | Add "As of today" to the title, the way Deposit Dues now does | `registry.ts:105` | F18 |
+| Deposit Dues matches its categories on exact text, `due_type IN ('Security Deposit', 'Caution Money')`. Any other capitalisation or a stray space is dropped, which was measured at 161 properties reading short | Match case-insensitively and trimmed | `duesService.ts:644` and `:661` | F19 |
+| Deposit Dues adds two different money columns together: `net_amount` for what is held and `amount` for what is owed. Nothing says what the difference is. Separately, a deposit held for a tenant who has moved out is not counted at all | Settle what `net_amount` means against `amount`, then add the departed-tenants line D10 asked for | `duesService.ts:635`, `:648`, `:661` | F21, D10 |
+| **Part done.** Breakup by Stay Duration now ships an empty state at zero. It still never hides, and the View all copy of the same rule carries a written-in `TODO` | Hide the card when the rule says. Once the owner answers which rule, apply it in both places | `duesService.ts:668`, `:918` | F23, F24 |
+| Dues by Property renders on a single-property account, where the one row is the whole screen total repeated | Hide it when only one property is in scope, as Collection, Expense, Occupancy and Tenant already do | `duesService.ts:690` | F23 |
+| On a Custom window the forward rules never arrive. The dates are handed back raw: no chip suppression past today, no dash for counts of things that have not happened, no forecast extension | Carry D9's rules onto the Custom path. There are no dead `coming_up` branches left in this service, so this is the only part missing | `duesService.ts:80` | F17, D9 |
+
+### Collection
+
+| What is wrong now | What to do | Where | Entry |
+|---|---|---|---|
+| **Part done.** Forward handling arrived: a window starting after today now drops its chips and dashes the money tiles. Two things are left. The dead `case 'coming_up'` branch is still in the switch, and the future test only catches a window that *starts* after today, so a custom range straddling today still behaves as though it were wholly in the past | Delete the dead branch; make the future test handle a straddling window | `collectionService.ts:161`, `:178` | F27, F17, D9 |
+| In Due Date view the Advance and Current FY tiles lose their chips, while the same two tiles carry chips in Paid Date view. Nothing about those two numbers changes with the toggle | Keep both chips on both sides of the toggle | `collectionService.ts:394`, `:396` | F31 |
+| The paid-date window is capped at today but the due-date window runs to the end of the period, so on a running month the Due Date view counts bills that are not due yet | Cap the due window at today too, one rule for both views | `collectionService.ts:182`, `:201` | F32, D11 |
+| The Collected & Adjusted chip compares a window that runs to the end of this month against a previous window that stops at the same elapsed day. The two sides measure different lengths of time, so the chip always reads worse than reality | Bound both sides to the same elapsed moment | `collectionService.ts:374`, `:376` | F33 |
+| Collection Breakup groups categories on exact text, so two spellings of the same due type draw two bars. Dues already solved this | Group on the lower-cased trimmed name, as `duesService.ts:427` does | `collectionService.ts:512`, `:527` | F35 |
+| In Due Date view the Mode and Received by tabs skip the three adjustment modes, so the tabs add up to less than the card's own Collected & Adjusted total sitting above them | Show adjustment modes as rows in Due Date view. They correctly stay out of Paid Date view | `collectionService.ts:573`, `:598` | F36 |
+| Payments with no tenant attached stay inside the card's total but appear in no Status bar, so the bars sum short and nothing says why. The code comments it; the screen does not | Ship the one-line note the sheet asks for | `collectionService.ts:531` | F37 |
+| In Due Date view every Breakup tab now carries its billed side except Status, which still returns collected only | Add the billed side per row on the Status tab, the way Category now does | `collectionService.ts:533` | F38 |
+| **Part done.** Two of §15's four replacement empty messages have landed. The Mode tab still promises a split by "cash, UPI, RentOk, bank transfer & cheque", naming a mode the card does not show and leading with the smallest. Collection Status still promises a pending row the card has never had by design | Ship §15's copy on those two | `collectionService.ts:61`, `:64` | F39 |
+| The Discount figure sums `inv.discount`, a column measured as empty on production, and windows it by due date. The real discounts live in the credits records, and the figure should follow when the money arrived | Read the credits records, windowed by paid date | `collectionService.ts:712`, `:715` | F40, F105 |
+| Payment Settlement joins each payout to bank details on account number or VPA with no single-row pick, so a payout that matches two records is counted twice. Measured at 14% overstatement of settled money | Pick one account record per payout before summing | `collectionService.ts:927` | F87 |
+| A payment counts as settled the moment a payout id or a wallet entry exists, whatever happened next. A failed transfer still reads as money in the bank, and a Flexi Pay balance counts as settled although the sheet reserves that word for money that reached the bank | Read the payout's status again, so a failed transfer can sit inside Unsettled as §11 asks | `collectionService.ts:889`, `:951` | F88 |
+| The View all sheet's Adjusted rows sum the three adjustment modes and leave discount out, so they disagree with the Adjusted Collection card above them | Include discount | `collectionService.ts:1038` | F45 |
+
+### Expense
+
+| What is wrong now | What to do | Where | Entry |
+|---|---|---|---|
+| The Overview tile row shows four tiles whatever the window holds, so a month with no spending is a row of ₹0 with nothing said. Every other block on the tab now tells a quiet window apart from an empty account | Give the row the screen's own in-window zero state | `expenseService.ts:215` | F51 |
+| **Part done.** "Nothing owed to staff right now." ships on the tile. The View all row that repeats the same number has no healthy state | Add it there too | `expenseService.ts:289` | F51 |
+| The quarantine row, which exists to surface expenses saved with a negative or zero amount, always reads ₹0. A fix was attempted and sits one layer out: `Math.abs(n(x))` where `n()` has already floored the negative to zero | Take the absolute value **inside**, before the helper floors it | `expenseService.ts:299`, helper at `:54` | F55 |
+| The no-bill row prints the same amount twice, once as the value and again inside its own sub-label | Print it once | `expenseService.ts:293` | F56 |
+| The View all sheet is labelled with today's date whatever window it is showing, so a Last Month sheet says today | Carry the window's own name | `expenseService.ts:302` | F57 |
+| Nothing anywhere says which clock `paid_date` is stored on. If it is UTC, every window on this tab is off by five and a half hours at its edges | Settle it and say so; convert if it is UTC | every query in `expenseService.ts` | F58 |
+| Outside the six named category groups the catch-all keeps the saved name trimmed but not lower-cased, so two spellings differing only in capitals draw two bars. A tenth of all spending is in the catch-all | Group on the lower-cased trimmed name, display the first spelling | `expenseService.ts:38` | F59 |
+| On the Paid by tab a third of all spending shows as a bracketed internal string nobody typed. The Payment Mode tab names FlexiPe properly; this tab returns the raw `e.payer` value | Label FlexiPe spending "FlexiPe (Owner)"; never show the raw string | `expenseService.ts:495` | F62, D19 |
+| **Part done.** The trend's running bar is now marked in progress and drawn lighter, so it no longer reads as a spending collapse. Its window still runs to the end of the month while the other six blocks on the tab stop at today | End the range at today | `expenseService.ts:527` | F63 |
+
+### Occupancy
+
+| What is wrong now | What to do | Where | Entry |
+|---|---|---|---|
+| Not one change chip is built on this whole tab. The chip function is written and called nowhere, and the Overview now carries `showChip ? null : null`, a ternary that returns null on both branches | Build the chips. Fix the comparison window in the same change | `occupancyService.ts:56`, `:323` | F65, F47 |
+| The Under eviction tile counts only tenants whose leaving date is already approved. A pending notice awaiting approval is invisible on this entire screen, and the tile is still labelled "Under Notice", which D28 renamed | Take in pending notices too, with the two parts always named on a second line | `occupancyService.ts:183`, `:320` | F66, D21, D28 |
+| A booking counts as booked whatever its approval state, on three surfaces. The new grain query is right and the approval test is still missing | Confirmed bookings only: approved, or on a property that needs no approval. Fix it here, in the rooms widget helper, and in the rooms list filters together | `occupancyService.ts:155`, `:171`, `:187`, `:238`, plus `helpers.ts` `fetchAllWidgetCounts` | F67, D20 |
+| For a period, the occupancy rate divides average occupied beds by *today's* rentable count, while the trend beside it rebuilds capacity as it stood each day. The two blocks disagree about the same month and nothing explains why. Stay rows scheduled for the future are counted as though they had happened | Divide by the capacity as it stood, reusing the trend's own query, and exclude future-scheduled stay rows | `occupancyService.ts:257`, reuse `trendMonths` at `:573` | F68 |
+| Occupancy Status ships four summary chips where the sheet asks for two, shows them all at zero, and gives the eviction chip no second line naming its two parts | Two chips, hidden at zero, with the Under eviction second line | `occupancyService.ts:377` to `:384` | F69 |
+| **Part done.** Over-occupancy is now explained with a note when the rate passes 100%. The legend still does not add up to the header it sits under, in either direction: over-occupied beds in Bed view, and rooms with no declared capacity holding somebody in Unit view | Make the legend and the header reconcile both ways | `occupancyService.ts:368` to `:372`, `:399` | F70 |
+| The chip labelled "Booked Beds" prints a count of rooms. The bed-level number now exists in the same function and is used two lines away for the Vacant split | Count booked at bed grain, or rename the chip to say it is by room | `occupancyService.ts:379` | F71 |
+| Rentable units is total rooms minus disabled rooms. A room that declares no capacity at all still counts as rentable, so it pads the denominator and reads vacant forever | Exclude rooms with no declared capacity, and give them somewhere to go | `occupancyService.ts:141` | F72 |
+| Vacant Room Status paints its largest bar red, and the maximum is taken across all six bars, Never rented and Unknown included. Never rented is red on almost every property, the one thing §8 forbade | Take the maximum across the four aging bars only | `occupancyService.ts:473` | F73 |
+| **Part done.** The not-set-up screen is built with its button, and one of the four healthy lines is exact. Upcoming Vacancy, Agreements ending soon and Where am I losing money still ship their old copy. The sentence §16 forbade by name, "Vacancy duration by days will appear here once rooms are empty", is still in the file and still reachable. The no-beds case sends the generic status copy with no Add beds button | Ship §16's remaining three healthy lines, delete the forbidden sentence, and give the no-beds case §16's own copy and button | `occupancyService.ts:20`, `:21`, `:23`, `:24`, `:351` | F74 |
+| Upcoming Vacancy paints its largest bar red. The sheet granted that exception to its neighbour only, because a room emptying soon is not bad news | Drop the red | `occupancyService.ts:524` | F76 |
+| Where an agreement has no recorded length, the code assumes eleven months. More than half the dates on Agreements ending soon are invented this way, and the card's own info text says nothing about it | Name the assumption in the hint with its count, and give that count a drill to the tenants missing a length. Same treatment on the Tenant tab's Agreement Expiry | `occupancyService.ts:541`, `occupancyHints.ts:30` | F77, D24 |
+| A vacant room with no current tenants has no rent to average, so it is priced at zero. 85% of vacant beds cost nothing on this card. The coverage line now says how many beds were priced, which discloses the hole without closing it | Fall back to the group average, so an empty room is not free | `occupancyService.ts:688`, `:697` | F78 |
+| Three blocks read live numbers and ignore the top filter without saying so: Occupancy Status, Property Wise Occupancy and the View all sheet | Add "As of today", as Vacant Room Status now has | `occupancyService.ts` `getStatus`, `getByProperty`, `getViewAll` | F80 |
+| **Part done.** The View all sheet's missing rows have landed. It still ships two sections where the item asks for three | Add the third section | `occupancyService.ts:869` | F81 |
+| The Occupancy Trend always walks back a fixed six, twelve or twenty-four months, so it draws empty months from before the property existed. The values in them are now honest zeros rather than invented numbers, but the months are still on the chart | Start the chart where the property's own data starts | `occupancyService.ts:626` | F82 |
+| **Part done.** A Custom window now stops at today. The dead `case 'coming_up'` branch is still in the switch, and the rest of D9, dashing counts of things that have not happened and extending forecasts, is not there | Delete the dead branch and carry D9's rules onto Custom | `occupancyService.ts:88` to `:95` | F83, D9 |
+| Upcoming Vacancy no longer follows the Bed and Unit toggle. D23 ruled on 24 August that it should, and DA-08 §4 and §9 were rewritten around that. Commit `21a506e36` made the card room-wise only. Ruled again on 27 August: D23 stands | Put the toggle back: Bed view counts departing tenants, Unit view counts distinct room-and-day vacancy events, and the axis label switches with them | `occupancyService.ts:492` to `:527` | F107, D23 |
+
+### Tenant
+
+| What is wrong now | What to do | Where | Entry |
+|---|---|---|---|
+| The agreement end date casts `agreement_period` straight to an integer. One property's junk settings value makes that cast throw, which kills the whole Tenant page and an Occupancy card with it | Guard the cast: digits only, else null | `tenantService.ts:170`, `occupancyService.ts:541` | F90 |
+| One failing block takes the whole page down, because every block on a page is resolved through a single `Promise.all` with nothing catching a rejection | Catch a failed block so the rest of the page still paints | `service.ts:84` | F90 |
+| Where an agreement has no recorded length, the Tenant tab assumes eleven months, so a tenant nobody ever gave a term lands in a dated band as though the date were real. Three quarters of the Already expired bar rests on this | On this tab, null means the No term recorded group, never eleven months. Inventory keeps its eleven-month step | `tenantService.ts:172` | D26, F100 |
+| Renewal overdue, Renewal Due and Journey's Renewals in 30 days all run on that same invented date | Count real terms only, moving with the bands above | `tenantService.ts:574`, `:1082`, `:1083` | D26 |
+| Agreement Expiry has no No term recorded group to move those tenants into, and its Already expired bar shows at zero | Add the stated group with its count and a drill to the list; hide Already expired and No term recorded at zero, the four day bands keep showing | `tenantService.ts:877` | F100, D26, D30 |
+| **Part done.** "Already expired" landed. The three day bands still read "30 days", "60 days" and "90 days", which do not say whether a band starts at zero or at 31, and the last reads "Valid (90 days+)" | Relabel: Already expired · 0–30 days · 31–60 days · 61–90 days · Valid (90+ days) | `tenantService.ts:877` to `:881` | D31 |
+| **Part done.** A Custom window now stops at today. The dead `coming_up` branch is still there, and the rest of D9 is not | Delete the dead branch and carry D9's rules onto Custom | `tenantService.ts:145` | F91, D9 |
+| Ten blocks on this tab read live numbers or forward ones and none of them says so on its face | "As of today" on the live blocks, "From today onwards" on Upcoming Eviction and Agreement Expiry | `tenantService.ts`, all ten blocks | F92 |
+| **Part done.** Leads no longer fold into Approved Bookings. On a property set to auto-accept, the tile still counts every tenant ever added, dated by when the record was created, so it is a count of tenants added rather than bookings approved. Journey's funnel is built on the same mistake | Say whether an auto-accepted booking leaves any trace at all. Until then, count real approval rows only, as the move-out query already does | `tenantService.ts:366`, `:367`, `:679` | F93 |
+| The Overview ships seven tiles and the info sheet defines a different seven: Eviction Approved and Past Their Date have no definition at all, and the Active Bookings definition says "confirmed bookings" while the tile counts awaiting ones too | Add the two missing entries and correct the Active Bookings one | `tenantHints.ts:10` to `:15` | F94 |
+| A cancelled booking counts as a move-out, because deleting one stamps it with a leaving date and the query takes any status-0 tenant that has one | Exclude cancelled bookings | `tenantService.ts:537` | F95 |
+| **Part done.** The Journey bar was renamed, but to "Pending Eviction" where D29 says "Eviction pending", and its sibling reads "Approved Eviction" where D29 says "Approved eviction" | Match D29's wording | `tenantService.ts:597`, `:598` | F96, D29 |
+| **Part done.** Two of D29's new rows landed, Renewals in 30 days and Agreements expired, and Agreements expired does reuse the expression D29 named. The two headings do not exist, all five bars sit in one flat list, and "No notices" is commented out | Two named groups. "Who is staying, who is leaving": Active tenants · No notices · Eviction pending · Approved eviction. "Whose paperwork needs a decision": Renewals in 30 days · Agreements expired, parallel bars only | `tenantService.ts:594` to `:601` | D29 |
+| The Journey strip shows Churn as a bare count of move-outs, where the sheet defines a share. "Left early" measures against the agreement end date rather than the lock-in period, and carries no coverage line | Churn as a share with the count beside it; left early reads `lockin_period` | `tenantService.ts:637`, `:655` | F97 |
+| Upcoming Eviction reads only the eviction-details rows. Approval can set the tenant-level leaving date without leaving an active row behind, which this service's own comment documents with the production property it was found on, so those tenants are missing from the card while the tiles above count them | Fall back to the tenant-level date the tiles read, and settle which record is authoritative for the list too | `tenantService.ts:808` to `:813` | F99 |
+| Stayed after notice ships as a count where the sheet defines a share, and counts every leaving date inside the window whether or not it has passed, so it counts a day early | A share of those whose date fell in the window and passed, with the count beside it | `tenantService.ts:1093`, `:1114` | F101 |
+| Four colour rules are broken, including a red that every new tenant triggers on arrival. Not verified is red, police "Not done, in time" is red, the 30-day expiry band is red, and Not signed is orange where it should be red. The profile pair is also swapped: Complete is pale yellow and Pending is green | Police in-time plain, ID not-verified plain, the 30-day band plain, Not signed red. Unswap the profile pair while you are there | `tenantService.ts:730`, `:734`, `:878`, `tenantColors.ts:27` to `:29` | F98 |
+| D28 renamed the parent group "Under eviction" suite-wide and five strings still say "Under notice": the View all sheet's row, the rent at risk note, both Journey empty messages, and the Journey hint | Rename all five. The Journey bar label is deliberately not in this list; D29 renames it Eviction pending instead | `tenantService.ts:458`, `:63`, `:64`, `tenantHints.ts` | D28, D29, S3 |
+| **Part done.** The not-set-up screen is built, a second state covers an account with bookings but no tenants, and the six unsent empty states are wired. Two of the five healthy states ship. The Bookings tab still shows the Tenants sentence with one word changed, promising a booking's "renewals due in 30 days" | Ship the remaining three §21 healthy messages and rewrite the Bookings-tab copy | `tenantService.ts:64` | F103 |
+| Three breakdowns drop or mislabel recorded answers, against each card's own coverage line. A food preference matching none of the four patterns is counted as recorded and drawn on no bar, 1,824 of 11,040. Any gender that is not a male or female spelling is shown as "Prefer not to say", 10,184 tenants, and "girls" is a female spelling the list still misses. A tenant with no joining date fits neither police verification bar and is dropped silently from Tenure | An Other bar for unmatched food values; "girls" joins the female list and junk values leave the coverage rather than being relabelled; no-joining-date tenants become a stated line | `tenantService.ts:905`, `:985` to `:989`, `:715`, `:717`, `:1187` | F104 |
+
+### Waiting on an answer from Vivek
+
+Two of these block an owner ruling as well, so they are the longest pole on their tabs.
+
+| The question | Why it is blocking | Entry |
+|---|---|---|
+| Does `is_confirmed = 0` on a booking mean pending, or cancelled? Two places in the code disagree | Everything that counts a confirmed booking depends on it: Projected Due, the Occupancy booked layer, the rooms list | F4 |
+| What are creator codes 5 and 6 on a bill? | Both are silently shown to the manager as "RentOk" today. The owner cannot name them until you say what they are | F26 |
+| Does an auto-accepted booking leave any trace at all in the data? | If it does not, the Approved Bookings tile cannot be built as specified and the owner has to choose what it shows instead | F93 |
+| Was commenting out the per-row share on all five ranked lists deliberate? | One answer decides five blocks | F106 |
+
+---
+
+## What was fixed since the review
+
+Eleven rows, verified in the code on 27 August 2026. Kept here rather than deleted, so nobody
+re-raises them.
+
+| What was owed | What is there now | Entry |
+|---|---|---|
+| An unresolved property must not fall back to the block's demo numbers, fixed once in the shared builder rather than 51 times in the services | Done exactly there. `service.ts:161` lists the five built prefixes and `:172` to `:175` send an empty state instead of the registry's mock data. The rule is written in a comment above it | F52, F84 |
+| Deposit Dues must say it ignores the top filter | `registry.ts:125` now reads "Deposit Dues (As of today)" | F18 |
+| Collection's tile row needs an adjustments-only line and an empty state | Both. The line ships at `collectionService.ts:339`, and `:318` to `:333` now tell apart a new account, one that has never collected, and one that is simply quiet | F34 |
+| Collection's three §15 healthy messages | All three. `collectionService.ts:392`, `:864` and `:343` | F46 |
+| Expense's four empty states must tell a quiet window from an account that has never spent | A lifetime probe now decides, used by all four blocks: `expenseService.ts:385`, `:473`, `:539`, `:582` | F50 |
+| Expenses by Property must send the empty state already written | `expenseService.ts:582` | F64 |
+| In Unit view the Under eviction tile must count units, not people | `occupancyService.ts:309` now picks a room count | F66, D22 |
+| Vacant Room Status must hide Never rented and Unknown at zero, and keep the four aging bands | `occupancyService.ts:470` and `:471` | D30 |
+| Upcoming Eviction must hide its Overdue bar at zero and keep the four day bands | `tenantService.ts:832` adds Overdue only above zero; the bands at `:833` to `:836` are unconditional | D30 |
+| Losing money: bar and share from rupees not the formatted label, sorted by revenue loss, with a coverage line | All three, and the comments name the tickets | `occupancyService.ts:757`, `:783`, `:784` | F79 |
+| Stay type always shows; renting type shows only when it has somebody in it | Both, and better than asked. Renting Type now reads a real column and splits B2B against Residential, and hides itself when neither side has anybody. The interim donut that showed the stay split under another name is gone | F102, D32, D27 |
+
+**Two rows left the queue without being built.** D33, ruled on 27 August, keeps the Current FY tile on
+the full financial year and puts the explanation on the chip instead, which withdraws the Current FY
+tile row (F1 and its second copy F25) and the Current FY filter row (F9). Nothing about those numbers
+moves; the chip gains a note saying it compares the year so far.
+
+---
+
+## What is waiting on you
+
+Seven questions only the owner can answer. None of them moved on its own, and none of them will.
+
+| The question | What it decides | Entry |
+|---|---|---|
+| Breakup by Stay Duration hides when there are no short-term tenants, or when there are no short-term dues. Which? | The card currently never hides. The two rules give different answers on a property with short-term tenants who owe nothing | F23 |
+| On a window that straddles today, what does a count of events show? Everything in the window, only the settled part, or a dash? | Every forward block on every tab. D9 settled the money side and left this open | D9 |
+| If an auto-accepted booking leaves no trace in the data, what does the Approved Bookings tile show instead? | The tile and the Journey funnel are both built on the assumption that a trace exists. Blocked until Vivek answers F93 first | F93 |
+| What are creator codes 5 and 6 called on the Added By bar? | They are shown to the manager as "RentOk" today, which is a guess. Blocked until Vivek answers F26 first | F26 |
+| Does the product start asking for the agreement length at move-in? | Without it, every fix for the eleven-month assumption is a patch and the gap reopens with the next tenant | S7 in the register |
+| Does a way to record paying staff back ship before the Still owed to staff tile does? | The tile shows a growing number with no way to bring it down | S6 in the register |
+| Is the "Others" rollup row renamed across Dues, Collection and Expense together? | The word means two different things on one screen today: the rollup, and a category people actually type | S5 in the register |
 
 ---
 
@@ -43,20 +281,25 @@ Three sources, and only one is authority on what shipped:
 | Source | What it is |
 |---|---|
 | The handoff sheet | What we asked for |
-| A line number in this log | **Every `file.ts:NNN` in here resolves against commit `3a13e08ac`**, the state of the code when each tab was reviewed. Line numbers move whenever anyone edits a file, so each finding also names the function or block it is about, and that never moves. If a cited line does not say what the entry says, check the function, not the number (D25) |
-| Vivek's calculation guide | What Vivek says the code does. Owned by him in the backend repo at `docs/analytics/ANALYTICS_GUIDE.md`; a read-only copy sits here as [[03 — Analytics Calculation Guide (Vivek)]] with the commit it was taken from. The Google Docs export circulating as a file is lossy, it ate the `$` from every SQL placeholder in the appendix, so never cite the export |
+| A line number in this log | **Every `file.ts:NNN` in a finding resolves against commit `3a13e08ac`**, the state of the code when each tab was reviewed. Line numbers move whenever anyone edits a file, so each finding also names the function or block it is about, and that never moves. If a cited line does not say what the entry says, check the function, not the number (D25). **Line numbers in the work queue are different**: those resolve against `0e8cc713b`, the state on 27 August 2026, because that table is about the code as it is now |
+| Vivek's calculation guide | What Vivek says the code does. Owned by him in the backend repo at `docs/analytics/ANALYTICS_GUIDE.md`; a read-only copy sits here as [[03 — Analytics Calculation Guide (Vivek)]] with the commit it was taken from. **That copy is seven commits and 192 lines stale as of 27 August 2026 and needs re-copying.** The Google Docs export circulating as a file is lossy, it ate the `$` from every SQL placeholder in the appendix, so never cite the export |
 | `src/v1/analytics/` in rentok-backend | What the code actually does |
 
 Doc against doc would pass a block where both documents agree and the code does neither, so every
 block is checked all three ways.
 
+**Never read a commit message to decide whether something is fixed.** The 27 August re-verification
+found three commits that sounded like they fixed a named defect and had not, and two fixes that were
+in the code, read as done in the diff, and did nothing because they were applied one layer outside the
+thing they needed to change. Open the function.
+
 **The guide has two halves and both count.** Its prose describes each block; its appendix, "the actual
 queries", restates the SQL per service. The Dues pass first read only the prose, and the appendix was
 read afterwards, on 2026-08-24, when the owner asked whether it had been used. It overturned nothing,
 independently corroborated F2's package defect, and its pointer to `i.added_by` led to F26. **Read
-both halves per tab.** Where a claim depends on live data it is measured on production,
-test and deleted properties excluded, and the query's scope is stated next to the number. Where an
-Expense figure is a share of all twelve-month spend, the base is ₹185.1 crore; the table is written to
+both halves per tab.** Where a claim depends on live data it is measured on production, test and
+deleted properties excluded, and the query's scope is stated next to the number. Where an Expense
+figure is a share of all twelve-month spend, the base is ₹185.1 crore; the table is written to
 continuously, so separate runs of the same query move it by a few lakh, which is the data moving and
 not an error.
 
@@ -66,28 +309,25 @@ the room. So each difference gets a view on which version is right, and the owne
 **Where the reasoning lives.** An F entry says what is wrong and the fix. A D entry says what was
 ruled and why. Reasoning is written once, in the D entry, and the F entry points to it.
 
+**Where the state lives.** In [the work queue](#the-work-queue), and nowhere else. A finding's own
+entry carries a permanent verdict and, if it is closed, one clause saying what closed it. It does not
+carry an Open or Ruled label, because a label in two places drifts and this log had it in three.
+
 **Every pointer carries its own meaning.** A reference to another entry always brings a few words of
 what is there, so a sentence can be read where it sits: "D26, which took the eleven-month guess off
 this tab", not "per D26". The numbering is for finding things again, never for carrying the meaning.
 Nobody reads this log in the order it was written, so the small repetition is deliberate.
 
-**Every finding has the same four-field header:**
+**Every finding carries a verdict**, and closed ones say what closed them:
 
-| Field | Values |
+| Verdict | Means |
 |---|---|
-| Verdict | Pass · Build gap · Accepted change · Specification gap · Doc error · Withdrawn |
-| Status | Open · Ruled · Closed |
-| Owed by | Vivek · Owner · Sheet · Nobody |
-| Note | Free text, when one is needed: which D settles it, what blocks it, what closed it |
-
-Verdicts: a **build gap** is where the sheet asked for something and the code does something else.
-An **accepted change** is where the code differs and is right, so the sheet changes. A
-**specification gap** is where the code is fine and the sheet was silent or contradicted itself. A
-**doc error** is where the code is right and the guide describes it wrong. **Withdrawn** means raised,
-then shown to be wrong or superseded, kept so the reasoning survives.
-
-Status: **Open** until the owner decides, **Ruled** once he has and work remains, **Closed** when the
-edit or ticket is done.
+| Build gap | The sheet asked for something and the code does something else |
+| Accepted change | The code differs and is right, so the sheet changes |
+| Specification gap | The code is fine and the sheet was silent or contradicted itself |
+| Doc error | The code is right and the guide describes it wrong |
+| Pass | Checked and correct, recorded so nobody re-checks it |
+| Withdrawn | Raised, then shown to be wrong or superseded, kept so the reasoning survives |
 
 **Words used throughout, so entries do not re-explain them:**
 
@@ -125,13 +365,15 @@ edit or ticket is done.
 | Expense | 5 | 5 | 0 |
 | Occupancy (Inventory) | 8 | 8 | 0 |
 | Tenant | 14 | 14 | 0 |
-| Issues (Complaints) | 11 | 0 | 11 |
 
 **Deliberately excluded, known and agreed:**
 
-- **Issues / Complaints is not built.** The tab is declared in `masterConfig.ts` with 11 blocks in
-  `registry.ts`, every one of them sample data. DA-10 closed on 2026-08-18 with 79 owner rulings and
-  none of it is wired. Not re-flagged per block.
+- **Issues / Complaints is not built, and as of 26 August it is not reachable either.** Its eleven
+  blocks are still declared in `registry.ts`, every one of them sample data, but the whole tab entry
+  is commented out of the navigation in `masterConfig.ts:170` to `:181`, with a note saying to
+  re-enable by uncommenting. Commit `0625481ad`. DA-10 closed on 2026-08-18 with 79 owner rulings and
+  none of it is wired. Not re-flagged per block. Recorded as F108 because this log's scope section
+  said something else until today.
 - **Redirection is not built.** No number opens its own records yet. The tap matrix in every sheet is
   unimplemented by design for now. Not re-flagged per block.
 - **Old Tenants, Bookings and Leads were never specified**, so their absence is expected, not a gap.
@@ -140,213 +382,38 @@ A block being wired does not prove every field inside it is. That is checked per
 
 ---
 
-## Status board
+## The sweeps, and what each one found
 
-| Tab | Blocks | Reviewed | Findings | State |
-|---|---|---|---|---|
-| Dues | 9, plus the View all screen | All | 26 | Complete |
-| Collection | 7, plus the View all sheet | All | 25 | Complete; re-verified against the fix commits |
-| Expense | 5, plus the View all sheet and the Others sheet | All | 18 | Complete; fixes with Vivek |
-| Occupancy | 8, plus the View all sheet | All | 20 | Complete; fixes with Vivek |
-| Tenant | 14, plus the View all sheet | All | 15 | Complete; ruled same day, D26 to D32; fixes with Vivek |
+Each question was born from a finding on one tab and then asked of every other. **A question with no
+answer beside it has not been run across all five tabs yet**, which is a gap in this review, not a
+clean result.
 
-**All five tabs are reviewed, and the owner has ruled on everything this review raised.** Tenant returned 15
-findings, F90 to F104. Two are visible on almost every property: the Approved Bookings tile is really
-a count of tenants added rather than bookings approved (F93), and three quarters of the Already expired bar rested on dates the product invented (F100,
-settled by D26, which moved those tenants into their own stated group). One property's junk settings
-value crashes the whole Tenant page (F90).
-
-**Seven rulings came out of this tab, D26 to D32.** Three closed things this review had raised: no-term tenants get their
-own stated group instead of the red expired bar (D26), Renting Type hides rather than showing the
-stay split under a false name (D27), and the suite renames the parent group to Under eviction,
-settling S3, his own rename suggestion from 23 August, which was parked until all five tabs were
-done (D28). Four came from the owner reading the built screen and asking for
-better: Journey grows to six rows in two named groups (D29), a bucket outside a run of days hides at
-zero (D30), every agreement expiry label carries its own days (D31), and stay type and renting type
-get opposite showing rules (D32). What remains open waits on Vivek's answers, on the fix lists below, and
-on the register's proposals.
-
-**Sweeps to run on every remaining tab.** Each was born from a finding on a tab already checked, and
-the entry it came from is named beside it.
-
-| Sweep | Born from |
-|---|---|
-| Does the code implement every rule the sheet's own base section states, rule by rule | F85 |
-| Does a number agree with the surface its drill lands on | F86 |
-| Is the chip's comparison figure worked out as it stood on that date, or as it stands today | F5 |
-| Is each chip's colour right for what that tile measures | F6 |
-| Does the Current FY option end at today | F9. Already answered: only Dues and Collection get it wrong |
-| Does every block that ignores the top filter say so on its face | F18 |
-| Does any filter carry exactly one option | F16 |
-| Does every hiding rule in the sheet have a `hidden` return in the code | F23 |
-| Does every zero go somewhere: empty, healthy, or hidden | F24 |
-| Does any block match a free-named category by exact text | F19 |
-| Does any forecast read a status code as if it already contained the approval step | F2, F4 |
-| Does any forecast leave out a tenant filter altogether | F2 |
-| Does every column the code sums actually hold data on production | F40 |
-| Do all rows of one card count on one clock | F40 |
-| Does a tile keep its chip on both sides of a view toggle | F31 |
-| Do a card's tabs still sum to the card's total in every view | F36 |
-| Is a number clamped so it can never go below zero, where a negative is the real answer | F55 |
-| Does every card on a screen end its window on the same day | F63 |
-| Is an empty state defined in the code and never sent | F64 |
-| Does any of our own code save an internal string that ends up on a bar the manager reads | F62 |
-| Is a helper written, correct, and never called | F65 |
-| Does a bar's width or share come from a number already formatted for display | F79 |
-| Where a rule bounds which bars may be coloured, does the code honour the bound | F73 |
-| Does a fallback the sheet and the guide both describe actually exist in the query | F78 |
-
----
-
-## Open items
-
-Everything still waiting, by who it waits on. An item leaves this table when its entry is Closed.
-
-**Collection has been re-verified against the two fix commits**, `4bce93d21` "payment settlement
-logic changed" and `a2d839ea1` "collection due view all sheet data", on 2026-08-25. What they did:
-refunds now come off collected money, a rule the sheet always carried and this review missed (F85);
-the View all sheet now follows the toggle, closing F44 (F89); the destination rows now cover nearly
-all settled money, closing F42's coverage but overstating the total by 14% (F87); and "settled" was
-redefined to include Flexi Pay balances (F88). The refund fix moved Total Collection off the
-collections list it drills into without landing on the homescreen figure, so the screen now agrees
-with neither (F86). Two of the four need an owner ruling before Vivek does anything else on this
-tab.
-
-**Waits on Vivek, Dues and Collection**
-
-| Item | One-line action | Entry |
+| The question | Born from | What it found |
 |---|---|---|
-| Current FY tile | Show `fy_ytd` instead of `current_fy`, in both `getOverview` and `getViewAll` | F1, F25 |
-| Current FY filter option | End at today instead of 31 March, in `duesService` and `collectionService` | F9 |
-| Projected Due, rent half | Count living tenants and confirmed bookings | F2 |
-| Projected Due, package half | Add a tenant filter: living tenants and confirmed bookings | F2 |
-| Projected Due, rent day | Fall back the way `chargeRentTenants` does, per property setup | F3 |
-| Upcoming Dues | Same three fixes, second copy of the query | F2, F3, D8 |
-| Upcoming Dues | Add the other configured types; extend to the chosen end date on a forward window | D8, D9 |
-| Both Dues chips | Comparison figure as it stood on that date, not as it stands today | F5 |
-| Both Dues chips | Red for up, green for down; copy any sibling tab's chip code | F6 |
-| Dues Breakdown, Collection Breakup | Three active bars: Active, no eviction · Eviction pending · Eviction approved | D6 |
-| Overdue Breakup | Rename "By Amount" to "By ageing"; remove the one-option dropdown; add "As of today" | F15, F16, F18 |
-| Deposit Dues | Match categories case-insensitively and trimmed | F19 |
-| Deposit Dues | Say what `net_amount` means against `amount`; then add the departed-tenants line | F21, D10 |
-| Deposit Dues | Add "As of today" | F18 |
-| Breakup by Stay Duration | Hide when the rule says; add an empty state | F23, F24 |
-| Dues by Property | Hide on a single-property account | F23 |
-| Forward window | Carry the D9 rules onto the Custom path: no chip, dash for event counts, forecasts extend | F17, D9 |
-| Bookings | Confirm whether `is_confirmed = 0` means pending or cancelled; two places in the code disagree | F4 |
-| Added By | Say what creator codes 5 and 6 are; they are shown as RentOk today | F26 |
-| Collection Custom forward path | The D9 rules: no chip past today, dash the money-arrived numbers, delete the dead `coming_up` branches; confirm the Paid Date picker stops at today | F27, F17 |
-| Collection Overview | Advance and Current FY keep their chips in Due Date view | F31 |
-| Collection Overview | Cap the due window at today in `computeWindows`, both views one rule | F32, D11 |
-| Collection Overview | Collected & Adjusted comparison bounded to the same elapsed moment | F33 |
-| Collection Overview | Adjustments-only line and an empty state for the tile row | F34 |
-| Collection Breakup | Case-insensitive, trimmed category grouping, as Dues does | F35 |
-| Collection Breakup | Adjustment modes as rows on the Due Date Mode and Received by tabs | F36 |
-| Collection Breakup | The one-line no-tenant note on the Status tab | F37 |
-| Collection Breakup | Billed side per row on the Due Date Status tab | F38 |
-| Collection empty copy | Ship §15's replacement copy on four blocks | F39 |
-| Adjusted Collection | Discount reads the credits records, windowed by paid date | F40 |
-| Payment Settlement | Pick one account record per payout before summing; the rows overstate settled money by 14% | F87 |
-| Payment Settlement | Read the payout's status again, so a failed transfer can be marked inside Unsettled as §11 asks | F88 |
-| Collection View all | Adjusted rows include discount | F45 |
-| Collection healthy states | Emit the three §15 healthy messages | F46 |
-
-**Waits on Vivek, Expense**
-
-| Item | One-line action | Entry |
-|---|---|---|
-| Every chip, all five tabs | End the "same point last month" window at the end of the previous month. The same two lines sit in duesService, collectionService, expenseService, tenantService and occupancyService | F47 |
-| Four empty states | Send the in-window zero copy where the property has spent before; keep the setup line for a property that never has, in `expenseService.ts` | F50 |
-| Overview row | Give it an empty state, the screen's own in-window zero | F51 |
-| Expense healthy state | Emit "Nothing owed to staff right now." on the tile and on the View all row that repeats it | F51 |
-| View all, quarantine row | Take the absolute value before the two helpers that floor it at zero | F55 |
-| View all, no-bill row | Print the amount once, not as value and sub-label both | F56 |
-| View all sheet | Carry the window's own name, not today's date | F57 |
-| Every window on the tab | Say which clock `paid_date` is stored on; convert if it is UTC | F58 |
-| Expense Breakdown, Category | Group the catch-all on the lower-cased trimmed name, display the first spelling | F59 |
-| Top Payers, Paid by | Label FlexiPe spending "FlexiPe (Owner)"; never show the raw `(Owner)` | F62, D19 |
-| Expense Trend | End the range at today, like the other six blocks | F63 |
-| Expenses by Property | Send the empty state that is already written, when the window's total is zero | F64 |
-
-**Waits on Vivek, everywhere**
-
-| Item | One-line action | Entry |
-|---|---|---|
-| Every block, all five tabs | An unresolved property must not fall back to the block's scaffold; fix once in `toBlock`, not 51 times in the services | F52, F84 |
-
-**Waits on Vivek, Occupancy.** Every row is in `occupancyService.ts` unless another file is named.
-
-| Item | One-line action | Entry |
-|---|---|---|
-| Every tile | Build the chips at all: `chip()` at `:54` is written and never called, and `:204` to `:208` hardcode null. Fix `:72`'s comparison window in the same change | F65 |
-| Under eviction tile | Take in pending notices too, with the two parts always named on the second line | F66, D21 |
-| Under eviction tile | Unit view counts units holding someone under eviction, not people, at `:208` | F66, D22 |
-| Booked, three surfaces | Confirmed bookings only, in `helpers.ts` `fetchAllWidgetCounts` (`:1929`, `:1945`, `:2023` to `:2025`), in the rooms list filters, and here | F67, D20 |
-| Overview, a period | Divide by the capacity as it stood at `:196`, reusing `trendMonths` at `:440`; exclude future-scheduled stay rows at `:158` | F68 |
-| Occupancy Status | Two chips, not four, at `:256` to `:261`; hide them at zero; add the Under eviction second line | F69 |
-| Occupancy Status | Make the legend add up to the header, both directions: over-occupancy in Bed view, zero-capacity rooms holding somebody in Unit view | F70 |
-| Occupancy Status | Count booked at bed grain at `:243`, or say the count is by room | F71 |
-| Rentable units | Exclude rooms that declare no capacity at `:139`, and give them somewhere to go | F72 |
-| Vacant Room Status | Red marks the largest of the four aging bars only, at `:348` | F73 |
-| Four cards | Send the healthy copy §16 already holds; stop shipping the sentence §16 forbade, at `:22`; add the not-set-up and no-beds states | F74 |
-| Upcoming Vacancy | Drop the red bar at `:390` | F76 |
-| Agreements ending soon | Name the eleven-month fallback in `occupancyHints.ts` with its count, and give that count a drill to the tenants missing a length. Same treatment on the Tenant tab's Agreement Expiry | F77, D24 |
-| Losing money | Fall back to the group average at `:547` and `:554`, so an empty room is not priced at zero | F78 |
-| Losing money | Compute the bar and the share from rupees at `:571`, not from the formatted string; sort by revenue loss at `:566`; build the coverage threshold | F79 |
-| Three silent blocks | "As of today" on Status, Property Wise and the View all sheet | F80 |
-| Vacant Room Status | Hide Never rented and Unknown at zero; the four aging bands keep showing at zero. The Unknown half is not new: DA-08 §8 already says that bar hides at zero and the build renders it always, a gap the Occupancy pass missed | D30 |
-| View all sheet | The seven missing rows at `:621` to `:639`, the missing third section, the never-rented number `getVacantRooms` already computes | F81 |
-| Occupancy Trend | Start the chart where the property's data starts, at `:497` | F82 |
-| Custom path | D9's rules in `occupancyService.ts` `computeWindow`; delete the dead `coming_up` branches | F83 |
-
-**Waits on Vivek, Tenant.** Every row is in `tenantService.ts` unless another file is named.
-
-| Item | One-line action | Entry |
-|---|---|---|
-| Agreement end date, two services | Guard the `agreement_period` cast: digits only, else null | F90 |
-| Agreement end date, Tenant only | Null means the No term recorded group, never eleven months. Inventory keeps its eleven-month step | D26 |
-| Any failed block, `service.ts` | Catch it, so one bad settings value cannot kill the whole page | F90 |
-| Custom path | D9's rules; delete the dead `coming_up` branches at `:149`, `:260`, `:265`, `:311`, `:470`, `:1003` | F91, D9 |
-| Ten silent blocks | "As of today" on the live blocks, "From today onwards" on Upcoming Eviction and Agreement Expiry | F92 |
-| Approved Bookings, Journey funnel | Say whether an auto-accepted booking leaves any trace; until then, count real approval rows only, as `movedCounts` already does | F93 |
-| Overview info sheet, `tenantHints.ts` | Add Eviction Approved and Past their date entries; fix the Active Bookings definition, it counts awaiting too | F94 |
-| Move-outs | Exclude cancelled bookings, the delete path stamps them with a leaving date | F95 |
-| Journey, Under Notice bar | Rename it Eviction pending; the number it already computes is right, and D29 gives Approved eviction its own row beside it | F96, D29 |
-| Journey, Tenants tab, group 1 | Heading "Who is staying, who is leaving": Active tenants · No notices · Eviction pending · Approved eviction. The last three add up to Active on any property where nobody is past their date; where somebody is, they fall short by that count, which S9 proposes closing | D29 |
-| Journey, Tenants tab, group 2 | Heading "Whose paperwork needs a decision": Renewals in 30 days · Agreements expired. These overlap group 1, and exclude each other. Parallel bars only. Agreements expired reuses the `renewal_overdue` expression `getRenewalRetention` already runs | D29 |
-| Journey strip | Churn as a share with the count beside it; left early reads `lockin_period`, not the agreement end date, with a coverage line | F97 |
-| Upcoming Eviction | Hide the Overdue bar at zero; the four day bands keep showing at zero | D30 |
-| Agreement Expiry | Relabel to Already expired · 0–30 days · 31–60 days · 61–90 days · Valid (90+ days) | D31 |
-| Agreement Expiry | Hide Already expired and No term recorded at zero; the four day bands keep showing | D30 |
-| Stay Type, Renting Type | Stay type shows always, zero side included. Renting type shows only when either side is above zero, which replaces D27's untestable "until the field is captured"; today that hides the block everywhere, and the interim stay-split donut is removed rather than renamed | D32, D27, F102 |
-| Four colours | Police in-time plain (the default colour, not red), ID not-verified plain, the 30-day band plain, Not signed red; look at the swapped profile pair while there | F98 |
-| Upcoming Eviction | Fall back to the tenant-level date the tiles read, and say which record is authoritative for the list too | F99 |
-| Agreement Expiry | No-term tenants leave the five bands and become the stated "No term recorded" group with its count and its drill to the list | F100, D26 |
-| Renewal figures | Renewal overdue, Renewal Due and Journey's Renewals in 30 days all count real terms only, moving with the bands above | D26 |
-| Renewal & Retention | Stayed after notice as a share of those whose date fell in the window and passed, count beside it | F101 |
-| The rename, five strings | "Under eviction" replaces "Under notice" in the View all sheet's row, the rent at risk note, both Journey empty messages, and the Journey hint in `tenantHints.ts`. The Journey bar label is deliberately not in this list: D29 renames it Eviction pending instead | D28, D29, S3 |
-| Empty and healthy states | The five §21 healthy messages; wire the six unsent empty states; the whole-screen not-set-up state; fix the Bookings-tab copy-paste | F103 |
-| Three breakdowns | An Other bar for unmatched food values; "girls" into the female list; no-joining-date tenants stated, not dropped | F104 |
-
-**Waits on the owner**
-
-| Item | The question | Entry |
-|---|---|---|
-| Breakup by Stay Duration | Hide when there are no short-term tenants, or no short-term dues | F23 |
-| Forward window | What an event count shows on a window that straddles today | D9 |
-| Approved Bookings | What the tile shows if auto-accepted bookings leave no trace, once Vivek answers | F93 |
-| Added By | Name creator codes 5 and 6, once Vivek says what they are | F26 |
-| Agreement length | Whether the product starts asking for it at move-in, so the gap stops reopening | S7 in the register |
-| Paying staff back | Whether a way to record it ships before the Still owed to staff tile does | S6 in the register |
-| The word "Others" | Whether the rollup row is renamed across Dues, Collection and Expense together | S5 in the register |
-
-**Waits on the other sheets**
-
-| Sheet | Change | When |
-|---|---|---|
-| DA-09 Tenants | §4: drop Coming up, rewrite the forward column per D9, from that tab's code | Done, 2026-08-25 |
-| DA-04 Expense | §4 explains its own no-forward rule by pointing at Coming up, an option D9 deleted. The rule is right; the reason needs rewriting without the dead name | Done, 2026-08-24 |
-| DA-08 Inventory | §4's forward column, the under-eviction naming after D6, and the Occupancy booking question | Done, 2026-08-24 |
+| Does the code implement every rule the sheet's own base section states, rule by rule | F85 | **Not run across all five.** It caught the missing refund rule on Collection and has not been repeated elsewhere |
+| Does a number agree with the surface its drill lands on | F86 | **Not run across all five.** Open on Collection, where Total Collection now matches neither the list nor the homescreen |
+| Is the chip's comparison figure worked out as it stood on that date, or as it stands today | F5 | **Answered: as it stands today, on Dues.** The comparison runs on the pool of bills unpaid now, so anything since paid has dropped out. Still open |
+| Is each chip's colour right for what that tile measures | F6 | **Answered: no, in two places.** Dues is inverted, rising dues green and falling red. Tenant has four wrong plus a swapped pair. Both still open |
+| Does the Current FY option end at today | F9 | **Answered: only Dues and Collection ran to 31 March.** D33 has since ruled that is correct and moved the explanation onto the chip |
+| Does every block that ignores the top filter say so on its face | F18 | **Answered: almost none does.** Deposit Dues is the only one that says it, and it landed on 27 August. Overdue Breakup, three Occupancy blocks and ten Tenant blocks still do not |
+| Does any filter carry exactly one option | F16 | **Answered: one.** Overdue Breakup's `ALL_TIME_ONLY` list. Still there |
+| Does every hiding rule in the sheet have a `hidden` return in the code | F23 | **Answered: mostly yes.** Collection, Expense, Occupancy and Tenant all hide their per-property card on a single property. Dues does not, and Breakup by Stay Duration has no hide at all |
+| Does every zero go somewhere: empty, healthy, or hidden | F24 | **Answered: much better than it was.** Empty states are now wired across Expense, Tenant and most of Occupancy. Healthy states are the gap: Collection has all three, Tenant two of five, Occupancy one of four |
+| Does any block match a free-named category by exact text | F19 | **Answered: two still do.** Deposit Dues and Collection Breakup. Dues Breakdown was fixed to lower-case and trim; Expense trims but still does not lower-case |
+| Does any forecast read a status code as if it already contained the approval step | F2, F4 | **Not run across all five.** Open on Dues and on Occupancy's booked layer |
+| Does any forecast leave out a tenant filter altogether | F2 | **Answered: one.** Projected Due's package half, which still filters nobody |
+| Does every column the code sums actually hold data on production | F40 | **Answered: one does not.** `inv.discount`, still read by Adjusted Collection |
+| Do all rows of one card count on one clock | F40 | **Not run across all five** |
+| Does a tile keep its chip on both sides of a view toggle | F31 | **Answered: no.** Collection's Advance and Current FY lose theirs in Due Date view. Still open |
+| Do a card's tabs still sum to the card's total in every view | F36 | **Answered: no.** Collection Breakup's Mode and Received by tabs drop adjustment money in Due Date view |
+| Is a number clamped so it can never go below zero, where a negative is the real answer | F55 | **Answered: one.** The Expense quarantine row, and its attempted fix does not work |
+| Does every card on a screen end its window on the same day | F63 | **Answered: no.** The Expense trend runs to month end while the other six blocks stop at today |
+| Is an empty state defined in the code and never sent | F64 | **Answered: fixed everywhere it was found.** Expense's four and Tenant's six are all wired now |
+| Does any of our own code save an internal string that ends up on a bar the manager reads | F62 | **Answered: one.** Expense's Paid by tab, a third of all spending. Still open |
+| Is a helper written, correct, and never called | F65 | **Answered: two.** Occupancy's `chip()`, still uncalled. Tenant's `projectedTiles()`, deliberately parked with a comment saying so, which is the honest version |
+| Does a bar's width or share come from a number already formatted for display | F79 | **Answered: one, now fixed.** Occupancy's losing-money card computes from raw rupees |
+| Where a rule bounds which bars may be coloured, does the code honour the bound | F73 | **Answered: no, twice.** Vacant Room Status takes its maximum across all six bars including Never rented, and Upcoming Vacancy paints a red bar the sheet never granted it |
+| Does a fallback the sheet and the guide both describe actually exist in the query | F78 | **Answered: no.** Occupancy's group-average rent fallback does not exist. The guide has since been corrected to describe what ships; the code has not |
 
 ---
 
@@ -2466,6 +2533,64 @@ no reader left once F40 is fixed.
 
 ---
 
+### F106. Every ranked list in the suite has quietly lost each row's share of the account total
+
+**Verdict:** Build gap · **Note:** found on 2026-08-27; one answer settles five blocks
+
+Every "by property" card in the suite ranks its rows and draws a bar whose width is relative to the
+top row. Each row was also meant to carry its share of the account total, so a manager can see that
+one property is 40% of the money rather than only that it is the biggest. That share is now commented
+out in all five, alongside the total it was computed from:
+
+| Block | Line |
+|---|---|
+| Dues by Property | `duesService.ts:711` |
+| Collection by Property | `collectionService.ts:812` |
+| Expenses by Property | `expenseService.ts:576` |
+| Property Wise Occupancy | `occupancyService.ts:832` |
+| Property Wise Active Tenants | `tenantService.ts:1227` |
+
+All five are commented rather than deleted, and all five have the same shape, so this is one decision
+somebody made and not five accidents. This log records the share as something that shipped: it is
+named in [Passes worth recording](#passes-worth-recording) as "each row carrying its share of the
+account total", which is no longer true.
+
+**Fix:** ask first. If it goes back it is one line per block. If it stays out, P8 and every sheet that
+promises the share come out with it. DA-01 §14 is the clearest of them: "every row carries its share of
+the account total: the share is what turns a ranking into a staffing decision".
+
+### F107. Upcoming Vacancy no longer follows the view toggle, which reverses a ruling
+
+**Verdict:** Build gap · **Note:** D23 re-affirmed on 2026-08-27; the fix is to restore the old behaviour
+
+On 24 August the owner ruled, in D23, that this card is right to follow the Bed and Unit toggle: a
+departing tenant is a bed freeing up, which is as bed-level as anything else on the screen. F75 closed
+as an accepted change, and sheet DA-08 §4 and §9 were rewritten around the build.
+
+The card now reads "Always room-wise" at `occupancyService.ts:496` and never looks at the toggle. It
+counts a room once, only when every active tenant in it is leaving, bucketed by the last departure.
+Commit `21a506e36`, "upcoming vacany room wise logic done".
+
+This is the only place in the 27 August re-verification where the code moved away from a decision
+rather than towards it. Re-ruled the same day: **D23 stands.** The sheet is not changing a third time.
+
+**Fix:** restore the toggle. Bed view counts departing tenants, Unit view counts distinct
+room-and-day vacancy events, and the axis label switches with them.
+
+### F108. The Issues tab has been taken out of the navigation, and this log's scope said otherwise
+
+**Verdict:** Accepted change · **Closed:** scope section corrected 2026-08-27; nothing owed
+
+`masterConfig.ts:170` to `:181` comments the whole Issues tab entry out of the navigation, with a note
+saying to re-enable by uncommenting. Its eleven blocks are still declared in `registry.ts`, every one
+of them sample data. Commit `0625481ad`, 26 August.
+
+The right call: a tab of demo numbers on a live account is the same data bug F52 is about, one level
+up. It is recorded here only because [What is in scope](#what-is-in-scope) said the tab was declared
+with eleven blocks of sample data, which was half true from 26 August until this entry was written.
+The scope section now says both halves.
+
+
 ## Decisions ruled
 
 | # | Date | Rules on | What was decided |
@@ -3399,27 +3524,57 @@ too, and DA-01 §3's "this screen never says under notice" line is rewritten aro
 
 ---
 
+### D33. The Current FY tile keeps the full financial year; the chip says what it compares (2026-08-27)
+
+The tile goes on showing 1 April through 31 March. The chip beside it goes on comparing 1 April to
+today against 1 April to the same day last year, which is what the code already does, and it now
+carries a note on its face saying it compares the year so far. **No number moves.**
+
+**What this withdraws.** Two rows were asking for the same thing, that the financial year window stop
+at today: the Current FY tile row (F1, and its second copy in the View all screen, F25) and the
+Current FY filter option row (F9). Both are withdrawn. The mismatch F1 described is real, and it gets
+answered by wording inside the chip rework rather than by moving the window.
+
+**What was rejected while ruling.** Making the chip compare a full year against a full year. It is
+honestly in sync with the tile, and it would read heavily down every year from April through March,
+correcting itself only on 31 March. A chip that is wrong for eleven months and right for one is worse
+than a chip that measures a different window and says so.
+
+**What this changes about D2.** D2, ruled on 23 August, settled Current FY as year to date. That
+stands as the definition of the *comparison*, and no longer as the definition of the *tile*. G3, the
+guide's contradiction on this, now needs rewriting rather than fixing: the tile description is the
+correct line and the glossary is the one that has to change.
+
+
 ## Doc fixes owed to Vivek
 
 These do not affect the product. They matter because the guide is written for support and owners.
 
-| # | Fix |
-|---|---|
-| G1 | Upcoming Dues is written last in the guide. It is sixth on the screen and sixth in the sheet |
-| G2 | The status glossary lists tenant statuses 0 to 3 only. The table also has 4 (invite) and 5 to 8 (deleted states). A support reader tracing a status 4 person will not find them |
-| G3 | The guide contradicts itself on Current FY: the glossary says 1 Apr to today, the tile description says within this financial year. D2 settled it as year to date; both places should say so |
-| G4 | Upcoming Dues: "Food/Others appear only when configured" is not true of the build, which is rent only. After D8 it will be true; until then the line describes a card that does not exist |
-| G5 | The guide marks Settlement Pending "(Live)" and calls Collection Overview "Period, with two live tiles". The tile is window-scoped in the sheet and the build; Current FY keeps a fixed window, which is not the same as live |
-| G6 | The guide's Collection filter list still names Coming up, an option the app cannot send (F17) |
-| G7 | The guide calls Expense Overview "Period, with one live tile". Two of the four tiles ignore the filter, and Current FY keeps a fixed window, which is not the same as live. Same fault as G5 |
-| G8 | The guide's Expense section describes the five cards. It mentions the View all sheet once, inside a whole-tab assumption, and never describes its rows. Its four fund rows are the least obvious numbers on the tab, and §6 attaches three rules to them that are each a wrong number if missed. A support reader asked where "Paid from staff's own money" comes from has nothing to read |
-| G9 | The guide states as a whole-tab assumption that "the window's upper end never goes past today". True of five blocks and not of the trend, which runs to the end of the month (F63). Once F63 is fixed the sentence becomes true |
-| G10 | The Occupancy losing-money section says revenue loss is priced at "the room's per-bed rent (its own tenants' average, falling back to the group average)". There is no group-average fallback in the query; an empty room prices at zero (F78). The guide should describe what ships, whichever way F78 is fixed |
-| G11 | The guide's Occupancy filter list names Coming up, an option the app cannot send (F83), and its Overview section describes the Coming-up projection as though a reader could reach it. Same fault as G6 on Collection |
-| G12 | The guide says the Occupancy period rate uses "today's rentable count for past periods" as an assumption, and separately says the trend uses capacity "as it stood that month". Both are true of the code and the guide never says the two blocks therefore disagree about the same month (F68). A support reader asked why the tile and the bar differ has nothing to read |
-| G13 | The guide's Tenant filter line ends "(+ Coming up for forward blocks)", an option the app cannot send, and the Move Metrics and Overview sections describe the Coming-up behaviour as though a reader could reach it. Same fault as G6 and G11 |
-| G14 | The guide's Tenant Overview prose lists "Active / Approved Bookings" among the live tiles. Approved Bookings is a window number, and the guide's own appendix says so |
-| G15 | The guide says stayed-after-notice comes "from `tenant_agreement_renewals`". It is computed from the tenant records, living tenants whose confirmed leaving date fell in the window; only Completed and renewed read the renewals table |
+**Checked against the live file, not our copy.** These fifteen were re-checked on 27 August 2026
+against `docs/analytics/ANALYTICS_GUIDE.md` at `origin/master`, because [[03 — Analytics Calculation
+Guide (Vivek)]] in this repo is a 22 August snapshot and the source has moved seven commits and 192
+lines since. **One fixed, one part done, thirteen not started**, and the 192 new lines are new
+content, mostly the vacancy and inventory sections, rather than these corrections. Re-copying the
+guide into this repo is a mechanical job and should happen before anyone reads our copy again.
+
+
+| # | Fix | Where it stands, 27 Aug 2026 |
+|---|---|---|
+| G1 | Upcoming Dues is written last in the guide. It is sixth on the screen and sixth in the sheet | **Part done.** No longer last: it now sits after Deposit Dues, so the two are simply swapped against the screen order |
+| G2 | The status glossary lists tenant statuses 0 to 3 only. The table also has 4 (invite) and 5 to 8 (deleted states). A support reader tracing a status 4 person will not find them | Not started |
+| G3 | The guide contradicts itself on Current FY: the glossary says 1 Apr to today, the tile description says within this financial year. D2 settled it as year to date; both places should say so | **Needs rewriting, not fixing.** D33 keeps the tile on the full financial year, so the tile description is now the correct line and the glossary is the one that changes, plus a sentence saying the chip measures a different window on purpose |
+| G4 | Upcoming Dues: "Food/Others appear only when configured" is not true of the build, which is rent only. After D8 it will be true; until then the line describes a card that does not exist | Not started |
+| G5 | The guide marks Settlement Pending "(Live)" and calls Collection Overview "Period, with two live tiles". The tile is window-scoped in the sheet and the build; Current FY keeps a fixed window, which is not the same as live | Not started |
+| G6 | The guide's Collection filter list still names Coming up, an option the app cannot send (F17) | Not started |
+| G7 | The guide calls Expense Overview "Period, with one live tile". Two of the four tiles ignore the filter, and Current FY keeps a fixed window, which is not the same as live. Same fault as G5 | Not started |
+| G8 | The guide's Expense section describes the five cards. It mentions the View all sheet once, inside a whole-tab assumption, and never describes its rows. Its four fund rows are the least obvious numbers on the tab, and §6 attaches three rules to them that are each a wrong number if missed. A support reader asked where "Paid from staff's own money" comes from has nothing to read | Not started. There is still no View all section anywhere in the guide |
+| G9 | The guide states as a whole-tab assumption that "the window's upper end never goes past today". True of five blocks and not of the trend, which runs to the end of the month (F63). Once F63 is fixed the sentence becomes true | Not started, and still untrue while the Expense trend runs to month end (F63) |
+| G10 | The Occupancy losing-money section says revenue loss is priced at "the room's per-bed rent (its own tenants' average, falling back to the group average)". There is no group-average fallback in the query; an empty room prices at zero (F78). The guide should describe what ships, whichever way F78 is fixed | **Fixed.** The guide now says the loss is priced at that room's own tenants' average and stops there, and describes the coverage line the card ships. The underlying defect F78 is still open, so the guide is now honest about a number that is still wrong |
+| G11 | The guide's Occupancy filter list names Coming up, an option the app cannot send (F83), and its Overview section describes the Coming-up projection as though a reader could reach it. Same fault as G6 on Collection | Not started |
+| G12 | The guide says the Occupancy period rate uses "today's rentable count for past periods" as an assumption, and separately says the trend uses capacity "as it stood that month". Both are true of the code and the guide never says the two blocks therefore disagree about the same month (F68). A support reader asked why the tile and the bar differ has nothing to read | Not started |
+| G13 | The guide's Tenant filter line ends "(+ Coming up for forward blocks)", an option the app cannot send, and the Move Metrics and Overview sections describe the Coming-up behaviour as though a reader could reach it. Same fault as G6 and G11 | Not started |
+| G14 | The guide's Tenant Overview prose lists "Active / Approved Bookings" among the live tiles. Approved Bookings is a window number, and the guide's own appendix says so | Not started |
+| G15 | The guide says stayed-after-notice comes "from `tenant_agreement_renewals`". It is computed from the tenant records, living tenants whose confirmed leaving date fell in the window; only Completed and renewed read the renewals table | Not started |
 
 ---
 
@@ -3440,47 +3595,51 @@ These do not affect the product. They matter because the guide is written for su
 
 ## Passes worth recording
 
-**Overview Snapshot.** All Time, All Past, This Month and All Future match the sheet exactly. No tile
+Checked and found correct, written down so nobody re-checks it. **Each pass carries a P number so it
+can be pointed at**, which matters when a later change quietly undoes one: P8 below is the first
+example, recorded and then contradicted by F106.
+
+**P1. Overview Snapshot.** All Time, All Past, This Month and All Future match the sheet exactly. No tile
 reads the top filter. Exactly two tiles carry a chip. The three add up: All Past plus This Month plus
 All Future equals All Time, no overlap, no gap. The rent-only mislabel on the Projected row that the
 tracker logged in August is fixed; the projection counts scheduled packages as well as rent.
 
-**Dues (Live).** Total Dues is the same computation as All Time Dues. The four slices add up to it:
+**P2. Dues (Live).** Total Dues is the same computation as All Time Dues. The four slices add up to it:
 overdue is strictly before today, so a due dated today is not yet overdue, matching §3. The empty
 state fires at zero.
 
-**Bills Summary.** Bill Due counts everything that came due in the window whether since paid or not,
+**P3. Bills Summary.** Bill Due counts everything that came due in the window whether since paid or not,
 and is always at least as large as the This Month's Due tile, which is correct. Empty state fires when
 both are zero. This Month resolves as 1st through today, matching the tile and the dues list.
 
-**Dues Breakdown.** Category is top 5 plus Others, Added By is top 4 plus Others, both on the base
+**P4. Dues Breakdown.** Category is top 5 plus Others, Added By is top 4 plus Others, both on the base
 pool. Tenant Status widens to include moved-out tenants, their one home on the screen. The
 under-notice bar read the confirmed leaving date, which matched the sheet as written at the time; D6
 has since changed the bars. Each tab has its own empty state.
 
-**Overdue Breakup.** Buckets 1-7, 8-14, 15-21, 22-90 and over 90, as today minus due date on the base
+**P5. Overdue Breakup.** Buckets 1-7, 8-14, 15-21, 22-90 and over 90, as today minus due date on the base
 pool with due date before today. By Category runs on the same overdue pool. The zeros are told apart
 as §17 asks: overdue money shows the bars, none but billed shows the healthy "all paid on time"
 message, never billed shows the empty state.
 
-**Deposit Dues.** Due runs on the base pool filtered to deposit categories. Received nets off refunds
+**P6. Deposit Dues.** Due runs on the base pool filtered to deposit categories. Received nets off refunds
 and adjustment payments, so money returned or adjusted stops counting. Empty state fires when both
 rows are zero.
 
-**Breakup by Stay Duration.** The split runs on the base pool inside the window using the tenant's
+**P7. Breakup by Stay Duration.** The split runs on the base pool inside the window using the tenant's
 short-term flag, and the two bars add up to the window's total when both are present.
 
-**Dues by Property.** Ranked high to low, each row carrying its share of the account total. Bar width
+**P8. Dues by Property.** ⚠ **The share half is no longer true, see F106.** Ranked high to low, each row carrying its share of the account total. Bar width
 is relative to the top property, zero-dues properties stay at the bottom, a zero total fires the
 empty state, View more appears past five rows.
 
-**View all screen.** All six tiles restated, each carrying the real month name and financial year on
+**P9. View all screen.** All six tiles restated, each carrying the real month name and financial year on
 its face. Chips on exactly the two allowed rows. Category rows in the specified form, "Aug Rent
 Dues", top five with Others folded below and suppressed at zero. Stay rows carry their exact labels.
 
 ### Collection, verified 2026-08-24
 
-**The toggle and §4.** The toggle is screen-level, Paid Date default; only Due Date may take a Custom
+**P10. The toggle and §4.** The toggle is screen-level, Paid Date default; only Due Date may take a Custom
 window past today. Every block answers to the view. The five filter options match the app's list, and
 no Collection block carries a one-option filter (F16 sweep). The three cards the sheet gives their
 own dropdown have one, following the top filter's options; the Trend's range control is 8 weeks, 6
@@ -3490,7 +3649,7 @@ to today with "This financial year" on its face; only the filter option carries 
 Per-tile chip direction is right everywhere it is built: collection tiles green for up, Still Unpaid
 red for up, Billed neutral grey.
 
-**Collection Overview.** The three source buckets add up to Total Collection exactly, each payment
+**P11. Collection Overview.** The three source buckets add up to Total Collection exactly, each payment
 in exactly one bucket by the due date of the bill it cleared, and the bucket boundary agrees with
 §3's "due date still ahead" reading of Paid Early. The negative-total state is built with §5's exact
 line. Part payments hold together: a part payment splits its bill, so the paid split counts and the
@@ -3499,42 +3658,42 @@ invoice exists, so Billed, which reads only unpaid and paid bills, statuses 0 an
 Billed excludes written off and refunded bills as §5 asks, and Billed minus Collected & Adjusted
 equals the unpaid amount exactly.
 
-**Collection Breakup.** Top 3 plus Others fold, Others carrying its drill and, on Received by, its
+**P12. Collection Breakup.** Top 3 plus Others fold, Others carrying its drill and, on Received by, its
 staff count. Old cash codes 202 and 207 fold into Cash (§17.8). Online modes collapse to RentOk on
 both tabs. Blank receivers read "Not recorded" (§6). Adjustment modes excluded in Paid Date view,
 where they are worth ₹0.
 
-**Collection Status.** Paid Date only, hidden in Due Date with a real hidden return
+**P13. Collection Status.** Paid Date only, hidden in Due Date with a real hidden return
 (`collectionService.ts:587`, F23 sweep). The four bars are the same four numbers as the tiles. The
 first bar carries the window's own name, matching design-fix item §19.12. Empty state fires when all
 four are zero.
 
-**Adjusted Collection.** Grid order matches §8. Deposit, advance and caution each sum the bill
+**P14. Adjusted Collection.** Grid order matches §8. Deposit, advance and caution each sum the bill
 amounts their mode cleared, by paid date. Empty state fires on four zeros; its copy is wrong (F39)
 and its Discount figure reads a dead column (F40).
 
-**Collection Trend.** Own range, the top filter has no hold. Collection is the bottom segment in
+**P15. Collection Trend.** Own range, the top filter has no hold. Collection is the bottom segment in
 both views. Paid Date green counts money arrived, capped at today on the running period, yellow the
 period's billing, two independent numbers as §9 says. Due Date yellow is the remainder, so the bar's
 top is exactly Billed, the reading §9 recommends. The running bar is marked in progress, weekly bars
 are calendar weeks, and the empty state fires on no data.
 
-**Collection by Property.** Hidden below two properties with a real hidden return
+**P16. Collection by Property.** Hidden below two properties with a real hidden return
 (`collectionService.ts:714`, F23 sweep). Zero-collection properties stay listed at the bottom. Each
 row carries its share of the account total, §19.21 done right; bars are relative to the top
 property; View more appears past five rows.
 
-**Payment Settlement.** Collected, Settled and Unsettled add up; the bar is two segments, §19.8 done
+**P17. Payment Settlement.** Collected, Settled and Unsettled add up; the bar is two segments, §19.8 done
 right. Destination naming falls back to the contact-support line per row. The card's yes test and
 coverage are F42 and F43.
 
-**View all sheet.** Six groups as §12 lists them. Category rows are every category, largest first,
+**P18. View all sheet.** Six groups as §12 lists them. Category rows are every category, largest first,
 with the billed side in Due Date view. FY rows carry the year on their face. Adjusted rows carry
 window, FY and all time, short of discount (F45).
 
 ### Expense, verified 2026-08-24
 
-**The filter and the screen's behaviour.** Five options matching the app's list, This Month default.
+**P19. The filter and the screen's behaviour.** Five options matching the app's list, This Month default.
 Custom is stopped at today twice over, once in the config the app reads and once in the service, and
 Expense is the only tab that does this. Current FY runs 1 April to today as a tile and as a filter
 option, so F9 genuinely does not reach here. The three cards with their own dropdown carry the top
@@ -3543,7 +3702,7 @@ it does not recognise. No card carries a one-option dropdown. Chips hide on All 
 is right per tile: red for rising spend, neutral grey for the count, none on Still owed to staff.
 There is no view toggle, so the F31 and F36 toggle sweeps do not apply.
 
-**Overview.** Four tiles in the sheet's order with the sheet's labels, the two fixed ones carrying
+**P20. Overview.** Four tiles in the sheet's order with the sheet's labels, the two fixed ones carrying
 their face note where the others put a chip. The block is titled "Overview", not "Overview (Live)",
 so design fix §17.5 is already done. Still owed to staff reads the passbook rather than re-inventing it, so
 §15.15 passes properly; the check and its citations are in F53. §5's claim that a quarter of spending
@@ -3551,7 +3710,7 @@ comes from staff pockets is true as a share of money: ₹48.65 crore of ₹185.1
 months, 26.3%. The sheet's own appendix records 26% as a share of expenses, a different measurement
 that this review did not re-run.
 
-**View all sheet.** Eleven rows in §6's order. Average per expense hides at no expenses; petty cash
+**P21. View all sheet.** Eleven rows in §6's order. Average per expense hides at no expenses; petty cash
 and the quarantine row hide at zero; the sheet opens on a dead window with zeros rather than refusing
 to open, as §6 asks. The fund rows are the part most likely to be wrong and are right: an expense
 paid from two sources is counted once in the total and split only across the fund rows, no passbook
@@ -3561,7 +3720,7 @@ live properties: across 2,847 properties that spent anything, not one has fund r
 own total, and the whole platform's unexplained remainder is ₹1.67 lakh out of ₹185.1 crore. The
 no-bill test is sound: no expense carries an array of blank strings that would pass as a receipt.
 
-**Expense Breakdown.** Payment Mode passes in every detail. All nine codes in §7's list map to §7's
+**P22. Expense Breakdown.** Payment Mode passes in every detail. All nine codes in §7's list map to §7's
 labels and all nine hold real money (the F40 sweep). Unrecognised modes fall to "Online" and are
 almost nothing: 197 expenses carry mode code 0 and a further 4 carry no mode at all, ₹1.22 lakh
 between them, 0.01% of the money. So "Online hides at zero" means most properties never see the row. The tab has no rollup, every mode sorts by
@@ -3571,27 +3730,27 @@ disagree on the card's total (the F36 sweep). The Others sheet lists the remaini
 and then the typed names by amount, and spend with no category at all appears as "No category" rather
 than folded into anything.
 
-**Top Payers and Vendors.** The tab never derives the payer from the record's creator, which was §8's
+**P23. Top Payers and Vendors.** The tab never derives the payer from the record's creator, which was §8's
 flat prohibition. Names are trimmed and merged only when identical. Blank names get their own row and
 stay in the total, and §8's "a handful of rows across every property" is exactly right: over twelve
 months, 4 expenses worth ₹3,000 have no payer and 7 worth ₹4,900 have no payee. Three largest then
 Others, each row with its amount and share, both tabs summing to one card total.
 
-**Expense Trend.** Its own range, the top filter has no hold. Months oldest to newest, the running
+**P24. Expense Trend.** Its own range, the top filter has no hold. Months oldest to newest, the running
 month marked in progress and drawn lighter, an all-zero range firing the empty state.
 
-**Expenses by Property.** Hidden below two properties with a real `hidden` return
+**P25. Expenses by Property.** Hidden below two properties with a real `hidden` return
 (`expenseService.ts:545`), the only hiding rule this tab has and the F23 sweep passes on it.
 Zero-spend properties stay listed at the bottom, rows sort high to low, bars are relative to the top
 property, each row carries its share of the account total, and View more appears past five rows.
 
-**Windows, settled earlier and re-checked here.** F9 and F17 both exempt this tab and both exemptions
+**P26. Windows, settled earlier and re-checked here.** F9 and F17 both exempt this tab and both exemptions
 hold in the code: Current FY ends at today, Custom caps at today, and there has never been a forward
 branch to leave behind because the sheet never asked for one.
 
 ### Occupancy (Inventory), verified 2026-08-24
 
-**The filter and the toggle.** Five options matching §4 exactly, Now default, and no All Time, which
+**P27. The filter and the toggle.** Five options matching §4 exactly, Now default, and no All Time, which
 is this tab's own deliberate difference (`masterConfig.ts:84`). **F9 does not reach this tab**: the
 Current FY case ends at today (`occupancyService.ts:83`), re-checked rather than taken from the
 earlier pass. The toggle is Bed and Unit with Bed default (`masterConfig.ts:150`), matching §4 and
@@ -3599,17 +3758,17 @@ design fix 5. No block carries a one-option dropdown, so the F16 sweep passes. T
 hide on an all-singles property, which §4 asks for and the sheet's appendix put at 29.5% of active
 properties; small enough to sit inside F80's group of face-level gaps rather than earn its own entry.
 
-**The two toggle sweeps, which do apply here.** F31, does a tile keep its chip across the toggle:
+**P28. The two toggle sweeps, which do apply here.** F31, does a tile keep its chip across the toggle:
 moot, no tile has a chip either side (F65). F36, do a card's tabs still sum to the card's total in
 every view: the donut is the only card with parts, and it sums correctly in Unit view. In Bed view it
 does not, which is F70, and that is a rounding of over-occupancy rather than a toggle fault.
 
-**Overview Snapshot.** Five tiles in §5's order with §5's labels, switching with the toggle. The rate
+**P29. Overview Snapshot.** Five tiles in §5's order with §5's labels, switching with the toggle. The rate
 is computed from beds in both views and says "by beds" on its face, which is §18 item 2 and design fix
 14's sibling. Occupied, Vacant and Rentable are read from the widget on Now, so the screen and the
 rooms list cannot drift. The window's name rides beside the title as §5 asks.
 
-**Occupancy Status.** The donut carries §7's slices in each view, Semi-Vacant appearing in Unit view
+**P30. Occupancy Status.** The donut carries §7's slices in each view, Semi-Vacant appearing in Unit view
 only and only above zero, Disabled only when present. The header carries both totals, total and
 rentable, which is design fix 32 done. The over-100% sentence exists (`occupancyService.ts:276`),
 though it states the over-occupied half without the vacant half §7 asked for. The money tiles are the
@@ -3618,39 +3777,39 @@ two §7 specifies, with §7's own labels, and the second one reads "per Rentable
 330,532 of 352,750, so the averages read about 6% low rather than half, and the sheet's appendix
 figure of 43 to 54% was about beds carrying a rent, a different measurement.
 
-**Vacant Room Status.** Six bars in §8's order including never rented and unknown, which the design
+**P31. Vacant Room Status.** Six bars in §8's order including never rented and unknown, which the design
 never drew. Counted per room in both views, with "by rooms · As of today" on its face, matching §8 and
 §4. Bucket edges are 0-7, 8-15, 16-30 and 31+, so day 30 falls in exactly one bucket and both bar
 charts agree, which is §18 item 19 and design fix 8. Never rented comes from the absence of any stay
 history rather than from a zero age, which is §18 item 13 exactly. The subtitle carries the card's
 direction, design fix 9.
 
-**Upcoming Vacancy.** Built from approved leaving dates only, dates from today onwards, so a tenant
+**P32. Upcoming Vacancy.** Built from approved leaving dates only, dates from today onwards, so a tenant
 whose date has passed is correctly absent, which is F14's row 3 holding. Bookings cannot leak in:
 status 1 only, which is §18 item 7's test. Buckets and subtitle agree with its neighbour.
 
-**Agreements ending soon.** Counts agreements and says so on the axis, ignores both the toggle and the
+**P33. Agreements ending soon.** Counts agreements and says so on the axis, ignores both the toggle and the
 filter with "From today onwards" on its face, all three matching §10 and design fixes 10 and 29. The
 footer restates the 90-day total. The end date itself is this tab's largest question and is F77; the
 same four-step rule runs on the Tenant tab, so both screens carry it and both are fixed together.
 
-**Occupancy Trend.** Its own range, 6, 12 and 24 months with 6 default, and the top filter has no hold
+**P34. Occupancy Trend.** Its own range, 6, 12 and 24 months with 6 default, and the top filter has no hold
 on it, matching §11 and §4. Months run oldest to newest, the running month is marked in progress, and
 the chart plots the level rather than movement, which is §11's deliberate exception. Its capacity work
 is B7. The empty state fires on an all-zero range.
 
-**Property Wise Occupancy.** Hidden below two properties with a real `hidden` return
+**P35. Property Wise Occupancy.** Hidden below two properties with a real `hidden` return
 (`occupancyService.ts:582`), so the F23 sweep passes on this tab. Sorted highest to lowest by vacant
 space rather than by rate, which is §13's whole point and design fix 11. Properties with nothing
 rentable still appear at zero, and every property the manager selected produces a row, so §13's
 account-grouping warning does not bite: the scope comes from the request, not from a grouping field
 that is missing on 29% of properties.
 
-**Empty states, the F64 sweep.** All eight are defined and all eight are wired. Not one is written and
+**P36. Empty states, the F64 sweep.** All eight are defined and all eight are wired. Not one is written and
 left unsent, which is the only tab so far where that sweep passes cleanly. What is wrong with them is
 their words, not their plumbing, and that is F74.
 
-**The F55 clamping sweep.** Vacant is floored at zero on a period (`occupancyService.ts:195`), which
+**P37. The F55 clamping sweep.** Vacant is floored at zero on a period (`occupancyService.ts:195`), which
 is right here: a bed cannot be negatively empty, and over-occupancy is its own number on the same
 screen. The rate is deliberately not clamped, so it can read above 100% as §3 requires.
 
@@ -3659,14 +3818,14 @@ rather than quiet. The Unit view donut was first written up as summing correctly
 zero-capacity rooms holding somebody, and that is now inside F70. And the losing-money card was first
 written up as silent about its window; it is not, it carries a plain line, and that is now inside F80.
 
-**The F62 sweep, an internal string reaching the manager.** Nothing on this tab prints a stored string
+**P38. The F62 sweep, an internal string reaching the manager.** Nothing on this tab prints a stored string
 from our own writers. Every label is written in the analytics layer, and the only free text near this
 screen, the room type field the sheet's appendix found with 60-plus spellings, is deliberately not
 used as an axis.
 
 ### Tenant, verified 2026-08-25
 
-**The filter and §4.** Five options matching the app's list, This Month default, no view toggle, so
+**P39. The filter and §4.** Five options matching the app's list, This Month default, no view toggle, so
 the F31 and F36 toggle sweeps do not apply. **F9 does not reach this tab**: Current FY ends at today
 (the `current_fy` case, `tenantService.ts:127` to `:129`), re-checked in the code rather than taken
 from the earlier pass. No block
@@ -3678,7 +3837,7 @@ event counts recomputed from dated records, so the F5 as-it-stood trap does not 
 **F47 re-checked in this file alone**: the same two overflow lines sit at `:160` to `:161` at head
 `6797eec6d`, so the open item's five-service fix list stays right.
 
-**Overview Snapshot.** Seven tiles in §5's order with §5's labels, Past their date in the Move-outs
+**P40. Overview Snapshot.** Seven tiles in §5's order with §5's labels, Past their date in the Move-outs
 slot as §5 moves it, live tiles carrying "as of today" and no chip, the two window tiles carrying
 chips (§25's design fix 1 done right in the build). The two money lines ride under the tiles with
 the sheet's own note format, and leaving-with-dues only appears when somebody owes. Rent at risk
@@ -3686,57 +3845,57 @@ reads the monthly rent of everyone under notice on the parent test, past-their-d
 outside it. The unpaid balance behind leaving-with-dues reads the invoice pool through the
 homescreen's own property key and payer join.
 
-**View all sheet.** Three sections as §6 lays them out, indented rows as layers, every row keyed for
+**P41. View all sheet.** Three sections as §6 lays them out, indented rows as layers, every row keyed for
 its drill. Under notice equals approved plus awaiting by construction, one `UNDER_NOTICE` test.
 Awaiting-confirmation hides at zero as §6 asks. Arriving this month reads the calendar month
 whatever the filter says, which is what "expected within the current month" means. Bookings
 confirmed reads real approval rows only, the one correct count of the four the F93 entry examined.
 
-**Move metrics.** Move-ins count status 0 and 1 by joining date, so someone who joined and left in
+**P42. Move metrics.** Move-ins count status 0 and 1 by joining date, so someone who joined and left in
 the window still counts, and a room change moves neither number (320 multi-room tenants platform
 wide, the sheet's own measure). Move-outs read the confirmed leaving date, else the checkout date;
 only 198 of 636,873 moved-out tenants on live properties carry neither, 0.03%, so the "never shows
 zero" test holds everywhere it matters. Net change is stated with the cards as §7 asks, chips run in
 opposite directions correctly.
 
-**Verification.** The card states its base, both tabs split over all active tenants, and the action
+**P43. Verification.** The card states its base, both tabs split over all active tenants, and the action
 bar names only the workable queue, overdue among the last 90 days of joiners, exactly §9's rule,
 with the full overdue count still on the card. The e-KYC test reads the latest verified KYC row per
 tenant, manual as the remainder, unverified as no row at all.
 
-**Tenancy Details.** The four agreement buckets cover the base with no overlap: measured on
+**P44. Tenancy Details.** The four agreement buckets cover the base with no overlap: measured on
 production, zero active tenants fall between them. Profile completion checks exactly the ten fields §3 lists,
 and the tenant list's own completed-profile test reads the same ten
 (`getAllTenants.ts:1324` to `:1333`), so the number and the list agree by construction, the F86
 sweep's question answered yes here.
 
-**Upcoming Eviction.** Five bands with Inventory's edges, 0-7, 8-15, 16-30, 31+, each split pending
+**P45. Upcoming Eviction.** Five bands with Inventory's edges, 0-7, 8-15, 16-30, 31+, each split pending
 against approved, pending bucketed by the requested date and approved by the confirmed one, §3's
 rule exactly. A withdrawn notice leaves the card because only active notice rows count.
 
-**Agreement Expiry.** Verified against §3 and §12 **as they stood before D26**: the four-step end
+**P46. Agreement Expiry.** Verified against §3 and §12 **as they stood before D26**: the four-step end
 date rule matched that §3 step for step, start date as last renewal else joining, and the footer
 carried the assumption line that §12 then asked for. D26 and F100 supersede both halves, so the
 build now owes the No term recorded group and the footer's assumption line goes. The 30-day band and
 Journey's Renewals in 30 days and Renewal Due are one expression three times, so they cannot
 disagree (§23.5 honoured in effect). Bands do not overlap; day 30 falls in exactly one.
 
-**Profile and Details.** Every tab carries the coverage line in §3's own words, built from recorded
+**P47. Profile and Details.** Every tab carries the coverage line in §3's own words, built from recorded
 over base. City groups on the trimmed lower-cased district and displays it title-cased, top 5 plus
 Others, the F19 sweep passing here. Tenant Type reads `working_type`, the field with real coverage,
 26.6% of active tenants measured today against the sheet's 23%, not the lookalike field the sheet
 warned is 99% empty. Age bands cover everyone once, and an invalid under-14 date of
 birth is excluded from coverage on purpose, with the comment saying why.
 
-**Tenure.** Bands on the joining date with no gap and no overlap, and the code comment names the
+**P48. Tenure.** Bands on the joining date with no gap and no overlap, and the code comment names the
 off-by-one this fixed. Future joining dates land in Under 1 month rather than vanishing.
 
-**Property Wise Active Tenants.** Hidden on one property with a real `hidden` return (`:1100`), the
+**P49. Property Wise Active Tenants.** Hidden on one property with a real `hidden` return (`:1100`), the
 F23 sweep passing. Every property in scope appears including zeros, sorted highest first, each row
 carrying its share of the account total and a bar relative to the top property, §18 exactly.
 
-**The F79 sweep.** Every share and bar percent on the tab is computed from raw counts before
+**P50. The F79 sweep.** Every share and bar percent on the tab is computed from raw counts before
 formatting; nothing reads a display string back.
 
-**The F52 count re-confirmed.** Fifteen null returns, one per block, all falling back through the
+**P51. The F52 count re-confirmed.** Fifteen null returns, one per block, all falling back through the
 caller to the shared empty-card shell the registry holds, as F52 already records. Nothing new here.

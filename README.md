@@ -18,7 +18,7 @@ Handoff documentation for the RentOk Manager App analytics suite: nine screens, 
 | **Designing** | The design reading map, below | Every fix for your screen sits in one numbered list |
 | **Running the project** | [The tracker](00%20—%20Manager%20App%20Analytics%20Tracker.md) | Every locked rule, the backfill queue, the next action. Read it first, every time |
 | **Writing a new sheet** | [The template](_meta/_Handoff%20Sheet%20Template.md) | The canonical spine. Copy it; never start from a blank page |
-| **Checking what was built** | [The verification log](01%20—%20Build%20Verification%20Log.md) | Every difference between what we asked for and what shipped, with what the owner ruled. Its open-items table says who owes what |
+| **Checking what was built** | [The verification log](01%20—%20Build%20Verification%20Log.md) | Every difference between what we asked for and what shipped, with what the owner ruled. Its [work queue](01%20—%20Build%20Verification%20Log.md#the-work-queue) is what is still owed, one readable row per job, re-checked against the live code on 27 Aug 2026 |
 | **Fixing something that is not a spec failure** | [The suggestions register](02%20—%20Suggestions%20Register.md) | Product problems found while verifying, none of them actioned without a ruling |
 | **Wanting engineering's own explanation** | [The calculation guide](03%20—%20Analytics%20Calculation%20Guide%20(Vivek).md) | Vivek's block-by-block account of how each number is worked out. Read-only copy; the source lives in the backend repo |
 

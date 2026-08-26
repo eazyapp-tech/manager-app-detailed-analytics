@@ -9,7 +9,9 @@ re-verified two of those 27. Twenty-five had never been checked.
 
 **How each item was judged.** By reading the current code for the function the item names, never by
 reading a commit message. Three commits this run sounded like they fixed something and had not:
-"upcoming vacany room wise logic done" changed which rooms count and left the colour defect alone.
+"upcoming vacany room wise logic done" changed which rooms count and left the colour defect alone. Two
+further defects read as already handled because the guard sits one layer outside the value it has to
+change; both predate this review, and F55 and F65 already describe them correctly.
 
 **What the outcomes mean.**
 
@@ -326,10 +328,12 @@ the work queue have been running on separate tracks.
 3. **A ruling has been reversed.** Upcoming Vacancy no longer follows the view toggle, and D23 ruled
    that it must. The sheet has already been rewritten around the old behaviour. This needs the owner's
    word before anything else happens on that card.
-4. **Two attempted fixes do not work, and both read as done.** The Expense quarantine row wraps
-   `Math.abs` around a helper that has already floored the negative to zero, so it still always reads
-   ₹0. Occupancy's Overview now carries `showChip ? null : null`, a ternary with the same answer on
-   both sides. Neither would show up in a review that trusted the diff.
+4. **Two defects look like a fix and are not one.** The Expense quarantine row wraps `Math.abs`
+   around a helper that has already floored the negative to zero, so it still always reads ₹0.
+   Occupancy's Overview carries `showChip ? null : null`, a ternary with the same answer on both
+   sides. **Neither is a recent attempt**: both predate this review, and F55 and F65 described them
+   accurately at the time. They belong together because they share a shape, code sitting one layer
+   outside the thing it needs to change, which reads as handled to anyone skimming.
 
 **And one thing to ask Vivek before filing anything.** Every ranked list in the suite has had its
 per-row share of the account total commented out: Dues, Collection, Expense, Occupancy and Tenant,
