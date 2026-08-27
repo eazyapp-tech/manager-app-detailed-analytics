@@ -55,7 +55,7 @@ Four tiles, three different clocks.
 
 | Line | What is this? | How is this calculated? |
 |---|---|---|
-| Monthly | Total spend in each month. | The lighter bar is the running month, still filling in. |
+| Monthly | Total spend in each month. | The lighter bar is the current month, still filling in. |
 
 ## 5. Expenses by Property
 
@@ -75,7 +75,7 @@ The live account holds almost no expense data, so most checks here are code-side
 |---|---|
 | Current FY is April to today, not to 31 March | ₹8.30K shown equals the trend's April ₹7.3K plus June ₹1K, and the code windows FY at today. This tab does not have the 31 March problem Dues and Collection have |
 | The three clocks on the Overview strip | Live: Total ₹0 for This Month while Current FY showed ₹8.30K and owed-staff sat at ₹0 "as of today" |
-| The running month renders lighter | The trend block marks the current month in progress with its own lighter colour |
+| The current month renders lighter | The trend block marks the current month in progress with its own lighter colour |
 | Share still renders here | The code computes it for this tab; it was removed from Dues and Collection by-property, not from Expense |
 
 ## Launch risks on this tab

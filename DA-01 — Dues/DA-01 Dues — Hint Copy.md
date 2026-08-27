@@ -97,8 +97,8 @@ One total split four ways by due date. Does not follow the date filter.
 
 | Card | What is this? | How is this calculated? |
 |---|---|---|
-| Short Term | Unpaid dues for the dates you pick, from tenants marked short stay. | The short stay mark sits on the tenant's profile, not on the bill. |
-| Long Term | Unpaid dues from tenants not marked short stay. | - |
+| Short Term | Unpaid dues for the dates you pick, from tenants marked short term. | The short term mark sits on the tenant's profile, not on the bill. |
+| Long Term | Unpaid dues from tenants not marked short term. | - |
 
 ## 9. Dues by Property
 

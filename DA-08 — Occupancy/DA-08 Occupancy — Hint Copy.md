@@ -35,7 +35,7 @@ Five tiles. Follows the date filter; the title carries the mode, "(Now)" or the 
 
 ## 2. Occupancy Status
 
-The donut, the chips and the two money tiles. Always right now; the date filter does not change this block.
+The status graph, its counts and the two money tiles. Always right now; the date filter does not change this block.
 
 > **Good to know:** always shows this moment, so on a period it can differ from the Overview above it. That is the two clocks, not a bug.
 
@@ -43,13 +43,13 @@ The donut, the chips and the two money tiles. Always right now; the date filter 
 |---|---|---|
 | Occupied | Beds or units with a tenant living in them. | - |
 | Semi-Vacant | Rooms part-filled: some beds taken, some free. | Unit view only. |
-| Vacant | Empty rentable beds or units, split into booked and available. | Booked means a booking is against it; available means still open to let. |
+| Vacant | Empty rentable beds or units, split into booked and available. | Booked means a booking is against it; available means no booking yet. |
 | Disabled for Rent | Beds or units switched off for rent. | Not counted in Rentable. |
 | Under Notice | Tenants who have given notice. | Manager-accepted notices. |
 | Booked Beds | Beds with an upcoming booking. | In Unit view this becomes units where every bed is booked. |
 | Under Notice with Booking | Beds where the leaving tenant is already replaced by a booking. | - |
 | Overbooked occupancy | More tenants than beds. | When this is above zero, the parts can add to more than the total. |
-| Avg. Rent per Occupied | The average rent of one filled bed or unit. | Uses the rent on each tenant's profile. Tenants with no rent set are left out, so thin rent records read low. |
+| Avg. Rent per Occupied | The average rent of one filled bed or unit. | Uses the rent on each tenant's profile. Tenants with no rent set are left out, so it can read low where many rents are missing. |
 | Avg. Revenue per Rentable | The same rent spread across every rentable bed or unit, filled or not. | Lower than Avg Rent whenever anything is vacant: the gap is what vacancy costs. |
 
 ## 3. Vacant Room Status (Live)

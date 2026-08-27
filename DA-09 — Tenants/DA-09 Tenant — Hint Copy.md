@@ -19,16 +19,16 @@ Nine tiles. Two of them ship without any definition today (finding F94); both ar
 | Tile | What is this? | How is this calculated? |
 |---|---|---|
 | Active Tenants | Tenants living in the property right now. | - |
-| Active Bookings | Bookings not yet moved in, awaiting or approved. | - |
+| Active Bookings | Bookings not yet moved in, pending or approved. | - |
 | Approved Bookings | Bookings a manager has approved. | - |
-| Eviction Pending | Tenants who asked to leave, awaiting the manager's answer. | - |
+| Eviction Pending | Tenants who asked to leave, still pending approval. | - |
 | Eviction Approved | Tenants whose leaving is approved, with a confirmed date. | - |
 | Notices Raised | Notices given in the dates you pick. | The one tile here that follows the date filter. |
-| Past Their Date | Approved leavers whose leaving date has already passed. | - |
-| Rent at risk | The monthly rent of tenants who are leaving. | Uses the rent on each tenant's profile, not billed amounts. |
+| Past Their Date | Tenants whose approved eviction date has passed, not yet moved out. | - |
+| Rent at risk | The monthly rent of tenants who are leaving. | Counts tenants with a notice, pending or approved. Uses the rent on each tenant's profile, not billed amounts. |
 | Leaving with dues | Money still owed by tenants who are leaving. | Worked out on its own, so it can differ slightly from the Dues tab. |
 
-The shipped Active Bookings sentence says "Confirmed bookings"; the tile counts awaiting and approved together, so the word confirmed goes.
+The shipped Active Bookings sentence says "Confirmed bookings"; the tile counts pending and approved together, so the word confirmed goes.
 
 ## 2. Move-in & Move-out Metrics
 
@@ -44,7 +44,7 @@ The shipped Active Bookings sentence says "Confirmed bookings"; the tile counts 
 
 | Tab | What is this? | How is this calculated? |
 |---|---|---|
-| Tenants | Where tenants stand right now: active, leaving pending or approved, renewals due, agreements expired. | Each bar's share is out of Active Tenants. |
+| Tenants | Where tenants stand right now: active, eviction pending or approved, renewals due, agreements expired. | Each bar's share is out of Active Tenants. |
 | Bookings | The booking funnel for these dates: total, approved, cancelled, converted. | - |
 
 ## 4. Tenant Verification
@@ -71,7 +71,7 @@ The shipped Active Bookings sentence says "Confirmed bookings"; the tile counts 
 
 | Card | What is this? | How is this calculated? |
 |---|---|---|
-| Upcoming evictions | Tenants leaving soon, grouped by leaving date, pending and approved shown separately. | Always right now, whatever dates you pick. |
+| Upcoming evictions | Tenants leaving, grouped by eviction date; pending and approved shown separately. | Always right now, whatever dates you pick. |
 
 ## 7. Agreement Expiry
 
@@ -103,26 +103,26 @@ The shipped Active Bookings sentence says "Confirmed bookings"; the tile counts 
 
 | Card | What is this? | How is this calculated? |
 |---|---|---|
-| Renewal Due | Agreements due for renewal soon. | Always right now. |
+| Renewal Due | Agreements due for renewal in the next 30 days. | Always right now. |
 | Completed | Renewals done in the dates you pick. | - |
 
 ## 11. Stay Type
 
 | Card | What is this? | How is this calculated? |
 |---|---|---|
-| Stay type | Tenants living here now, short stay against long stay. | A tenant not marked short stay counts as long stay. |
+| Stay type | Tenants living here now, short term against long term. | A tenant not marked short term counts as long term. |
 
 ## 12. Renting Type
 
 | Card | What is this? | How is this calculated? |
 |---|---|---|
-| Renting type | Tenants by who the room is let to: a company (B2B) or a person (Residential). | Shows only when renting type is recorded; hidden otherwise. |
+| Renting type | Tenants renting as a company (B2B) or as an individual (Residential). | Shows only when renting type is recorded; hidden otherwise. |
 
 ## 13. Tenure
 
 | Card | What is this? | How is this calculated? |
 |---|---|---|
-| Tenure | How long current tenants have stayed, in bands from under a month to over a year. | Counted from each tenant's joining date. |
+| Tenure | How long current tenants have stayed. | - |
 
 ## 14. Property Wise Active Tenants
 
